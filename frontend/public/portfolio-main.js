@@ -52,8 +52,10 @@
     const upd = () => { raf = 0;
       const max = document.documentElement.scrollHeight - innerHeight, y = scrollY;
       const bot = document.querySelector('.sf__bot');  // the footer has its own 'Back to top', so step aside once it's on screen
-      tt.classList.toggle('show', y > innerHeight * .9 && !(bot && bot.getBoundingClientRect().top < innerHeight - 8));
+      const isShown = y > innerHeight * .9 && !(bot && bot.getBoundingClientRect().top < innerHeight - 8);
+      tt.classList.toggle('show', isShown);
       tt.style.setProperty('--p', max > 0 ? Math.min(1, y / max).toFixed(4) : 0);
+      if (!isShown) return;
       const r = tt.getBoundingClientRect();
       tt.style.pointerEvents = 'none';
       const under = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
@@ -1000,32 +1002,15 @@ const toggleMode = () => setMode(getMode() === 'dark' ? 'light' : 'dark');
     f.src = ROUTES[i] + '?embed';
     f.title = TITLES[i];
     f.tabIndex = -1;
+    f.loading = 'lazy';
+    f.style.contain = 'strict';
     f.addEventListener('load', () => { ready[i] = true; if (i === cur) frameReady = true; f.contentWindow?.postMessage({ wall: 'mode', mode: root.dataset.mode === 'dark' ? 'dark' : 'light' }, location.origin === 'null' ? '*' : location.origin); }, { once: true });
     frames[i] = f; wallv.appendChild(f);
   }
   const pick = i => { cur = i; frame = frames[i]; frameReady = !!ready[i]; frames.forEach((f, k) => f && f.classList.toggle('cur', k === i)); };
   const toWall = msg => { try { frame?.contentWindow?.postMessage(msg, location.origin === 'null' ? '*' : location.origin); } catch (e) {} };
-  // start fetching the wall once the doors are near, so a click never waits
-  // Deferred until after the intro has finished to guarantee a silky smooth 60fps intro loader
-  if ('IntersectionObserver' in window){
-    const initNearObserver = () => {
-      const near = new IntersectionObserver(es => {
-        if (es.some(e => e.isIntersecting)){
-          near.disconnect();
-          setTimeout(() => {
-            warm(4);
-            setTimeout(() => [0, 1, 2, 3].forEach(warm), 2000);
-          }, 800);
-        }
-      }, { rootMargin: '100px' });
-      near.observe(sec);
-    };
-    if (document.body.classList.contains('ready')) {
-      initNearObserver();
-    } else {
-      addEventListener('intro:ready', initNearObserver, { once: true });
-    }
-  }
+  // Room preloading: Only warmed on hover or focus intent, preventing background iframe thrashing
+  // (d.way pointerenter/focus handlers already call warm(i) on-demand when user intends to enter)
 
   // hovering the doors: promote them to a GPU layer and pre-render them at the zoom the walk-through will use,
   // so clicking has nothing heavy left to do (a paused animation makes the browser raster at its peak scale)
@@ -1088,7 +1073,15 @@ const toggleMode = () => setMode(getMode() === 'dark' ? 'light' : 'dark');
     const set = i => { if (busy) i = -1; if (i === active) return; active = i; if (i < 0) hide(); else show(i); };
     const under = el => { const w = el && el.closest ? el.closest('.doorway') : null; return w ? units.findIndex(u => u.contains(w)) : -1; };
     addEventListener('pointermove', e => { px = e.clientX; py = e.clientY; set(under(e.target)); }, { passive: true });
-    addEventListener('scroll', () => { if (px >= 0) set(under(document.elementFromPoint(px, py))); }, { passive: true });
+    let dScrollRaf = 0;
+    addEventListener('scroll', () => {
+      if (px >= 0 && !dScrollRaf) {
+        dScrollRaf = requestAnimationFrame(() => {
+          dScrollRaf = 0;
+          if (px >= 0) set(under(document.elementFromPoint(px, py)));
+        });
+      }
+    }, { passive: true });
     document.documentElement.addEventListener('pointerleave', () => set(-1));
     addEventListener('blur', () => set(-1));
     units.forEach((u, i) => {
@@ -1584,7 +1577,7 @@ if (isSubSection){
 try {
   if (matchMedia('(hover: none), (pointer: coarse)').matches || root.classList.contains('lite')) throw 0;   // phones and modest devices keep native momentum scrolling
   const { default: Lenis } = await import('lenis');
-  lenis = new Lenis({ smoothWheel: true }); window.__lenis = lenis;
+  lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 0.9, smoothWheel: true, touchMultiplier: 1.5 }); window.__lenis = lenis;
   if (!scrollEnabled) lenis.stop();
   const raf = t => { lenis.raf(t); requestAnimationFrame(raf); };
   requestAnimationFrame(raf);
@@ -1672,8 +1665,19 @@ try {
     if (innerWidth >= 768) size();
   };
   let raf = 0, p = 0, dotY = null, lastT = 0;
+  let storyVisible = false;
+  if ('IntersectionObserver' in window){
+    const storyIo = new IntersectionObserver(es => {
+      storyVisible = es.some(e => e.isIntersecting);
+      if (storyVisible) q();
+    }, { rootMargin: '150px' });
+    storyIo.observe(sec);
+  } else {
+    storyVisible = true;
+  }
   function update(){
     raf = 0;
+    if (!storyVisible) return;
     const lr = line.getBoundingClientRect(), mid = innerHeight * .5;
     // the dot sits wherever the middle of the screen falls on the line
     const y = Math.min(lastY, Math.max(firstY, mid - lr.top));

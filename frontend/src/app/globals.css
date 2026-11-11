@@ -947,3 +947,8 @@ body{margin:0}
 .ck button{height:2.5rem;padding:0 1rem;border-radius:999px;border:1px solid rgba(232,228,224,.25);background:none;color:inherit;font:inherit;font-size:.8125rem;font-weight:600;line-height:1;cursor:pointer}
 .ck button[data-ck="yes"]{background:#E8E4E0;color:#1A1818;border-color:transparent}
 @media (max-width:539.98px){.ck{flex-direction:column;align-items:stretch}.ck div button{flex:1}}
+
+/* Performance: GPU compositing layers & content visibility for 60/120fps scrolling */
+.doors { transform: translateZ(0); }
+.site-foot { content-visibility: auto; contain-intrinsic-size: 1px 600px; }
+.story { contain: paint; }
