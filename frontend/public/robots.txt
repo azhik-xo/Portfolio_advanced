@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://therishithakor.com/sitemap.xml
