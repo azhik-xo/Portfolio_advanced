@@ -15,8 +15,8 @@ export default function PowerlifterPage() {
   return (
     <main style={{ minHeight: '100vh', background: '#030306', color: '#E8E4E0', overflow: 'hidden' }}>
       <div dangerouslySetInnerHTML={{ __html: markup }} />
-      <Script src="/powerlifter/lifts.js" strategy="afterInteractive" />
-      <Script src="/powerlifter/powerlifter-engine.js" strategy="afterInteractive" />
+      <Script id="powerlifter-lifts" src="/powerlifter/lifts.js" strategy="beforeInteractive" />
+      <Script id="powerlifter-engine" src="/powerlifter/powerlifter-engine.js" strategy="afterInteractive" />
     </main>
   );
 }

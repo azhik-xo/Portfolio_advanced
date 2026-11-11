@@ -1006,9 +1006,25 @@ const toggleMode = () => setMode(getMode() === 'dark' ? 'light' : 'dark');
   const pick = i => { cur = i; frame = frames[i]; frameReady = !!ready[i]; frames.forEach((f, k) => f && f.classList.toggle('cur', k === i)); };
   const toWall = msg => { try { frame?.contentWindow?.postMessage(msg, location.origin === 'null' ? '*' : location.origin); } catch (e) {} };
   // start fetching the wall once the doors are near, so a click never waits
+  // Deferred until after the intro has finished to guarantee a silky smooth 60fps intro loader
   if ('IntersectionObserver' in window){
-    const near = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)){ near.disconnect(); setTimeout(() => { warm(4); setTimeout(() => [0, 1, 2, 3].forEach(warm), 1500); }, 600); } }, { rootMargin: '200px' });
-    near.observe(sec);
+    const initNearObserver = () => {
+      const near = new IntersectionObserver(es => {
+        if (es.some(e => e.isIntersecting)){
+          near.disconnect();
+          setTimeout(() => {
+            warm(4);
+            setTimeout(() => [0, 1, 2, 3].forEach(warm), 2000);
+          }, 800);
+        }
+      }, { rootMargin: '100px' });
+      near.observe(sec);
+    };
+    if (document.body.classList.contains('ready')) {
+      initNearObserver();
+    } else {
+      addEventListener('intro:ready', initNearObserver, { once: true });
+    }
   }
 
   // hovering the doors: promote them to a GPU layer and pre-render them at the zoom the walk-through will use,
@@ -1379,7 +1395,7 @@ if (['#works', '#about', '#contact'].includes(location.hash)){
   document.fonts?.ready.then(() => { ready = Math.max(ready, .85); });
   const loaded = () => { ready = 1; };
   if (document.readyState === 'complete') loaded(); else addEventListener('load', loaded, { once: true });
-  setTimeout(loaded, 5000);                               // never keep anyone waiting long
+  setTimeout(loaded, 1600);                               // safety fallback so intro never stalls
   // one colour joins the stack for each sixth of the way
   const paint = p => { loader.style.setProperty('--p', p.toFixed(3)); pills.forEach((el, k) => el.classList.toggle('on', p >= k / 6 + .02 || p >= 1)); };
   const FILL = 1600;

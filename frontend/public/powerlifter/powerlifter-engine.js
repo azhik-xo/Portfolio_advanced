@@ -38,37 +38,56 @@
   }
 
   /* ---- items list & filtering ---- */
-  const ALL_ITEMS = window.POWERLIFTING_ITEMS || [];
+  let ALL_ITEMS = (window.POWERLIFTING_ITEMS && Array.isArray(window.POWERLIFTING_ITEMS) && window.POWERLIFTING_ITEMS.length > 0)
+    ? window.POWERLIFTING_ITEMS
+    : [];
   let currentFilter = 'all';
   let activeItems = [...ALL_ITEMS];
 
   const getFilteredItems = (filter) => {
-    if (filter === 'all') return ALL_ITEMS;
-    if (filter === 'video') return ALL_ITEMS.filter(it => it.mediaType === 'video');
-    return ALL_ITEMS.filter(it => it.category === filter);
+    const list = (window.POWERLIFTING_ITEMS && window.POWERLIFTING_ITEMS.length > 0) ? window.POWERLIFTING_ITEMS : ALL_ITEMS;
+    if (filter === 'all') return list;
+    if (filter === 'video') return list.filter(it => it.mediaType === 'video');
+    return list.filter(it => it.category === filter);
   };
 
   /* ---- 3D draggable matrix layout ---- */
-  let vw = innerWidth, vh = innerHeight, g = vw >= 640 ? 32 : 18;
+  let vw = Math.max(window.innerWidth || 0, 360), vh = Math.max(window.innerHeight || 0, 600), g = vw >= 640 ? 32 : 18;
   let ROWS = [];
-  let PW = 0, PH = 0;
+  let PW = 800, PH = 600;
 
   function buildRows() {
-    vw = innerWidth; vh = innerHeight;
+    vw = Math.max(window.innerWidth || 0, 360);
+    vh = Math.max(window.innerHeight || 0, 600);
     g = vw >= 640 ? 32 : 18;
     const mobile = vw < 640;
     const side = (mobile ? vw * 0.65 : Math.min(420, vh * 0.48)) * 0.95;
-    const A = side * side;
+    const A = Math.max(side * side, 10000);
+
+    if ((!activeItems || activeItems.length === 0) && window.POWERLIFTING_ITEMS && window.POWERLIFTING_ITEMS.length > 0) {
+      ALL_ITEMS = window.POWERLIFTING_ITEMS;
+      activeItems = getFilteredItems(currentFilter);
+    }
+
+    if (!activeItems || activeItems.length === 0) {
+      ROWS = [{
+        y: 0, H: 400, L: 800, off: 0,
+        cells: []
+      }];
+      PH = 600;
+      PW = 800;
+      return;
+    }
 
     const items = activeItems.map((p, idx) => {
-      const r = p.w / p.h;
-      const w = Math.sqrt(A * r);
-      return { idx, r, w, h: w / r, item: p };
+      const r = (p.w && p.h) ? (p.w / p.h) : 0.8;
+      const w = Math.max(100, Math.sqrt(A * r));
+      return { idx, r, w, h: Math.max(100, w / r), item: p };
     });
 
     const numRows = mobile ? 3 : 4;
     ROWS = [];
-    const itemsPerRow = Math.ceil(items.length / numRows);
+    const itemsPerRow = Math.max(1, Math.ceil(items.length / numRows));
 
     let y = 0;
     for (let r = 0; r < numRows; r++) {
@@ -77,21 +96,39 @@
         const itemIdx = (r * itemsPerRow + c) % items.length;
         rowSlice.push(items[itemIdx]);
       }
-      const H = Math.max(...rowSlice.map(o => o.h));
+      const H = Math.max(100, ...rowSlice.map(o => o.h));
       let x = 0;
       const cells = rowSlice.map(o => {
         const cell = { idx: o.idx, x, y: (H - o.h) / 2, w: o.w, h: o.h, item: o.item };
         x += o.w + g;
         return cell;
       });
-      ROWS.push({ y, H, L: x, off: ((r * 0.381966) % 1) * x, cells });
+      const L = Math.max(x, 400);
+      ROWS.push({ y, H, L, off: ((r * 0.381966) % 1) * L, cells });
       y += H + g;
     }
-    PH = y;
-    PW = Math.max(...ROWS.map(r => r.L));
+    PH = Math.max(y, 400);
+    PW = Math.max(400, ...ROWS.map(r => r.L));
   }
 
   buildRows();
+
+  // Retry populating items if lifts.js finished loading after engine initialization
+  if (!window.POWERLIFTING_ITEMS || window.POWERLIFTING_ITEMS.length === 0) {
+    let attempts = 0;
+    const checkTimer = setInterval(() => {
+      attempts++;
+      if (window.POWERLIFTING_ITEMS && window.POWERLIFTING_ITEMS.length > 0) {
+        clearInterval(checkTimer);
+        ALL_ITEMS = window.POWERLIFTING_ITEMS;
+        activeItems = getFilteredItems(currentFilter);
+        buildRows();
+        renderCells();
+      } else if (attempts > 60) {
+        clearInterval(checkTimer);
+      }
+    }, 50);
+  }
 
   /* ---- infinite viewport rendering ---- */
   let camX = 0, camY = 0;
@@ -126,6 +163,8 @@
   function renderCells() {
     pool.forEach(p => { p.inUse = false; p.el.style.display = 'none'; });
 
+    if (!PH || PH <= 50 || !PW || PW <= 50 || !ROWS || ROWS.length === 0) return;
+
     const viewLeft = camX - 100;
     const viewRight = camX + vw + 100;
     const viewTop = camY - 100;
@@ -133,24 +172,32 @@
 
     let poolIdx = 0;
 
-    const rowStart = Math.floor(viewTop / PH);
-    const rowEnd = Math.floor(viewBottom / PH);
+    const rawRowStart = Math.floor(viewTop / PH);
+    const rawRowEnd = Math.floor(viewBottom / PH);
+    // Strict safety clamp: never allow runaway or infinite iteration
+    const rowStart = Math.max(rawRowStart, -10);
+    const rowEnd = Math.min(rawRowEnd, 10);
 
     for (let rBlock = rowStart; rBlock <= rowEnd; rBlock++) {
       const blockY = rBlock * PH;
       for (let ri = 0; ri < ROWS.length; ri++) {
         const row = ROWS[ri];
+        if (!row || !row.L || row.L <= 50) continue;
         const rowY = blockY + row.y;
         if (rowY + row.H < viewTop || rowY > viewBottom) continue;
 
-        const effectiveX = viewLeft - row.off;
-        const colStart = Math.floor(effectiveX / row.L);
-        const colEnd = Math.floor((viewRight - row.off) / row.L);
+        const effectiveX = viewLeft - (row.off || 0);
+        const rawColStart = Math.floor(effectiveX / row.L);
+        const rawColEnd = Math.floor((viewRight - (row.off || 0)) / row.L);
+        // Strict safety clamp: never allow runaway or infinite iteration
+        const colStart = Math.max(rawColStart, -10);
+        const colEnd = Math.min(rawColEnd, 10);
 
         for (let cBlock = colStart; cBlock <= colEnd; cBlock++) {
-          const blockX = cBlock * row.L + row.off;
+          const blockX = cBlock * row.L + (row.off || 0);
           for (let ci = 0; ci < row.cells.length; ci++) {
             const c = row.cells[ci];
+            if (!c) continue;
             const cellX = blockX + c.x;
             const cellY = rowY + c.y;
 
@@ -167,22 +214,28 @@
             el.dataset.idx = c.idx;
 
             const it = c.item;
-            const img = el.querySelector('img');
-            if (img.getAttribute('src') !== it.thumbnail) {
-              img.src = it.thumbnail;
-              img.classList.remove('ok');
-              img.onload = () => img.classList.add('ok');
-            }
+            if (it) {
+              const img = el.querySelector('img');
+              if (img && img.getAttribute('src') !== it.thumbnail) {
+                img.src = it.thumbnail;
+                img.classList.remove('ok');
+                img.onload = () => img.classList.add('ok');
+              }
 
-            const badge = el.querySelector('.ph__badge');
-            if (it.mediaType === 'video') {
-              badge.innerHTML = `<span class="badge-vid">▶ VIDEO</span> <span class="badge-txt">${it.badge}</span>`;
-            } else {
-              badge.innerHTML = `<span class="badge-txt">${it.badge}</span>`;
-            }
+              const badge = el.querySelector('.ph__badge');
+              if (badge) {
+                if (it.mediaType === 'video') {
+                  badge.innerHTML = `<span class="badge-vid">▶ VIDEO</span> <span class="badge-txt">${it.badge}</span>`;
+                } else {
+                  badge.innerHTML = `<span class="badge-txt">${it.badge}</span>`;
+                }
+              }
 
-            el.querySelector('.ph__title').textContent = it.title;
-            el.querySelector('.ph__sub').textContent = it.subtitle;
+              const titleEl = el.querySelector('.ph__title');
+              if (titleEl) titleEl.textContent = it.title || '';
+              const subEl = el.querySelector('.ph__sub');
+              if (subEl) subEl.textContent = it.subtitle || '';
+            }
           }
         }
       }
