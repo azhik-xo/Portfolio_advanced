@@ -32,7 +32,7 @@ export default function RoomPage() {
   <div class="box"><p><b>In short:</b> no advertising, no tracking pixels and no third-party embeds. Visits are counted with Google Analytics only if you choose “Allow” on the banner; until then nothing is sent to Google and no cookies are set.</p></div>
 
   <h3>Who is responsible</h3>
-  <p>Ashik, an independent freelancer based in India. You can reach me at <a data-mail href="#">my email address</a> (rishithakor218 at gmail dot com).</p>
+  <p>Ashik, an independent freelancer based in India. You can reach me at <a data-mail href="#">my email address</a> (ashik at gmail dot com).</p>
 
   <h3>What this site stores on your device</h3>
   <p>Two things, both in your browser's local storage: your light or dark mode choice (key <code>rishi-mode</code>) and your answer to the analytics question (key <code>rishi-analytics</code>). Neither is a cookie and neither leaves your device. You can clear them any time from your browser settings, which also brings the analytics question back.</p>

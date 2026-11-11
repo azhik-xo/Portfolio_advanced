@@ -1,5 +1,5 @@
 (() => {
-  const m = ['rishithakor218', 'gmail.com'].join('@');
+  const m = ['ashik', 'gmail.com'].join('@');
   document.querySelectorAll('[data-mail]').forEach(a => { a.href = 'mailto:' + m; a.textContent = m; });
   document.querySelectorAll('[data-fyear]').forEach(e => e.textContent = new Date().getFullYear());
 })();

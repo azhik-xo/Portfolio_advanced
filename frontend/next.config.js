@@ -13,6 +13,26 @@ const nextConfig = {
   async rewrites() {
     return [
       {
+        source: '/home',
+        destination: '/',
+      },
+      {
+        source: '/work',
+        destination: '/',
+      },
+      {
+        source: '/my-story',
+        destination: '/',
+      },
+      {
+        source: '/about',
+        destination: '/',
+      },
+      {
+        source: '/contact',
+        destination: '/',
+      },
+      {
         source: '/api/:path*',
         destination: process.env.NEXT_PUBLIC_API_URL
           ? `${process.env.NEXT_PUBLIC_API_URL}/api/:path*`

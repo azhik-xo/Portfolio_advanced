@@ -931,7 +931,7 @@ const toggleMode = () => setMode(getMode() === 'dark' ? 'light' : 'dark');
 /* ---------- Doors: hover cracks a door open; click swings it open and carries you through it ---------- */
 (function doors(){
   // each door is its own page (/photographer etc.)
-  const ROUTES = ['web-developer/', 'app-developer/', 'ui-ux-designer/', 'devops-engineer/', 'powerlifter/'];
+  const ROUTES = ['/web-developer/', '/app-developer/', '/ui-ux-designer/', '/devops-engineer/', '/powerlifter/'];
   const SLUGS = ['web-developer', 'app-developer', 'ui-ux-designer', 'devops-engineer', 'powerlifter'];
   // a link like …#photographer lands at the doors and walks straight through that one
   const HASH_DOOR = SLUGS.indexOf(decodeURIComponent(location.hash.slice(1)));
@@ -1366,14 +1366,19 @@ const toggleMode = () => setMode(getMode() === 'dark' ? 'light' : 'dark');
 const loader = $('#loader');
 // back from a door's page (#works): skip the intro and stand in front of the doors again
 // (#about and #contact come from the links in a room's navbar and footer)
-if (['#works', '#about', '#contact'].includes(location.hash)){
+const pathSegment = (location.pathname || '').replace(/\/$/, '').split('/').pop() || '';
+const isWorkRoute = location.hash === '#works' || pathSegment === 'work';
+const isAboutRoute = location.hash === '#about' || pathSegment === 'my-story' || pathSegment === 'about';
+const isContactRoute = location.hash === '#contact' || pathSegment === 'contact';
+const isSubSection = isWorkRoute || isAboutRoute || isContactRoute;
+
+if (isSubSection){
   loader.remove();
   document.body.classList.add('ready');
-  const wantContact = location.hash === '#contact';
   requestAnimationFrame(() => {
-    if (wantContact) setTimeout(() => openModal(), 400);
-    const el = $(location.hash === '#about' ? '#about' : '#works');
-    if (el) window.scrollTo(0, el.getBoundingClientRect().top + pageYOffset);
+    if (isContactRoute) setTimeout(() => openModal(), 400);
+    const targetEl = isAboutRoute ? $('#about') : isWorkRoute ? $('#works') : null;
+    if (targetEl) window.scrollTo(0, targetEl.getBoundingClientRect().top + pageYOffset);
     dispatchEvent(new Event('intro:ready'));
   });
 } else {
@@ -1420,16 +1425,18 @@ if (['#works', '#about', '#contact'].includes(location.hash)){
 
 /* ---------- Clean routes: the address bar reads /home, /work or /my-story as you move through the page ---------- */
 (() => {
-  if (!true || location.protocol === 'file:') return;
-  const dir = location.pathname.replace(/[^/]*$/, '');            // where the site lives (root or a subfolder)
+  if (location.protocol === 'file:') return;
   const ROUTE = { home: 'home', works: 'work', about: 'my-story' };
   let cur = '';
   const set = name => {
-    if (name === cur || (history.state && history.state.wall)) return;   // never while a door's page is open
+    if (name === cur || (history.state && history.state.wall)) return;
     cur = name;
-    try { history.replaceState(history.state, '', dir + ROUTE[name]); } catch (e) {}
+    try { history.replaceState(history.state, '', '/' + ROUTE[name]); } catch (e) {}
   };
-  const first = location.hash === '#about' ? 'about' : location.hash === '#works' ? 'works' : 'home';
+  const pathName = (location.pathname || '').replace(/\/$/, '').split('/').pop() || '';
+  const first = (location.hash === '#about' || pathName === 'my-story' || pathName === 'about') ? 'about'
+              : (location.hash === '#works' || pathName === 'work') ? 'works'
+              : 'home';
   addEventListener('intro:ready', () => {
     set(first);
     const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) set(e.target.id === 'works' ? 'works' : e.target.id === 'about' ? 'about' : 'home'); }),
