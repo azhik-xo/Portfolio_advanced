@@ -1,0 +1,383 @@
+{
+  "cloudName": "h8vtnbby",
+  "rootFolder": "ashik-portfolio",
+  "uploadedAt": "2026-11-11T09:13:10.263Z",
+  "folders": {
+    "hero": {
+      "ashik-portrait": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388391/ashik-portfolio/hero/ashik-portrait.webp",
+        "format": "webp",
+        "bytes": 117702,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/hero/ashik-portrait"
+      },
+      "ashik-portrait-bw": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388392/ashik-portfolio/hero/ashik-portrait-bw.webp",
+        "format": "webp",
+        "bytes": 100440,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/hero/ashik-portrait-bw"
+      },
+      "og": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388393/ashik-portfolio/hero/og.jpg",
+        "format": "jpg",
+        "bytes": 98800,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/hero/og"
+      },
+      "apple-touch-icon": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388395/ashik-portfolio/hero/apple-touch-icon.png",
+        "format": "png",
+        "bytes": 33985,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/hero/apple-touch-icon"
+      },
+      "icon-192": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388396/ashik-portfolio/hero/icon-192.png",
+        "format": "png",
+        "bytes": 37958,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/hero/icon-192"
+      },
+      "icon-512": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388396/ashik-portfolio/hero/icon-512.png",
+        "format": "png",
+        "bytes": 213008,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/hero/icon-512"
+      }
+    },
+    "card": {
+      "back": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388397/ashik-portfolio/card/back.webp",
+        "format": "webp",
+        "bytes": 94100,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/card/back"
+      },
+      "body": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388398/ashik-portfolio/card/body.webp",
+        "format": "webp",
+        "bytes": 566,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/card/body"
+      },
+      "plate": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388399/ashik-portfolio/card/plate.webp",
+        "format": "webp",
+        "bytes": 148078,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/card/plate"
+      },
+      "sheen": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388401/ashik-portfolio/card/sheen.webp",
+        "format": "webp",
+        "bytes": 21098,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/card/sheen"
+      },
+      "win_bg": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388402/ashik-portfolio/card/win_bg.webp",
+        "format": "webp",
+        "bytes": 9162,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/card/win_bg"
+      },
+      "win_sub": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388403/ashik-portfolio/card/win_sub.webp",
+        "format": "webp",
+        "bytes": 41994,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/card/win_sub"
+      }
+    },
+    "web-developer": {
+      "1-zerodha": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388404/ashik-portfolio/web-developer/1-zerodha.webp",
+        "format": "webp",
+        "bytes": 119614,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/web-developer/1-zerodha"
+      },
+      "2-tax-pnl": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388405/ashik-portfolio/web-developer/2-tax-pnl.webp",
+        "format": "webp",
+        "bytes": 161198,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/web-developer/2-tax-pnl"
+      },
+      "3-capital-gains": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388406/ashik-portfolio/web-developer/3-capital-gains.webp",
+        "format": "webp",
+        "bytes": 147140,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/web-developer/3-capital-gains"
+      },
+      "4-quicko-cg": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388407/ashik-portfolio/web-developer/4-quicko-cg.webp",
+        "format": "webp",
+        "bytes": 88388,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/web-developer/4-quicko-cg"
+      },
+      "5-sandbox-cost": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388408/ashik-portfolio/web-developer/5-sandbox-cost.webp",
+        "format": "webp",
+        "bytes": 100402,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/web-developer/5-sandbox-cost"
+      },
+      "project-2": {
+        "url": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388408/ashik-portfolio/web-developer/project-2.mp4",
+        "format": "mp4",
+        "bytes": 1072723,
+        "resource_type": "video",
+        "public_id": "ashik-portfolio/web-developer/project-2"
+      },
+      "project-4": {
+        "url": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388410/ashik-portfolio/web-developer/project-4.mp4",
+        "format": "mp4",
+        "bytes": 177208,
+        "resource_type": "video",
+        "public_id": "ashik-portfolio/web-developer/project-4"
+      }
+    },
+    "app-developer": {
+      "app-brick": {
+        "url": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388411/ashik-portfolio/app-developer/app-brick.mp4",
+        "format": "mp4",
+        "bytes": 161964,
+        "resource_type": "video",
+        "public_id": "ashik-portfolio/app-developer/app-brick"
+      },
+      "app-expense": {
+        "url": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388413/ashik-portfolio/app-developer/app-expense.mp4",
+        "format": "mp4",
+        "bytes": 287892,
+        "resource_type": "video",
+        "public_id": "ashik-portfolio/app-developer/app-expense"
+      },
+      "app-vault": {
+        "url": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388414/ashik-portfolio/app-developer/app-vault.mp4",
+        "format": "mp4",
+        "bytes": 373761,
+        "resource_type": "video",
+        "public_id": "ashik-portfolio/app-developer/app-vault"
+      },
+      "app-dice": {
+        "url": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388415/ashik-portfolio/app-developer/app-dice.mp4",
+        "format": "mp4",
+        "bytes": 96842,
+        "resource_type": "video",
+        "public_id": "ashik-portfolio/app-developer/app-dice"
+      },
+      "icon-brick": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388417/ashik-portfolio/app-developer/icon-brick.webp",
+        "format": "webp",
+        "bytes": 8998,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/app-developer/icon-brick"
+      },
+      "icon-dice": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388418/ashik-portfolio/app-developer/icon-dice.webp",
+        "format": "webp",
+        "bytes": 2364,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/app-developer/icon-dice"
+      }
+    },
+    "ui-ux-designer": {
+      "ux-1": {
+        "url": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388419/ashik-portfolio/ui-ux-designer/ux-1.mp4",
+        "format": "mp4",
+        "bytes": 1803798,
+        "resource_type": "video",
+        "public_id": "ashik-portfolio/ui-ux-designer/ux-1"
+      },
+      "ux-2": {
+        "url": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388420/ashik-portfolio/ui-ux-designer/ux-2.mp4",
+        "format": "mp4",
+        "bytes": 673030,
+        "resource_type": "video",
+        "public_id": "ashik-portfolio/ui-ux-designer/ux-2"
+      },
+      "ux-3": {
+        "url": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388422/ashik-portfolio/ui-ux-designer/ux-3.mp4",
+        "format": "mp4",
+        "bytes": 518135,
+        "resource_type": "video",
+        "public_id": "ashik-portfolio/ui-ux-designer/ux-3"
+      },
+      "ux-cliq": {
+        "url": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388424/ashik-portfolio/ui-ux-designer/ux-cliq.mp4",
+        "format": "mp4",
+        "bytes": 295308,
+        "resource_type": "video",
+        "public_id": "ashik-portfolio/ui-ux-designer/ux-cliq"
+      },
+      "ux-pnl": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388425/ashik-portfolio/ui-ux-designer/ux-pnl.webp",
+        "format": "webp",
+        "bytes": 119614,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/ui-ux-designer/ux-pnl"
+      }
+    },
+    "powerlifter": {
+      "p01_deadlift_pr": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388426/ashik-portfolio/powerlifter/p01_deadlift_pr.webp",
+        "format": "webp",
+        "bytes": 26390,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/powerlifter/p01_deadlift_pr"
+      },
+      "p02_front_double_bicep": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388427/ashik-portfolio/powerlifter/p02_front_double_bicep.webp",
+        "format": "webp",
+        "bytes": 46272,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/powerlifter/p02_front_double_bicep"
+      },
+      "p03_squat_pr": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388428/ashik-portfolio/powerlifter/p03_squat_pr.webp",
+        "format": "webp",
+        "bytes": 26122,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/powerlifter/p03_squat_pr"
+      },
+      "p04_gold_medal": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388429/ashik-portfolio/powerlifter/p04_gold_medal.webp",
+        "format": "webp",
+        "bytes": 26308,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/powerlifter/p04_gold_medal"
+      },
+      "p05_bench_pr": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388430/ashik-portfolio/powerlifter/p05_bench_pr.webp",
+        "format": "webp",
+        "bytes": 23728,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/powerlifter/p05_bench_pr"
+      },
+      "p06_lat_spread": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388431/ashik-portfolio/powerlifter/p06_lat_spread.webp",
+        "format": "webp",
+        "bytes": 45256,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/powerlifter/p06_lat_spread"
+      },
+      "p07_chalk_platform": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388432/ashik-portfolio/powerlifter/p07_chalk_platform.webp",
+        "format": "webp",
+        "bytes": 22412,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/powerlifter/p07_chalk_platform"
+      },
+      "p08_side_chest": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388432/ashik-portfolio/powerlifter/p08_side_chest.webp",
+        "format": "webp",
+        "bytes": 45510,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/powerlifter/p08_side_chest"
+      },
+      "p09_squat_triple": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388433/ashik-portfolio/powerlifter/p09_squat_triple.webp",
+        "format": "webp",
+        "bytes": 25816,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/powerlifter/p09_squat_triple"
+      },
+      "p10_trophy_board": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388434/ashik-portfolio/powerlifter/p10_trophy_board.webp",
+        "format": "webp",
+        "bytes": 24844,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/powerlifter/p10_trophy_board"
+      },
+      "p11_deficit_pull": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388435/ashik-portfolio/powerlifter/p11_deficit_pull.webp",
+        "format": "webp",
+        "bytes": 24910,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/powerlifter/p11_deficit_pull"
+      },
+      "p12_vacuum_abs": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388436/ashik-portfolio/powerlifter/p12_vacuum_abs.webp",
+        "format": "webp",
+        "bytes": 46376,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/powerlifter/p12_vacuum_abs"
+      },
+      "p13_bench_reps": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388438/ashik-portfolio/powerlifter/p13_bench_reps.webp",
+        "format": "webp",
+        "bytes": 23078,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/powerlifter/p13_bench_reps"
+      },
+      "p14_white_lights": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388438/ashik-portfolio/powerlifter/p14_white_lights.webp",
+        "format": "webp",
+        "bytes": 24004,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/powerlifter/p14_white_lights"
+      },
+      "p15_most_muscular": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388439/ashik-portfolio/powerlifter/p15_most_muscular.webp",
+        "format": "webp",
+        "bytes": 46914,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/powerlifter/p15_most_muscular"
+      },
+      "p16_quads_calves": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388440/ashik-portfolio/powerlifter/p16_quads_calves.webp",
+        "format": "webp",
+        "bytes": 44660,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/powerlifter/p16_quads_calves"
+      },
+      "p17_deadlift_lockout": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388441/ashik-portfolio/powerlifter/p17_deadlift_lockout.webp",
+        "format": "webp",
+        "bytes": 26172,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/powerlifter/p17_deadlift_lockout"
+      },
+      "p18_barbell_knurl": {
+        "url": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388442/ashik-portfolio/powerlifter/p18_barbell_knurl.webp",
+        "format": "webp",
+        "bytes": 22116,
+        "resource_type": "image",
+        "public_id": "ashik-portfolio/powerlifter/p18_barbell_knurl"
+      },
+      "lift-deadlift": {
+        "url": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388443/ashik-portfolio/powerlifter/lift-deadlift.mp4",
+        "format": "mp4",
+        "bytes": 161964,
+        "resource_type": "video",
+        "public_id": "ashik-portfolio/powerlifter/lift-deadlift"
+      },
+      "lift-squat": {
+        "url": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388444/ashik-portfolio/powerlifter/lift-squat.mp4",
+        "format": "mp4",
+        "bytes": 287892,
+        "resource_type": "video",
+        "public_id": "ashik-portfolio/powerlifter/lift-squat"
+      },
+      "lift-bench": {
+        "url": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388446/ashik-portfolio/powerlifter/lift-bench.mp4",
+        "format": "mp4",
+        "bytes": 373761,
+        "resource_type": "video",
+        "public_id": "ashik-portfolio/powerlifter/lift-bench"
+      },
+      "lift-triple": {
+        "url": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388448/ashik-portfolio/powerlifter/lift-triple.mp4",
+        "format": "mp4",
+        "bytes": 1072723,
+        "resource_type": "video",
+        "public_id": "ashik-portfolio/powerlifter/lift-triple"
+      }
+    }
+  }
+}

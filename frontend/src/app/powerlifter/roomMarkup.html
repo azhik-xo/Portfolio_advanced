@@ -1,0 +1,83 @@
+<canvas class="sky" id="sky" aria-hidden="true"></canvas>
+
+<div class="wall" id="wall" role="region" aria-label="Powerlifting media floating in the dark. Drag in any direction to explore, click any lift to view video, metrics and stats." tabindex="0">
+  <div class="space" id="space"></div>
+</div>
+
+<header class="bar">
+  <div class="bar__left">
+    <a class="chip" href="/#works" id="back" style="min-height:44px">← Back to the doors</a>
+    <span class="chip chip--title">Powerlifting &amp; Strength <small>Ashik</small></span>
+  </div>
+
+  <div class="chip chip--prs">
+    <span>TOTAL: <b>585 KG</b></span>
+    <span class="pr-div">·</span>
+    <span>SQ: <b>205 KG</b></span>
+    <span class="pr-div">·</span>
+    <span>BP: <b>145 KG</b></span>
+    <span class="pr-div">·</span>
+    <span>DL: <b>235 KG</b></span>
+  </div>
+
+  <div class="bar__right">
+    <button type="button" class="chip chip--filter active" data-filter="all">All (18)</button>
+    <button type="button" class="chip chip--filter" data-filter="lifts">Big Lifts (PRs)</button>
+    <button type="button" class="chip chip--filter" data-filter="physique">Physique &amp; Posing</button>
+    <button type="button" class="chip chip--filter" data-filter="competitions">Competitions</button>
+    <button type="button" class="chip chip--filter" data-filter="training">Training</button>
+    <button type="button" class="chip chip--filter" data-filter="video">▶ Videos</button>
+    <button type="button" class="chip" id="infoBtn" style="color:var(--accent-gold);border-color:rgba(245,158,11,.35)">+ Add Your Lifts</button>
+  </div>
+</header>
+
+<div class="chip hint" id="hint" aria-hidden="true">
+  Drag in any direction · Click to view lift &amp; video
+</div>
+
+<!-- Fullscreen Lightbox -->
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Powerlifting Media" hidden>
+  <div class="lb__box">
+    <div class="lb__media">
+      <img id="lbImg" alt="" style="display:none">
+      <video id="lbVid" controls playsinline loop style="display:none"></video>
+    </div>
+    <div class="lb__panel">
+      <div class="lb__head">
+        <span class="lb__badge" id="lbBadge">PR</span>
+        <h2 class="lb__title" id="lbTitle">235 KG Deadlift</h2>
+        <p class="lb__sub" id="lbSubtitle">All-Time Personal Record</p>
+      </div>
+      <div class="lb__stats" id="lbStats"></div>
+    </div>
+  </div>
+  <button type="button" class="chip lb__close" id="lbClose">Close ✕</button>
+  <button type="button" class="chip lb__nav lb__nav--p" id="lbPrev" aria-label="Previous lift">←</button>
+  <button type="button" class="chip lb__nav lb__nav--n" id="lbNext" aria-label="Next lift">→</button>
+  <span class="chip lb__count" id="lbCount">1 / 18</span>
+</div>
+
+<!-- Add Lifts & Videos Instructions Modal -->
+<div class="info-modal" id="infoModal" role="dialog" aria-modal="true" aria-label="How to Add Your Own Lifts" hidden>
+  <div class="info-modal__box">
+    <h2>Add Your Personal Lifts, Photos &amp; Videos</h2>
+    <p>
+      This powerlifting room is built so you can post your personal gym PRs, body posing shots, competition medals, and videos directly:
+    </p>
+    <ol style="padding-left:20px;display:flex;flex-direction:column;gap:10px;font-size:13px;line-height:1.6;color:rgba(232,228,224,.9)">
+      <li>
+        <b>Add Media Files:</b> Drop your lift video files (<code>.mp4</code>) or body posing photos (<code>.jpg</code>, <code>.webp</code>, <code>.png</code>) into:
+        <br><code>public/powerlifter/media/</code>
+      </li>
+      <li>
+        <b>Edit Lift Telemetry:</b> Open <code>public/powerlifter/lifts.js</code> and add or customize entries with your weights, reps, RPE, date, and notes.
+      </li>
+      <li>
+        <b>Instant Refresh:</b> The 3D endless wall and video lightbox immediately load and play your media with zero extra configuration!
+      </li>
+    </ol>
+    <div style="display:flex;justify-content:flex-end;margin-top:12px">
+      <button type="button" class="chip" id="infoClose" style="background:#E8E4E0;color:#1A1818;font-weight:700">Got it</button>
+    </div>
+  </div>
+</div>

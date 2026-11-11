@@ -1,0 +1,229 @@
+'use client';
+
+import { useEffect } from 'react';
+import './roomStyles.css';
+
+export default function RoomPage() {
+  useEffect(() => {
+    try {
+      const existing = document.getElementById('script-room-devops');
+      if (existing) {
+        window.__restartAll?.();
+        return;
+      }
+      const script = document.createElement('script');
+      script.id = 'script-room-devops';
+      script.src = '/devops-engineer/roomScript.js';
+      script.async = true;
+      document.body.appendChild(script);
+    } catch(e) {
+      console.error(e);
+    }
+  }, []);
+
+  return (
+    <div
+      dangerouslySetInnerHTML={{
+        __html: `<div class="glow" aria-hidden="true"></div>
+<header class="rn" id="rn">
+  <div class="rn__in">
+    <nav aria-label="Primary"><ul><li><button data-nav="home">Home</button></li><li><button data-nav="door:0">Web Development</button></li><li><button data-nav="door:1">App Development</button></li><li><button data-nav="door:2">UI/UX Design</button></li><li><button data-nav="door:3" aria-current=page>DevOps</button><button data-nav="door:4">Powerlifter</button></li><li><button data-nav="about">My story</button></li><li><button data-nav="contact">Contact</button></li></ul></nav>
+    <div class="rn__clock" aria-label="Local time"><span>Local time</span><b data-ftime>—</b><span class="d">•</span><span class="d" data-fdate></span></div>
+    <button class="rn__menu" id="rnMenu" aria-expanded="false" aria-controls="rnPanel"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>Menu</span></button>
+  </div>
+  <div class="rn__panel" id="rnPanel" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="rn__phead">
+      <span class="rn__plbl">Menu</span>
+      <button class="rn__pclose" id="rnClose" aria-label="Close menu"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="rn__plist"><button data-nav="home">Home</button><button data-nav="door:0" aria-current=page>Web Development</button><button data-nav="door:1">App Development</button><button data-nav="door:2">UI/UX Design</button><button data-nav="door:3">DevOps</button><button data-nav="door:4">Powerlifter</button><button data-nav="about">My story</button><button data-nav="contact">Contact</button></div>
+    <p class="rn__pfoot">Ashik — available for new work<br>Replies within 5 hours</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="top"><a class="chip" href="../#works">← Back to the doors</a></div>
+  <section class="intro">
+      <h1>DevOps Engineering</h1>
+      <p>Automated CI/CD pipelines, resilient Kubernetes clusters, declarative Infrastructure as Code (Terraform), and full-stack observability. Engineered for scalability, reliability, and zero downtime.</p>
+      <span class="count">04 Infrastructure Pillars</span>
+    </section>
+  <section class="stack" id="stack" aria-label="Projects"><!--pre-->
+  <article class="card" style="--i:0" aria-labelledby="p0">
+    <div class="card__in">
+      <div class="card__info">
+        <p class="card__meta"><span>Website build</span></p>
+        <h2 id="p0">Sundown Studio</h2>
+        <p class="sub">Studio website</p>
+        <p class="desc">An editorial website for a multi-disciplinary studio that creates spaces and experiences: oversized type, a soft red glow that follows the story and a project list that reveals imagery on hover.</p>
+        <ul class="tags"><li>Design &amp; build</li><li>Motion</li><li>Hover interactions</li></ul>
+        <span class="note">Screen recording of the build</span>
+      </div>
+      <div class="stage" aria-hidden="true">
+        <div class="mon"><div class="mon__body"><div class="mon__screen vid" style="--ar:1280 / 732">
+          <video muted loop playsinline preload="metadata" poster="https://res.cloudinary.com/h8vtnbby/video/upload/so_0/v1794388408/ashik-portfolio/web-developer/project-2.webp" src="https://res.cloudinary.com/h8vtnbby/video/upload/v1794388408/ashik-portfolio/web-developer/project-2.mp4" style="background:#EBE7DE;object-fit:contain"></video>
+        </div></div><div class="mon__neck"></div><div class="mon__foot"></div></div>
+      </div>
+    </div>
+    <div class="card__dim"></div>
+  </article>
+  <article class="card flip" style="--i:1" aria-labelledby="p1">
+    <div class="card__in">
+      <div class="card__info">
+        <p class="card__meta"><span>Website build</span></p>
+        <h2 id="p1">Personal portfolio</h2>
+        <p class="sub">Product designer portfolio</p>
+        <p class="desc">A dark, type-led portfolio with a large display headline, a project list with hover previews and an about section.</p>
+        <ul class="tags"><li>Design &amp; build</li><li>Typography</li><li>Hover previews</li></ul>
+        <span class="note">Screen recording of the build</span>
+      </div>
+      <div class="stage" aria-hidden="true">
+        <div class="mon"><div class="mon__body"><div class="mon__screen vid" style="--ar:1280 / 730">
+          <video muted loop playsinline preload="metadata" poster="https://res.cloudinary.com/h8vtnbby/video/upload/so_0/v1794388410/ashik-portfolio/web-developer/project-4.webp" src="https://res.cloudinary.com/h8vtnbby/video/upload/v1794388410/ashik-portfolio/web-developer/project-4.mp4" style="background:#000;object-fit:contain"></video>
+        </div></div><div class="mon__neck"></div><div class="mon__foot"></div></div>
+      </div>
+    </div>
+    <div class="card__dim"></div>
+  </article>
+  <article class="card" style="--i:2" aria-labelledby="p2">
+    <div class="card__in">
+      <div class="card__info">
+        <p class="card__meta"><span>Quicko · Live</span></p>
+        <h2 id="p2">P&amp;L Page for Zerodha</h2>
+        <p class="sub">Broker landing page · pnl.page</p>
+        <p class="desc">Landing page that helps Zerodha users connect their demat account, track profit &amp; loss, download tax-ready reports and share verified P&amp;L with their tax advisor.</p>
+        <ul class="tags"><li>Landing page</li><li>Responsive build</li><li>SEO</li></ul>
+        <a class="live" href="https://pnl.page/brokers/zerodha" target="_blank" rel="noopener noreferrer">Visit live site <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+      </div>
+      <div class="stage" aria-hidden="true">
+        <div class="mon"><div class="mon__body"><div class="mon__screen">
+          <img class="page" src="https://res.cloudinary.com/h8vtnbby/image/upload/v1794388404/ashik-portfolio/web-developer/1-zerodha.webp" alt="P&amp;L Page for Zerodha: full-page screenshot" decoding="async" loading="lazy">
+        </div></div><div class="mon__neck"></div><div class="mon__foot"></div></div>
+      </div>
+    </div>
+    <div class="card__dim"></div>
+  </article>
+  <article class="card flip" style="--i:3" aria-labelledby="p3">
+    <div class="card__in">
+      <div class="card__info">
+        <p class="card__meta"><span>Quicko · Live</span></p>
+        <h2 id="p3">Capital Gains Tax Calculator</h2>
+        <p class="sub">Interactive tool · quicko.com</p>
+        <p class="desc">Calculates LTCG and STCG on shares, property, mutual funds and crypto: enter the buy price and sell date to get capital gains tax and indexed cost instantly.</p>
+        <ul class="tags"><li>Calculator</li><li>Interactive UI</li><li>SEO</li></ul>
+        <a class="live" href="https://quicko.com/tools/capital-gains-tax-calculator" target="_blank" rel="noopener noreferrer">Visit live site <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+      </div>
+      <div class="stage" aria-hidden="true">
+        <div class="mon"><div class="mon__body"><div class="mon__screen">
+          <img class="page" src="https://res.cloudinary.com/h8vtnbby/image/upload/v1794388407/ashik-portfolio/web-developer/4-quicko-cg.webp" alt="Capital Gains Tax Calculator: full-page screenshot" decoding="async" loading="lazy">
+        </div></div><div class="mon__neck"></div><div class="mon__foot"></div></div>
+      </div>
+    </div>
+    <div class="card__dim"></div>
+  </article>
+  <article class="card" style="--i:4" aria-labelledby="p4">
+    <div class="card__in">
+      <div class="card__info">
+        <p class="card__meta"><span>Sandbox · Live</span></p>
+        <h2 id="p4">Tax API Cost Calculator</h2>
+        <p class="sub">Pricing tool · sandbox.co.in</p>
+        <p class="desc">Estimates the cost of tax APIs for KYC, Income Tax, TDS and GST: choose a plan, add monthly usage and download a pricing estimate.</p>
+        <ul class="tags"><li>Pricing calculator</li><li>Interactive UI</li><li>Embedded tool</li></ul>
+        <a class="live" href="https://sandbox.co.in/tools/cost-calculator" target="_blank" rel="noopener noreferrer">Visit live site <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+      </div>
+      <div class="stage" aria-hidden="true">
+        <div class="mon"><div class="mon__body"><div class="mon__screen">
+          <img class="page" src="https://res.cloudinary.com/h8vtnbby/image/upload/v1794388408/ashik-portfolio/web-developer/5-sandbox-cost.webp" alt="Tax API Cost Calculator: full-page screenshot" decoding="async" loading="lazy">
+        </div></div><div class="mon__neck"></div><div class="mon__foot"></div></div>
+      </div>
+    </div>
+    <div class="card__dim"></div>
+  </article>
+  <article class="card flip" style="--i:5" aria-labelledby="p5">
+    <div class="card__in">
+      <div class="card__info">
+        <p class="card__meta"><span>Quicko · Live</span></p>
+        <h2 id="p5">Tax P&amp;L Report, explained</h2>
+        <p class="sub">Long-form guide · pnl.page</p>
+        <p class="desc">A guide to every sheet of the Tax P&amp;L report: capital gains on shares, mutual funds and real estate, intraday and F&amp;O income, dividends and loss adjustment, with tables and FAQs.</p>
+        <ul class="tags"><li>Content page</li><li>Data tables</li><li>SEO</li></ul>
+        <a class="live" href="https://pnl.page/guides/understand-tax-pnl-report" target="_blank" rel="noopener noreferrer">Visit live site <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+      </div>
+      <div class="stage" aria-hidden="true">
+        <div class="mon"><div class="mon__body"><div class="mon__screen">
+          <img class="page" src="https://res.cloudinary.com/h8vtnbby/image/upload/v1794388405/ashik-portfolio/web-developer/2-tax-pnl.webp" alt="Tax P&amp;L Report, explained: full-page screenshot" decoding="async" loading="lazy">
+        </div></div><div class="mon__neck"></div><div class="mon__foot"></div></div>
+      </div>
+    </div>
+    <div class="card__dim"></div>
+  </article>
+  <article class="card" style="--i:6" aria-labelledby="p6">
+    <div class="card__in">
+      <div class="card__info">
+        <p class="card__meta"><span>Quicko · Live</span></p>
+        <h2 id="p6">Capital Gains Statement, explained</h2>
+        <p class="sub">Long-form guide · pnl.page</p>
+        <p class="desc">Walks Indian investors through each section of the Capital Gains Statement: STCG and LTCG on equity shares, mutual funds and real estate.</p>
+        <ul class="tags"><li>Content page</li><li>Data tables</li><li>SEO</li></ul>
+        <a class="live" href="https://pnl.page/guides/understand-capital-gains-statement" target="_blank" rel="noopener noreferrer">Visit live site <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+      </div>
+      <div class="stage" aria-hidden="true">
+        <div class="mon"><div class="mon__body"><div class="mon__screen">
+          <img class="page" src="https://res.cloudinary.com/h8vtnbby/image/upload/v1794388406/ashik-portfolio/web-developer/3-capital-gains.webp" alt="Capital Gains Statement, explained: full-page screenshot" decoding="async" loading="lazy">
+        </div></div><div class="mon__neck"></div><div class="mon__foot"></div></div>
+      </div>
+    </div>
+    <div class="card__dim"></div>
+  </article><!--/pre--></section>
+</main>
+<div class="sfw">
+<footer class="sf" id="contact-footer" aria-labelledby="sfTitle">
+  <div class="sf__in">
+    <p class="sf__eye"><i></i>Available for new work</p>
+    <h2 class="sf__h" id="sfTitle">Need something built?<span>Let's make it happen.</span></h2>
+    <p class="sf__p">I'm available for freelance work: websites, apps, interfaces and visual content. Tell me what you need and I'll get back to you within a day.</p>
+    <div class="sf__cta">
+      <button class="sf__btn" data-nav="contact">Hire me <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></b></button>
+      
+    </div>
+    <div class="sf__cols">
+      <div><h3>Work</h3><ul class="work"><li><a href="../web-developer/" data-nav="door:0">Web Development</a></li><li><a href="../app-developer/" data-nav="door:1">App Development</a></li><li><a href="../ui-ux-designer/" data-nav="door:2">UI/UX Design</a></li><li><a href="../devops-engineer/" data-nav="door:3">DevOps Engineering</a></li><li><a href="../powerlifter/" data-nav="door:4">Powerlifting</a></li></ul></div>
+      <div><h3>Navigate</h3><ul><li><a href="../" data-nav="home">Home</a></li><li><a href="../#about" data-nav="about">My story</a></li><li><button data-nav="contact">Contact</button></li></ul></div>
+      <div><h3>Status</h3><ul><li class="st">Available for work</li><li class="st">Remote-first, worldwide</li><li class="st">Local time <span data-ftime>—</span></li></ul></div>
+    </div>
+    <div class="sf__bot"><span>© <span data-fyear>2026</span> Ashik. Designed and built by Ashik.</span><span class="sf__legal"><a href="../legal/" target="_top">Privacy &amp; credits</a></span><button data-nav="top">Back to top ↑</button></div>
+  </div>
+</footer>
+</div>
+<button class="totop" data-nav="top" aria-label="Back to top"><svg class="ring" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24"/></svg><svg class="ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg><span class="lbl">Back to top</span></button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+.ck{position:fixed;left:50%;bottom:max(1rem,env(safe-area-inset-bottom));z-index:90;transform:translateX(-50%);width:min(34rem,calc(100% - 2rem));
+  display:flex;align-items:center;gap:1rem;padding:.9rem .9rem .9rem 1.2rem;border-radius:1.25rem;background:#1A1818;color:#E8E4E0;
+  box-shadow:0 18px 40px -16px rgba(0,0,0,.55),0 0 0 1px rgba(232,228,224,.12);font:400 .875rem/1.45 'Onest',ui-sans-serif,system-ui,sans-serif}
+.ck[hidden]{display:none}
+.ck p{margin:0;flex:1}.ck a{color:inherit}
+.ck div{display:flex;gap:.5rem;flex:none}
+.ck button{height:2.5rem;padding:0 1rem;border-radius:999px;border:1px solid rgba(232,228,224,.25);background:none;color:inherit;font:inherit;font-size:.8125rem;font-weight:600;line-height:1;cursor:pointer}
+.ck button[data-ck="yes"]{background:#E8E4E0;color:#1A1818;border-color:transparent}
+@media (max-width:539.98px){.ck{flex-direction:column;align-items:stretch}.ck div button{flex:1}}
+</style>
+<div class="ck" id="ck" role="region" aria-label="Analytics choice" hidden><p>May I count your visit with Google Analytics? It sets cookies. <a href="/legal/">Details</a></p><div><button type="button" data-ck="no">No thanks</button><button type="button" data-ck="yes">Allow</button></div></div>`
+      }}
+    />
+  );
+}

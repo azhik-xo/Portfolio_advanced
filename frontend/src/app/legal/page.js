@@ -1,0 +1,95 @@
+'use client';
+
+import { useEffect } from 'react';
+import './roomStyles.css';
+
+export default function RoomPage() {
+  useEffect(() => {
+    // Execute room client script once mounted
+    try {
+      const script = document.createElement('script');
+      script.src = '/legal/roomScript.js';
+      script.async = true;
+      document.body.appendChild(script);
+      return () => {
+        try { document.body.removeChild(script); } catch(e) {}
+      };
+    } catch(e) {
+      console.error(e);
+    }
+  }, []);
+
+  return (
+    <div
+      dangerouslySetInnerHTML={{
+        __html: `<main class="wrap">
+  <div class="top"><a class="chip" href="../">← Back to the portfolio</a></div>
+  <p class="eye">Privacy &amp; credits</p>
+  <h1>Your privacy, and who made what.</h1>
+  <p class="lead">This site is a personal portfolio. It only measures visits if you say yes, and it doesn't collect anything else about you unless you choose to contact me.</p>
+
+  <h2>Privacy notice</h2>
+  <div class="box"><p><b>In short:</b> no advertising, no tracking pixels and no third-party embeds. Visits are counted with Google Analytics only if you choose “Allow” on the banner; until then nothing is sent to Google and no cookies are set.</p></div>
+
+  <h3>Who is responsible</h3>
+  <p>Ashik, an independent freelancer based in India. You can reach me at <a data-mail href="#">my email address</a> (rishithakor218 at gmail dot com).</p>
+
+  <h3>What this site stores on your device</h3>
+  <p>Two things, both in your browser's local storage: your light or dark mode choice (key <code>rishi-mode</code>) and your answer to the analytics question (key <code>rishi-analytics</code>). Neither is a cookie and neither leaves your device. You can clear them any time from your browser settings, which also brings the analytics question back.</p>
+  <h3>Analytics</h3>
+  <p>If you choose “Allow”, this site loads Google Analytics 4 (Google LLC / Google Ireland Ltd.), which sets cookies (names starting <code>_ga</code>, kept for up to 2 years) and receives your approximate location, device and browser type, the pages you view and how you arrived. I use it only to see which work people look at; it is not used for advertising, and Google Analytics does not store full IP addresses. If you choose “No thanks”, Google Analytics is never loaded. Your consent is the legal basis for this, and you can withdraw it at any time by clearing this site's data in your browser.</p>
+
+
+  <h3>When you contact me</h3>
+  <p>On therishithakor.com, the "Hire me" form sends your name, email address, phone number, company or website (if you give one), your answers to its questions (the kind of work, budget range, start date and who the project is for) and your message to me through Netlify Forms, the form service of this site's host (Netlify, Inc., USA). Netlify stores the message in my account and forwards it to my inbox (Gmail, run by Google). If the form can't send, or you are viewing a copy of this site somewhere else, it opens your own email app with the message filled in instead, and nothing is sent until you press send there.</p>
+  <p>I collect your phone number so I can reach you quickly about your project. I will only call or message you in relation to the enquiry you submit, never for marketing. I use what you send only to reply to you and to discuss your project. I keep it only as long as it is useful for our work together, and I'll delete it, including the copy held by Netlify, if you ask.</p>
+
+  <h3>The hosting provider</h3>
+  <p>Like every website, this one is delivered by a hosting company, whose servers briefly process technical details such as your IP address and browser type to deliver the pages and protect them from abuse. That is governed by the hosting provider's own privacy policy. I don't receive or use those logs to identify visitors.</p>
+
+  <h3>Links to other websites</h3>
+  <p>Some projects link to live websites run by other companies. Once you follow a link you are on their site and under their privacy policy.</p>
+
+  <h3>Your rights</h3>
+  <p>You can ask me what personal data I hold about you, ask me to correct it, or ask me to delete it, by emailing me. I'll respond within 30 days. This notice is written to meet India's Digital Personal Data Protection Act, 2023 and the EU and UK GDPR.</p>
+
+  <h2>Work shown on this site</h2>
+  <p>The projects shown here were made by me, alone or as part of a team, for clients and employers. Client names, logos, products, screenshots and brand material belong to their respective owners and are shown only to describe my role in that work; showing them does not mean those companies endorse this site. If you own any of this material and would like it changed or removed, email me and I'll act on it promptly.</p>
+  <p>The photographs and original designs on this site are © Ashik. Please don't copy, republish or use them (including for training AI models) without my written permission.</p>
+
+  <h2>Credits &amp; licences</h2>
+  <p>This site is built with the open-source work below. Their full licence texts are in <a href="licenses.txt">licenses.txt</a>.</p>
+  <table>
+    <thead><tr><th>Software or font</th><th>Used for</th><th>Licence</th></tr></thead>
+    <tbody>
+      <tr><td>three.js r180 — © 2010–2025 three.js authors</td><td>The 3D ability card</td><td>MIT</td></tr>
+      <tr><td>ThreeUI holo card component — © 2026 Meng To</td><td>The ability card's renderer and frame art</td><td>MIT (ThreeUI Community)</td></tr>
+      <tr><td>Lenis 1.3.23 — © 2024 darkroom.engineering</td><td>Smooth scrolling on desktop</td><td>MIT</td></tr>
+      <tr><td>Onest — © 2021 The Onest Project Authors</td><td>The site's typeface</td><td>SIL Open Font License 1.1</td></tr>
+      <tr><td>EB Garamond — © 2017 The EB Garamond Project Authors</td><td>Small captions on the ability card</td><td>SIL Open Font License 1.1</td></tr>
+    </tbody>
+  </table>
+
+  <h2>No warranty</h2>
+  <p>This site is provided for information about my work. I try to keep it accurate and up to date, but it is provided as is, without any guarantee.</p>
+
+  <p class="small">Last updated 3 November 2026. © <span data-fyear>2026</span> Ashik.</p>
+</main>
+
+
+<style>
+.ck{position:fixed;left:50%;bottom:max(1rem,env(safe-area-inset-bottom));z-index:90;transform:translateX(-50%);width:min(34rem,calc(100% - 2rem));
+  display:flex;align-items:center;gap:1rem;padding:.9rem .9rem .9rem 1.2rem;border-radius:1.25rem;background:#1A1818;color:#E8E4E0;
+  box-shadow:0 18px 40px -16px rgba(0,0,0,.55),0 0 0 1px rgba(232,228,224,.12);font:400 .875rem/1.45 'Onest',ui-sans-serif,system-ui,sans-serif}
+.ck[hidden]{display:none}
+.ck p{margin:0;flex:1}.ck a{color:inherit}
+.ck div{display:flex;gap:.5rem;flex:none}
+.ck button{height:2.5rem;padding:0 1rem;border-radius:999px;border:1px solid rgba(232,228,224,.25);background:none;color:inherit;font:inherit;font-size:.8125rem;font-weight:600;line-height:1;cursor:pointer}
+.ck button[data-ck="yes"]{background:#E8E4E0;color:#1A1818;border-color:transparent}
+@media (max-width:539.98px){.ck{flex-direction:column;align-items:stretch}.ck div button{flex:1}}
+</style>
+<div class="ck" id="ck" role="region" aria-label="Analytics choice" hidden><p>May I count your visit with Google Analytics? It sets cookies. <a href="/legal/">Details</a></p><div><button type="button" data-ck="no">No thanks</button><button type="button" data-ck="yes">Allow</button></div></div>`
+      }}
+    />
+  );
+}
