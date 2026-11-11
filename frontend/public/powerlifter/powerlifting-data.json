@@ -1,0 +1,19 @@
+{
+  "athlete": "Ashik",
+  "division": "Junior / Open -83kg Raw",
+  "summary": {
+    "total": "585 kg (1,290 lbs)",
+    "squat": "205 kg (452 lbs)",
+    "bench": "145 kg (320 lbs)",
+    "deadlift": "235 kg (518 lbs)",
+    "dotsScore": 425.2,
+    "achievements": [
+      "State Powerlifting Championship — 1st Place Gold Medalist",
+      "Best Lifter Trophy & Highest DOTS Award",
+      "9/9 White Lights Clean Competition Record"
+    ]
+  },
+  "itemsCount": 18,
+  "instructions": "To add your own lifts, photos, or videos: Drop your .mp4 or .jpg/.webp files into /public/powerlifter/media/ and add a new object to /public/powerlifter/lifts.js."
+}
+
