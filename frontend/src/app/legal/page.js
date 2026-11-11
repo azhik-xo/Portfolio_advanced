@@ -62,11 +62,8 @@ export default function RoomPage() {
   <table>
     <thead><tr><th>Software or font</th><th>Used for</th><th>Licence</th></tr></thead>
     <tbody>
-      <tr><td>three.js r180 — © 2010–2025 three.js authors</td><td>The 3D ability card</td><td>MIT</td></tr>
-      <tr><td>ThreeUI holo card component — © 2026 Meng To</td><td>The ability card's renderer and frame art</td><td>MIT (ThreeUI Community)</td></tr>
       <tr><td>Lenis 1.3.23 — © 2024 darkroom.engineering</td><td>Smooth scrolling on desktop</td><td>MIT</td></tr>
       <tr><td>Onest — © 2021 The Onest Project Authors</td><td>The site's typeface</td><td>SIL Open Font License 1.1</td></tr>
-      <tr><td>EB Garamond — © 2017 The EB Garamond Project Authors</td><td>Small captions on the ability card</td><td>SIL Open Font License 1.1</td></tr>
     </tbody>
   </table>
 
