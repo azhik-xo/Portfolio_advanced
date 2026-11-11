@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+/.pnp
+.pnp.js
+
+# Environment Variables & Secrets (CRITICAL: NEVER COMMIT)
+.env
+.env.*
+!.env.example
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+backend/.env
+backend/.env.*
+!backend/.env.example
+frontend/.env
+frontend/.env.*
+frontend/.env.local
+!frontend/.env.example
+*.pem
+*.key
+*.cert
+
+# Next.js Build Outputs
+.next/
+frontend/.next/
+out/
+build/
+dist/
+
+# Debug and System Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.log
+
+# OS & Editor Files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temporary / Scratch Files
+scratch/
+scratch_*
+temp/

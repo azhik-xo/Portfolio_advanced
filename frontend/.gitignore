@@ -1,0 +1,11 @@
+# Frontend Git Ignore
+node_modules/
+.next/
+out/
+build/
+dist/
+.env.local
+.env.*.local
+!.env.example
+*.log
+.DS_Store

@@ -1,0 +1,7 @@
+# Backend Git Ignore
+node_modules/
+.env
+.env.*
+!.env.example
+*.env
+*.log
