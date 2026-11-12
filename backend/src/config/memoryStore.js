@@ -116,6 +116,17 @@ module.exports = {
     memoryProjects.splice(idx, 1);
     return true;
   },
+  reorderProjects: (items) => {
+    items.forEach((item, index) => {
+      const id = item.id || item._id;
+      const target = memoryProjects.find((p) => p._id === id || p.id === id);
+      if (target) {
+        target.order = item.order !== undefined ? item.order : index;
+      }
+    });
+    memoryProjects.sort((a, b) => (a.order || 0) - (b.order || 0));
+    return memoryProjects;
+  },
 
   getLifts: () => memoryLifts,
   addLift: (l) => {
@@ -166,6 +177,17 @@ module.exports = {
     if (idx === -1) return false;
     memoryStory.splice(idx, 1);
     return true;
+  },
+  reorderStory: (items) => {
+    items.forEach((item, index) => {
+      const id = item.id || item._id;
+      const target = memoryStory.find((s) => s._id === id || s.id === id);
+      if (target) {
+        target.order = item.order !== undefined ? item.order : index + 1;
+      }
+    });
+    memoryStory.sort((a, b) => (a.order || 0) - (b.order || 0));
+    return memoryStory;
   },
 
   getStorySettings: () => memoryStorySettings,

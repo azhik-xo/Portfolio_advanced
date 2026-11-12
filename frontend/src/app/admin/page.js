@@ -28,6 +28,9 @@ import {
   TrendingUp,
   History,
   Clock,
+  GripVertical,
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react';
 
 export default function AdminDashboard() {
@@ -65,6 +68,11 @@ export default function AdminDashboard() {
   const [liftModal, setLiftModal] = useState({ open: false, mode: 'create', data: null });
   const [storyModal, setStoryModal] = useState({ open: false, mode: 'create', data: null });
   const [deleteDialog, setDeleteDialog] = useState({ open: false, type: '', id: '', title: '' });
+
+  // Drag and drop ordering states
+  const [draggedStoryIdx, setDraggedStoryIdx] = useState(null);
+  const [dragOverStoryIdx, setDragOverStoryIdx] = useState(null);
+  const [isReorderingStory, setIsReorderingStory] = useState(false);
 
   // Toast auto-dismiss
   useEffect(() => {
@@ -364,6 +372,96 @@ export default function AdminDashboard() {
       fetchStory();
     } else {
       showToast(res?.error || 'Failed to update story header', 'error');
+    }
+  };
+
+  // Story Drag & Drop Ordering
+  const handleStoryDragStart = (e, index) => {
+    setDraggedStoryIdx(index);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', index.toString());
+  };
+
+  const handleStoryDragOver = (e, index) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (dragOverStoryIdx !== index) {
+      setDragOverStoryIdx(index);
+    }
+  };
+
+  const handleStoryDrop = async (e, targetIndex) => {
+    e.preventDefault();
+    if (draggedStoryIdx === null || draggedStoryIdx === targetIndex) {
+      setDraggedStoryIdx(null);
+      setDragOverStoryIdx(null);
+      return;
+    }
+
+    const reordered = [...story];
+    const [draggedItem] = reordered.splice(draggedStoryIdx, 1);
+    reordered.splice(targetIndex, 0, draggedItem);
+
+    const updatedWithOrder = reordered.map((item, idx) => ({
+      ...item,
+      order: idx + 1,
+    }));
+
+    setStory(updatedWithOrder);
+    setDraggedStoryIdx(null);
+    setDragOverStoryIdx(null);
+
+    await persistStoryOrder(updatedWithOrder);
+  };
+
+  const handleStoryDragEnd = () => {
+    setDraggedStoryIdx(null);
+    setDragOverStoryIdx(null);
+  };
+
+  // Move Story Milestone by Step (Up or Down)
+  const handleMoveStoryStep = async (index, direction) => {
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= story.length) return;
+
+    const reordered = [...story];
+    const [movedItem] = reordered.splice(index, 1);
+    reordered.splice(targetIndex, 0, movedItem);
+
+    const updatedWithOrder = reordered.map((item, idx) => ({
+      ...item,
+      order: idx + 1,
+    }));
+
+    setStory(updatedWithOrder);
+    await persistStoryOrder(updatedWithOrder);
+  };
+
+  const persistStoryOrder = async (updatedList) => {
+    try {
+      setIsReorderingStory(true);
+      const res = await authFetch('/api/admin/story/reorder', {
+        method: 'PUT',
+        body: JSON.stringify({
+          items: updatedList.map((s, idx) => ({
+            _id: s._id,
+            id: s._id,
+            order: idx + 1,
+          })),
+        }),
+      });
+
+      if (res?.success) {
+        showToast('Timeline order updated and saved live!');
+      } else {
+        showToast(res?.error || 'Failed to save milestone order', 'error');
+        fetchStory();
+      }
+    } catch (err) {
+      showToast('Error syncing order with server', 'error');
+      fetchStory();
+    } finally {
+      setIsReorderingStory(false);
     }
   };
 
@@ -1179,8 +1277,19 @@ export default function AdminDashboard() {
 
               {/* Search & Stats Bar */}
               <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
-                <div className="text-xs text-[#A8A29E]">
-                  Showing <span className="font-semibold text-[#FAF8F5]">{filteredStory.length}</span> milestones in chronological order
+                <div className="flex flex-wrap items-center gap-2.5 text-xs text-[#A8A29E]">
+                  <div className="flex items-center gap-1.5 font-medium text-[#FAF8F5]">
+                    <GripVertical className="w-4 h-4 text-[#D6B26E]" />
+                    <span>Drag cards to reorder</span>
+                  </div>
+                  <span>•</span>
+                  <span>{filteredStory.length} milestones</span>
+                  {isReorderingStory && (
+                    <span className="flex items-center gap-1.5 text-[#D6B26E] text-[11px] font-semibold bg-[#D6B26E]/10 px-2 py-0.5 rounded-full animate-pulse">
+                      <RefreshCw className="w-3 h-3 animate-spin" />
+                      Saving order...
+                    </span>
+                  )}
                 </div>
                 <div className="relative w-full sm:w-64">
                   <Search className="w-4 h-4 text-[#78716C] absolute left-3 top-1/2 -translate-y-1/2" />
@@ -1194,15 +1303,57 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Milestones Vertical List */}
-              <div className="space-y-4">
+              {/* Milestones Vertical List with Drag & Drop */}
+              <div className="space-y-3.5">
                 {filteredStory.map((ch, idx) => (
                   <div
                     key={ch._id || idx}
-                    className="bg-[#121010] border border-white/10 hover:border-[#D6B26E]/40 rounded-2xl p-5 transition-all relative group"
+                    draggable={storySearch === ''}
+                    onDragStart={(e) => handleStoryDragStart(e, idx)}
+                    onDragOver={(e) => handleStoryDragOver(e, idx)}
+                    onDrop={(e) => handleStoryDrop(e, idx)}
+                    onDragEnd={handleStoryDragEnd}
+                    className={`bg-[#121010] border rounded-2xl p-5 transition-all relative group select-none ${
+                      draggedStoryIdx === idx
+                        ? 'opacity-30 border-dashed border-[#D6B26E] scale-[0.99]'
+                        : dragOverStoryIdx === idx
+                        ? 'border-[#D6B26E] shadow-xl shadow-[#D6B26E]/20 scale-[1.01] bg-[#181515]'
+                        : 'border-white/10 hover:border-[#D6B26E]/40'
+                    }`}
                   >
                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                      <div className="flex items-start gap-4">
+                      <div className="flex items-start gap-3.5">
+                        {/* Drag Handle & Step Buttons */}
+                        <div className="flex items-center gap-1 self-center sm:self-start pt-1">
+                          <div
+                            className="cursor-grab active:cursor-grabbing p-1.5 text-[#78716C] hover:text-[#D6B26E] hover:bg-white/5 rounded-lg transition-colors flex items-center justify-center"
+                            title="Drag to reorder"
+                          >
+                            <GripVertical className="w-5 h-5 flex-shrink-0" />
+                          </div>
+
+                          <div className="flex flex-col gap-0.5">
+                            <button
+                              type="button"
+                              disabled={idx === 0 || storySearch !== ''}
+                              onClick={() => handleMoveStoryStep(idx, -1)}
+                              className="p-1 hover:bg-white/10 text-[#78716C] hover:text-[#FAF8F5] disabled:opacity-20 disabled:hover:bg-transparent rounded transition-colors"
+                              title="Move milestone up"
+                            >
+                              <ChevronUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              disabled={idx === filteredStory.length - 1 || storySearch !== ''}
+                              onClick={() => handleMoveStoryStep(idx, 1)}
+                              className="p-1 hover:bg-white/10 text-[#78716C] hover:text-[#FAF8F5] disabled:opacity-20 disabled:hover:bg-transparent rounded transition-colors"
+                              title="Move milestone down"
+                            >
+                              <ChevronDown className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+
                         {/* Rolling Year Odometer Badge */}
                         <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#1F1D1D] to-[#121010] border border-[#D6B26E]/30 flex flex-col items-center justify-center text-center flex-shrink-0 shadow-lg shadow-black/50">
                           <span className="text-[10px] text-[#A8A29E] uppercase tracking-wider font-mono">YEAR</span>

@@ -135,6 +135,33 @@ router.post('/projects', async (req, res) => {
   }
 });
 
+router.put('/projects/reorder', async (req, res) => {
+  try {
+    const { items } = req.body;
+    if (!Array.isArray(items)) {
+      return res.status(400).json({ success: false, error: 'Items array is required' });
+    }
+
+    if (getDBStatus()) {
+      const bulkOps = items.map((item, index) => ({
+        updateOne: {
+          filter: { _id: item.id || item._id },
+          update: { $set: { order: item.order !== undefined ? Number(item.order) : index } },
+        },
+      }));
+      if (bulkOps.length > 0) {
+        await Project.bulkWrite(bulkOps);
+      }
+      return res.json({ success: true, message: 'Projects reordered successfully' });
+    }
+
+    memoryStore.reorderProjects(items);
+    res.json({ success: true, message: 'Projects reordered successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 router.put('/projects/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -426,6 +453,42 @@ router.post('/story', async (req, res) => {
       success: true,
       message: 'Story chapter created successfully',
       data: chapter,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.put('/story/reorder', async (req, res) => {
+  try {
+    const { items } = req.body;
+    if (!Array.isArray(items)) {
+      return res.status(400).json({ success: false, error: 'Items array is required' });
+    }
+
+    if (getDBStatus()) {
+      const bulkOps = items.map((item, index) => ({
+        updateOne: {
+          filter: { _id: item.id || item._id },
+          update: { $set: { order: item.order !== undefined ? Number(item.order) : index + 1 } },
+        },
+      }));
+      if (bulkOps.length > 0) {
+        await Story.bulkWrite(bulkOps);
+      }
+      const updated = await Story.find().sort({ order: 1, createdAt: 1 });
+      return res.json({
+        success: true,
+        message: 'Story milestones reordered successfully',
+        data: updated,
+      });
+    }
+
+    memoryStore.reorderStory(items);
+    res.json({
+      success: true,
+      message: 'Story milestones reordered successfully',
+      data: memoryStore.getStory(),
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
