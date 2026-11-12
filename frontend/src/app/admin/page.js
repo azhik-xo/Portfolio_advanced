@@ -26,6 +26,8 @@ import {
   User,
   ArrowUpRight,
   TrendingUp,
+  History,
+  Clock,
 } from 'lucide-react';
 
 export default function AdminDashboard() {
@@ -38,15 +40,17 @@ export default function AdminDashboard() {
   const [loginError, setLoginError] = useState('');
 
   // Dashboard state
-  const [activeTab, setActiveTab] = useState('overview'); // overview, projects, lifts, messages, settings
+  const [activeTab, setActiveTab] = useState('overview'); // overview, projects, lifts, story, messages, settings
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null); // { message, type: 'success' | 'error' }
 
   // Data states
-  const [stats, setStats] = useState({ counts: { projects: 0, lifts: 0, messages: 0 }, recentMessages: [] });
+  const [stats, setStats] = useState({ counts: { projects: 0, lifts: 0, messages: 0, story: 0 }, recentMessages: [] });
   const [projects, setProjects] = useState([]);
   const [lifts, setLifts] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [story, setStory] = useState([]);
+  const [storySettings, setStorySettings] = useState({ eyebrow: 'My story', heading: "Let's go back in time." });
   const [profile, setProfile] = useState({});
 
   // Filter & Search states
@@ -54,10 +58,12 @@ export default function AdminDashboard() {
   const [projectSearch, setProjectSearch] = useState('');
   const [liftFilter, setLiftFilter] = useState('all');
   const [liftSearch, setLiftSearch] = useState('');
+  const [storySearch, setStorySearch] = useState('');
 
   // Modal states
   const [projectModal, setProjectModal] = useState({ open: false, mode: 'create', data: null });
   const [liftModal, setLiftModal] = useState({ open: false, mode: 'create', data: null });
+  const [storyModal, setStoryModal] = useState({ open: false, mode: 'create', data: null });
   const [deleteDialog, setDeleteDialog] = useState({ open: false, type: '', id: '', title: '' });
 
   // Toast auto-dismiss
@@ -87,6 +93,7 @@ export default function AdminDashboard() {
       fetchStats();
       fetchProjects();
       fetchLifts();
+      fetchStory();
       fetchMessages();
       fetchProfile();
     }
@@ -162,6 +169,14 @@ export default function AdminDashboard() {
     if (data?.success) setLifts(data.data || []);
   };
 
+  const fetchStory = async () => {
+    const data = await authFetch('/api/admin/story');
+    if (data?.success) {
+      setStory(data.data || []);
+      if (data.settings) setStorySettings(data.settings);
+    }
+  };
+
   const fetchMessages = async () => {
     const data = await authFetch('/api/admin/messages');
     if (data?.success) setMessages(data.data || []);
@@ -199,6 +214,20 @@ export default function AdminDashboard() {
       return matchesCat && matchesSearch;
     });
   }, [lifts, liftFilter, liftSearch]);
+
+  const filteredStory = useMemo(() => {
+    return story.filter((s) => {
+      if (!storySearch) return true;
+      const q = storySearch.toLowerCase();
+      return (
+        s.title?.toLowerCase().includes(q) ||
+        s.org?.toLowerCase().includes(q) ||
+        s.when?.toLowerCase().includes(q) ||
+        s.year?.toLowerCase().includes(q) ||
+        s.bullets?.some((b) => b.toLowerCase().includes(q))
+      );
+    });
+  }, [story, storySearch]);
 
   // Project CRUD handlers
   const handleSaveProject = async (e) => {
@@ -279,6 +308,65 @@ export default function AdminDashboard() {
     }
   };
 
+  // Story CRUD handlers
+  const handleSaveStory = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const form = e.target;
+    const bulletsRaw = form.bullets.value || '';
+    const bulletsArray = bulletsRaw
+      .split('\n')
+      .map((b) => b.trim())
+      .filter(Boolean);
+
+    const payload = {
+      title: form.title.value,
+      org: form.org.value,
+      when: form.when.value,
+      year: form.year.value,
+      bullets: bulletsArray,
+      isCurrent: form.isCurrent.checked,
+      order: parseInt(form.order.value, 10) || 0,
+    };
+
+    const isEdit = storyModal.mode === 'edit';
+    const url = isEdit ? `/api/admin/story/${storyModal.data._id}` : '/api/admin/story';
+    const method = isEdit ? 'PUT' : 'POST';
+
+    const res = await authFetch(url, { method, body: JSON.stringify(payload) });
+    setLoading(false);
+    if (res?.success) {
+      showToast(isEdit ? 'Story milestone updated!' : 'New story milestone added!');
+      setStoryModal({ open: false, mode: 'create', data: null });
+      fetchStory();
+      fetchStats();
+    } else {
+      showToast(res?.error || 'Failed to save story milestone', 'error');
+    }
+  };
+
+  const handleSaveStorySettings = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const form = e.target;
+    const payload = {
+      eyebrow: form.eyebrow.value,
+      heading: form.heading.value,
+    };
+
+    const res = await authFetch('/api/admin/story-settings', {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+    setLoading(false);
+    if (res?.success) {
+      showToast('Story section title updated live!');
+      fetchStory();
+    } else {
+      showToast(res?.error || 'Failed to update story header', 'error');
+    }
+  };
+
   // Profile Save
   const handleSaveProfile = async (e) => {
     e.preventDefault();
@@ -326,6 +414,7 @@ export default function AdminDashboard() {
     let url = '';
     if (type === 'project') url = `/api/admin/projects/${id}`;
     if (type === 'lift') url = `/api/admin/lifts/${id}`;
+    if (type === 'story') url = `/api/admin/story/${id}`;
     if (type === 'message') url = `/api/admin/messages/${id}`;
 
     const res = await authFetch(url, { method: 'DELETE' });
@@ -334,6 +423,7 @@ export default function AdminDashboard() {
       setDeleteDialog({ open: false, type: '', id: '', title: '' });
       if (type === 'project') fetchProjects();
       if (type === 'lift') fetchLifts();
+      if (type === 'story') fetchStory();
       if (type === 'message') fetchMessages();
       fetchStats();
     } else {
@@ -545,6 +635,21 @@ export default function AdminDashboard() {
           </button>
 
           <button
+            onClick={() => setActiveTab('story')}
+            className={`flex-1 md:flex-initial flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              activeTab === 'story'
+                ? 'bg-[#D6B26E]/15 text-[#D6B26E] border border-[#D6B26E]/30 shadow-sm'
+                : 'text-[#A8A29E] hover:text-[#FAF8F5] hover:bg-white/5'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <History className="w-4 h-4 flex-shrink-0" />
+              <span>My Story</span>
+            </div>
+            <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded-full">{story.length}</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('messages')}
             className={`flex-1 md:flex-initial flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
               activeTab === 'messages'
@@ -586,8 +691,8 @@ export default function AdminDashboard() {
                 <p className="text-xs text-[#A8A29E] mt-1">Real-time status across projects, powerlifting media, and inquiries</p>
               </div>
 
-              {/* 4 Metric Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* 5 Metric Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div className="bg-[#121010] border border-white/10 rounded-2xl p-5 hover:border-[#D6B26E]/40 transition-all">
                   <div className="flex items-center justify-between text-[#A8A29E]">
                     <span className="text-xs font-medium uppercase tracking-wider">Total Projects</span>
@@ -604,6 +709,15 @@ export default function AdminDashboard() {
                   </div>
                   <div className="text-3xl font-extrabold text-[#FAF8F5] mt-3">{lifts.length}</div>
                   <p className="text-[11px] text-[#78716C] mt-1.5">PRs, poses, competition videos</p>
+                </div>
+
+                <div className="bg-[#121010] border border-white/10 rounded-2xl p-5 hover:border-[#D6B26E]/40 transition-all">
+                  <div className="flex items-center justify-between text-[#A8A29E]">
+                    <span className="text-xs font-medium uppercase tracking-wider">Story Chapters</span>
+                    <History className="w-4 h-4 text-cyan-400" />
+                  </div>
+                  <div className="text-3xl font-extrabold text-[#FAF8F5] mt-3">{story.length}</div>
+                  <p className="text-[11px] text-[#78716C] mt-1.5">Interactive career timeline</p>
                 </div>
 
                 <div className="bg-[#121010] border border-white/10 rounded-2xl p-5 hover:border-[#D6B26E]/40 transition-all">
@@ -705,6 +819,21 @@ export default function AdminDashboard() {
                         <div>
                           <div>Post PR / Lift Video</div>
                           <div className="text-[10px] font-normal text-[#78716C]">Upload lift telemetry & media</div>
+                        </div>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setStoryModal({ open: true, mode: 'create', data: null });
+                        }}
+                        className="w-full bg-[#1A1818] hover:bg-[#252222] border border-white/10 rounded-xl p-3 text-xs font-semibold text-[#FAF8F5] flex items-center gap-3 transition-colors text-left"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
+                          <History className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div>Add Story Milestone</div>
+                          <div className="text-[10px] font-normal text-[#78716C]">Career history & rolling year</div>
                         </div>
                       </button>
                     </div>
@@ -983,6 +1112,168 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================== */}
+          {/* TAB 3.5: MY STORY & TIMELINE                               */}
+          {/* ========================================================== */}
+          {activeTab === 'story' && (
+            <div className="space-y-6 animate-in fade-in duration-300">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-bold text-[#FAF8F5]">My Story & Career Timeline ({story.length})</h2>
+                  <p className="text-xs text-[#A8A29E] mt-1">
+                    Manage the interactive timeline milestones, rolling year odometer, and career history chapters
+                  </p>
+                </div>
+                <button
+                  onClick={() => setStoryModal({ open: true, mode: 'create', data: null })}
+                  className="bg-[#D6B26E] hover:brightness-105 text-[#121010] text-xs font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-[#D6B26E]/20 self-start sm:self-auto"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Milestone</span>
+                </button>
+              </div>
+
+              {/* Story Header Settings Banner */}
+              <div className="bg-[#121010] border border-white/10 rounded-2xl p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2.5">
+                    <History className="w-4 h-4 text-[#D6B26E]" />
+                    <span className="text-xs font-bold text-[#FAF8F5]">Story Section Header Controls</span>
+                  </div>
+                  <span className="text-[10px] text-[#78716C]">Appears above the rolling timeline on the homepage</span>
+                </div>
+                <form onSubmit={handleSaveStorySettings} className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                  <div className="sm:col-span-2">
+                    <label className="block text-[10px] uppercase font-semibold text-[#A8A29E] mb-1">Eyebrow Badge</label>
+                    <input
+                      name="eyebrow"
+                      defaultValue={storySettings.eyebrow || 'My story'}
+                      placeholder="My story"
+                      className="w-full bg-[#1A1818] border border-white/10 rounded-xl px-3 py-1.5 text-xs text-[#FAF8F5]"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-[10px] uppercase font-semibold text-[#A8A29E] mb-1">Main Heading</label>
+                    <input
+                      name="heading"
+                      defaultValue={storySettings.heading || "Let's go back in time."}
+                      placeholder="Let's go back in time."
+                      className="w-full bg-[#1A1818] border border-white/10 rounded-xl px-3 py-1.5 text-xs text-[#FAF8F5]"
+                    />
+                  </div>
+                  <div className="flex items-end">
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full bg-white/10 hover:bg-[#D6B26E] hover:text-[#121010] text-[#FAF8F5] text-xs font-semibold py-2 px-3 rounded-xl transition-all"
+                    >
+                      Save Heading
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Search & Stats Bar */}
+              <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
+                <div className="text-xs text-[#A8A29E]">
+                  Showing <span className="font-semibold text-[#FAF8F5]">{filteredStory.length}</span> milestones in chronological order
+                </div>
+                <div className="relative w-full sm:w-64">
+                  <Search className="w-4 h-4 text-[#78716C] absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={storySearch}
+                    onChange={(e) => setStorySearch(e.target.value)}
+                    placeholder="Search milestones..."
+                    className="w-full bg-[#1A1818] border border-white/10 rounded-xl pl-9 pr-3 py-1.5 text-xs text-[#FAF8F5] focus:outline-none focus:border-[#D6B26E]"
+                  />
+                </div>
+              </div>
+
+              {/* Milestones Vertical List */}
+              <div className="space-y-4">
+                {filteredStory.map((ch, idx) => (
+                  <div
+                    key={ch._id || idx}
+                    className="bg-[#121010] border border-white/10 hover:border-[#D6B26E]/40 rounded-2xl p-5 transition-all relative group"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                      <div className="flex items-start gap-4">
+                        {/* Rolling Year Odometer Badge */}
+                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#1F1D1D] to-[#121010] border border-[#D6B26E]/30 flex flex-col items-center justify-center text-center flex-shrink-0 shadow-lg shadow-black/50">
+                          <span className="text-[10px] text-[#A8A29E] uppercase tracking-wider font-mono">YEAR</span>
+                          <span className="text-base font-extrabold text-[#D6B26E] tracking-tight">{ch.year || '2026'}</span>
+                        </div>
+
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2 mb-1">
+                            <span className="text-xs font-mono font-semibold tracking-wider uppercase text-[#D6B26E]">
+                              {ch.when}
+                            </span>
+                            {ch.isCurrent && (
+                              <span className="text-[10px] bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded-full font-bold">
+                                Current Role (ch--now)
+                              </span>
+                            )}
+                            <span className="text-[10px] bg-white/5 border border-white/10 text-[#A8A29E] px-2 py-0.5 rounded-full">
+                              Order: {ch.order ?? idx + 1}
+                            </span>
+                          </div>
+
+                          <h3 className="text-base font-bold text-[#FAF8F5]">{ch.title}</h3>
+                          <p className="text-xs font-medium text-[#A8A29E] mb-3">{ch.org}</p>
+
+                          {/* Bullet points */}
+                          {ch.bullets && ch.bullets.length > 0 && (
+                            <ul className="space-y-1.5 text-xs text-[#FAF8F5]/80">
+                              {ch.bullets.map((b, bIdx) => (
+                                <li key={bIdx} className="flex items-start gap-2">
+                                  <span className="text-[#D6B26E] font-bold leading-tight">•</span>
+                                  <span className="leading-relaxed">{b}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Action buttons */}
+                      <div className="flex items-center gap-2 self-end sm:self-start">
+                        <button
+                          onClick={() => setStoryModal({ open: true, mode: 'edit', data: ch })}
+                          className="bg-white/5 hover:bg-white/10 border border-white/10 text-[#FAF8F5] text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-colors"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          onClick={() =>
+                            setDeleteDialog({
+                              open: true,
+                              type: 'story',
+                              id: ch._id,
+                              title: `${ch.title} (${ch.when})`,
+                            })
+                          }
+                          className="p-1.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-xl transition-colors"
+                          title="Delete Milestone"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {filteredStory.length === 0 && (
+                  <div className="py-16 text-center text-[#78716C] text-xs bg-[#121010] border border-white/10 rounded-2xl">
+                    No timeline milestones found. Click "Add Milestone" to create one.
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -1634,6 +1925,132 @@ export default function AdminDashboard() {
                   className="bg-[#D6B26E] hover:brightness-105 text-[#121010] text-xs font-bold px-5 py-2 rounded-xl"
                 >
                   {loading ? 'Saving...' : 'Save Lift Entry'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================== */}
+      {/* MODAL: ADD / EDIT STORY MILESTONE                          */}
+      {/* ========================================================== */}
+      {storyModal.open && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-[#121010] border border-white/10 rounded-2xl w-full max-w-xl p-6 relative max-h-[90vh] overflow-y-auto shadow-2xl">
+            <button
+              onClick={() => setStoryModal({ open: false, mode: 'create', data: null })}
+              className="absolute top-5 right-5 text-[#78716C] hover:text-[#FAF8F5]"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <h3 className="text-lg font-bold text-[#FAF8F5] mb-1">
+              {storyModal.mode === 'create' ? 'Add Story Milestone' : 'Edit Story Milestone'}
+            </h3>
+            <p className="text-xs text-[#A8A29E] mb-6">
+              Updates the interactive chronological timeline and year odometer on the homepage
+            </p>
+
+            <form onSubmit={handleSaveStory} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs uppercase font-semibold text-[#A8A29E] mb-1">Role / Milestone Title</label>
+                  <input
+                    name="title"
+                    required
+                    defaultValue={storyModal.data?.title || ''}
+                    placeholder="e.g. Independent Freelancer"
+                    className="w-full bg-[#1A1818] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-[#FAF8F5]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs uppercase font-semibold text-[#A8A29E] mb-1">Organization / Context</label>
+                  <input
+                    name="org"
+                    required
+                    defaultValue={storyModal.data?.org || ''}
+                    placeholder="e.g. Working for myself, remote-first"
+                    className="w-full bg-[#1A1818] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-[#FAF8F5]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs uppercase font-semibold text-[#A8A29E] mb-1">Date Display</label>
+                  <input
+                    name="when"
+                    required
+                    defaultValue={storyModal.data?.when || ''}
+                    placeholder="e.g. Oct 2026 — Now"
+                    className="w-full bg-[#1A1818] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-[#FAF8F5]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs uppercase font-semibold text-[#A8A29E] mb-1">Odometer Year (4 digits)</label>
+                  <input
+                    name="year"
+                    required
+                    defaultValue={storyModal.data?.year || '2026'}
+                    placeholder="e.g. 2026"
+                    className="w-full bg-[#1A1818] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-[#FAF8F5]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs uppercase font-semibold text-[#A8A29E] mb-1">Display Order</label>
+                  <input
+                    name="order"
+                    type="number"
+                    defaultValue={storyModal.data?.order ?? story.length + 1}
+                    className="w-full bg-[#1A1818] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-[#FAF8F5]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs uppercase font-semibold text-[#A8A29E] mb-1">
+                  Bullet Points (One per line)
+                </label>
+                <textarea
+                  name="bullets"
+                  rows={4}
+                  defaultValue={Array.isArray(storyModal.data?.bullets) ? storyModal.data.bullets.join('\n') : ''}
+                  placeholder="Web applications, iOS apps, and DevOps automation built end to end.&#10;Engineering scalable cloud architectures."
+                  className="w-full bg-[#1A1818] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-[#FAF8F5] leading-relaxed"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  type="checkbox"
+                  id="isCurrent"
+                  name="isCurrent"
+                  defaultChecked={Boolean(storyModal.data?.isCurrent)}
+                  className="rounded bg-[#1A1818] border-white/10 text-[#D6B26E] focus:ring-0"
+                />
+                <label htmlFor="isCurrent" className="text-xs text-[#FAF8F5] font-medium cursor-pointer">
+                  Mark as Current Role (adds glowing badge and initial focus)
+                </label>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setStoryModal({ open: false, mode: 'create', data: null })}
+                  className="px-4 py-2 text-xs font-semibold text-[#A8A29E] hover:text-[#FAF8F5]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-[#D6B26E] hover:brightness-105 text-[#121010] text-xs font-bold px-5 py-2 rounded-xl"
+                >
+                  {loading ? 'Saving...' : 'Save Milestone'}
                 </button>
               </div>
             </form>

@@ -4,6 +4,11 @@ const path = require('path');
 let memoryProjects = [];
 let memoryLifts = [];
 let memoryMessages = [];
+let memoryStory = [];
+let memoryStorySettings = {
+  eyebrow: 'My story',
+  heading: "Let's go back in time.",
+};
 let memoryProfile = {
   name: 'Ashik',
   title: 'Web Developer, App Developer, UI/UX Designer, DevOps Engineer, Powerlifter',
@@ -66,6 +71,24 @@ function initMemoryStore() {
         order: Number(l.order) || i,
         createdAt: new Date().toISOString(),
       }));
+
+      if (seed.story && Array.isArray(seed.story)) {
+        memoryStory = seed.story.map((s, i) => ({
+          _id: s.id || 'mem_story_' + (i + 1),
+          year: s.year || '2026',
+          when: s.when || '',
+          title: s.title || '',
+          org: s.org || '',
+          bullets: Array.isArray(s.bullets) ? s.bullets : [],
+          isCurrent: Boolean(s.isCurrent),
+          order: Number(s.order) || i + 1,
+          createdAt: new Date().toISOString(),
+        }));
+      }
+
+      if (seed.storySettings) {
+        memoryStorySettings = { ...memoryStorySettings, ...seed.storySettings };
+      }
     }
   } catch (e) {
     console.error('Error initializing memory store:', e.message);
@@ -111,6 +134,44 @@ module.exports = {
     if (idx === -1) return false;
     memoryLifts.splice(idx, 1);
     return true;
+  },
+
+  getStory: () => memoryStory,
+  addStory: (s) => {
+    const item = {
+      _id: 'mem_story_' + Date.now(),
+      year: s.year || '2026',
+      when: s.when || '',
+      title: s.title || '',
+      org: s.org || '',
+      bullets: Array.isArray(s.bullets) ? s.bullets : [],
+      isCurrent: Boolean(s.isCurrent),
+      order: Number(s.order) || memoryStory.length + 1,
+      createdAt: new Date().toISOString(),
+    };
+    memoryStory.push(item);
+    // Sort by order
+    memoryStory.sort((a, b) => (a.order || 0) - (b.order || 0));
+    return item;
+  },
+  updateStory: (id, updates) => {
+    const idx = memoryStory.findIndex((s) => s._id === id || s.id === id);
+    if (idx === -1) return null;
+    memoryStory[idx] = { ...memoryStory[idx], ...updates, updatedAt: new Date().toISOString() };
+    memoryStory.sort((a, b) => (a.order || 0) - (b.order || 0));
+    return memoryStory[idx];
+  },
+  deleteStory: (id) => {
+    const idx = memoryStory.findIndex((s) => s._id === id || s.id === id);
+    if (idx === -1) return false;
+    memoryStory.splice(idx, 1);
+    return true;
+  },
+
+  getStorySettings: () => memoryStorySettings,
+  updateStorySettings: (updates) => {
+    memoryStorySettings = { ...memoryStorySettings, ...updates };
+    return memoryStorySettings;
   },
 
   getMessages: () => memoryMessages,

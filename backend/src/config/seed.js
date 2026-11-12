@@ -3,6 +3,7 @@ const path = require('path');
 const Project = require('../models/Project');
 const Lift = require('../models/Lift');
 const Profile = require('../models/Profile');
+const Story = require('../models/Story');
 
 async function seedInitialData() {
   try {
@@ -83,6 +84,23 @@ async function seedInitialData() {
         },
       });
       console.log(`[Database Seeder] Successfully initialized profile.`);
+    }
+
+    // 4. Seed Story Chapters if none exist
+    const storyCount = await Story.countDocuments();
+    if (storyCount === 0 && seedData.story && seedData.story.length > 0) {
+      console.log(`[Database Seeder] Seeding ${seedData.story.length} story chapters...`);
+      const formattedChapters = seedData.story.map((s, i) => ({
+        year: s.year || '2026',
+        when: s.when || '',
+        title: s.title || '',
+        org: s.org || '',
+        bullets: Array.isArray(s.bullets) ? s.bullets : [],
+        isCurrent: Boolean(s.isCurrent),
+        order: Number(s.order) || i + 1,
+      }));
+      await Story.insertMany(formattedChapters);
+      console.log(`[Database Seeder] Successfully seeded ${formattedChapters.length} story chapters.`);
     }
   } catch (err) {
     console.error('[Database Seeder Error]', err.message);

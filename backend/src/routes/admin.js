@@ -5,6 +5,7 @@ const Project = require('../models/Project');
 const Lift = require('../models/Lift');
 const Profile = require('../models/Profile');
 const Message = require('../models/Message');
+const Story = require('../models/Story');
 const { getDBStatus } = require('../config/db');
 const memoryStore = require('../config/memoryStore');
 
@@ -20,17 +21,20 @@ router.get('/stats', async (req, res) => {
     let projectsCount = 0;
     let liftsCount = 0;
     let messagesCount = 0;
+    let storyCount = 0;
     let recentMessages = [];
 
     if (isDBConnected) {
       projectsCount = await Project.countDocuments();
       liftsCount = await Lift.countDocuments();
       messagesCount = await Message.countDocuments();
+      storyCount = await Story.countDocuments();
       recentMessages = await Message.find().sort({ createdAt: -1 }).limit(5);
     } else {
       projectsCount = memoryStore.getProjects().length;
       liftsCount = memoryStore.getLifts().length;
       messagesCount = memoryStore.getMessages().length;
+      storyCount = memoryStore.getStory().length;
       recentMessages = memoryStore.getMessages().slice(0, 5);
     }
 
@@ -42,6 +46,7 @@ router.get('/stats', async (req, res) => {
           projects: projectsCount,
           lifts: liftsCount,
           messages: messagesCount,
+          story: storyCount,
         },
         recentMessages,
       },
@@ -354,6 +359,163 @@ router.put('/profile', async (req, res) => {
 
     const profile = memoryStore.updateProfile(req.body);
     res.json({ success: true, message: 'Profile updated successfully', data: profile });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ==========================================
+// 6. STORY & TIMELINE CRUD
+// ==========================================
+router.get('/story', async (req, res) => {
+  try {
+    const settings = memoryStore.getStorySettings();
+    if (getDBStatus()) {
+      let chapters = await Story.find().sort({ order: 1, createdAt: 1 });
+      if (!chapters || chapters.length === 0) {
+        chapters = memoryStore.getStory();
+      }
+      return res.json({ success: true, count: chapters.length, settings, data: chapters });
+    }
+
+    const chapters = memoryStore.getStory();
+    res.json({ success: true, count: chapters.length, settings, data: chapters });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/story', async (req, res) => {
+  try {
+    const { year, when, title, org, bullets, isCurrent, order } = req.body;
+
+    if (!title || !org || !when) {
+      return res.status(400).json({
+        success: false,
+        error: 'Title, organization, and date range are required.',
+      });
+    }
+
+    const bulletList = Array.isArray(bullets)
+      ? bullets
+      : typeof bullets === 'string'
+      ? bullets.split('\n').map((b) => b.trim()).filter(Boolean)
+      : [];
+
+    const storyPayload = {
+      year: (year || '2026').toString().trim(),
+      when: when.trim(),
+      title: title.trim(),
+      org: org.trim(),
+      bullets: bulletList,
+      isCurrent: Boolean(isCurrent),
+      order: order !== undefined ? Number(order) : 0,
+    };
+
+    if (getDBStatus()) {
+      const chapter = await Story.create(storyPayload);
+      return res.status(201).json({
+        success: true,
+        message: 'Story chapter created successfully',
+        data: chapter,
+      });
+    }
+
+    const chapter = memoryStore.addStory(storyPayload);
+    res.status(201).json({
+      success: true,
+      message: 'Story chapter created successfully',
+      data: chapter,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.put('/story/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { year, when, title, org, bullets, isCurrent, order } = req.body;
+
+    const updates = {};
+    if (year !== undefined) updates.year = year.toString().trim();
+    if (when !== undefined) updates.when = when.trim();
+    if (title !== undefined) updates.title = title.trim();
+    if (org !== undefined) updates.org = org.trim();
+    if (bullets !== undefined) {
+      updates.bullets = Array.isArray(bullets)
+        ? bullets
+        : typeof bullets === 'string'
+        ? bullets.split('\n').map((b) => b.trim()).filter(Boolean)
+        : [];
+    }
+    if (isCurrent !== undefined) updates.isCurrent = Boolean(isCurrent);
+    if (order !== undefined) updates.order = Number(order);
+
+    if (getDBStatus()) {
+      const chapter = await Story.findByIdAndUpdate(id, updates, {
+        new: true,
+        runValidators: true,
+      });
+      if (chapter) {
+        return res.json({
+          success: true,
+          message: 'Story chapter updated successfully',
+          data: chapter,
+        });
+      }
+    }
+
+    const chapter = memoryStore.updateStory(id, updates);
+    if (!chapter) {
+      return res.status(404).json({ success: false, error: 'Story chapter not found.' });
+    }
+
+    res.json({
+      success: true,
+      message: 'Story chapter updated successfully',
+      data: chapter,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.delete('/story/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (getDBStatus()) {
+      const deleted = await Story.findByIdAndDelete(id);
+      if (deleted) {
+        return res.json({ success: true, message: 'Story chapter deleted successfully' });
+      }
+    }
+
+    const removed = memoryStore.deleteStory(id);
+    if (!removed) {
+      return res.status(404).json({ success: false, error: 'Story chapter not found.' });
+    }
+
+    res.json({ success: true, message: 'Story chapter deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.put('/story-settings', (req, res) => {
+  try {
+    const { eyebrow, heading } = req.body;
+    const updates = {};
+    if (eyebrow !== undefined) updates.eyebrow = eyebrow.trim();
+    if (heading !== undefined) updates.heading = heading.trim();
+
+    const updated = memoryStore.updateStorySettings(updates);
+    res.json({
+      success: true,
+      message: 'Story settings updated successfully',
+      data: updated,
+    });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

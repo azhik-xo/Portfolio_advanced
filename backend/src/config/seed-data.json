@@ -804,5 +804,76 @@
       },
       "order": 17
     }
+  ],
+  "storySettings": {
+    "eyebrow": "My story",
+    "heading": "Let's go back in time."
+  },
+  "story": [
+    {
+      "id": "ch-1",
+      "year": "2026",
+      "when": "Oct 2026 — Now",
+      "title": "Independent freelancer",
+      "org": "Working for myself, remote-first",
+      "bullets": [
+        "Web applications, iOS apps, DevOps automation and modern interfaces built end to end.",
+        "Engineering scalable systems and delivering resilient software worldwide."
+      ],
+      "isCurrent": true,
+      "order": 1
+    },
+    {
+      "id": "ch-2",
+      "year": "2026",
+      "when": "Jul 2026 — Sep 2026",
+      "title": "DevOps Engineer",
+      "org": "Cloud & Systems Infrastructure",
+      "bullets": [
+        "Architected automated CI/CD pipelines, containerizing services with Docker and Kubernetes for zero-downtime releases.",
+        "Configured cloud environments, monitoring stacks (Prometheus, Grafana) and infrastructure as code."
+      ],
+      "isCurrent": false,
+      "order": 2
+    },
+    {
+      "id": "ch-3",
+      "year": "2026",
+      "when": "Jan 2026 — Jun 2026",
+      "title": "UI/UX Designer & Developer",
+      "org": "Digital Products & Interfaces",
+      "bullets": [
+        "Designed website interfaces and user experiences in Figma, focused on usability, visual clarity and function.",
+        "Built no-code web pages and interactive financial tools in Framer, turning designs into working products."
+      ],
+      "isCurrent": false,
+      "order": 3
+    },
+    {
+      "id": "ch-4",
+      "year": "2025",
+      "when": "Jan 2025 — May 2025",
+      "title": "Competitive Powerlifter",
+      "org": "Strength & Performance",
+      "bullets": [
+        "Disciplined training across the Big Three: Squat, Bench Press, and Deadlift with progressive overload.",
+        "Applying athletic grit, precision and structured periodization to software engineering."
+      ],
+      "isCurrent": false,
+      "order": 4
+    },
+    {
+      "id": "ch-5",
+      "year": "2022",
+      "when": "Jul 2022 — May 2026",
+      "title": "B.Tech, Computer Science",
+      "org": "Pandit Deendayal Energy University (PDEU)",
+      "bullets": [
+        "Four years of computer science: where it all started, with code in the classroom and design on the side.",
+        "Graduated in May 2026, with internships and real projects already under way."
+      ],
+      "isCurrent": false,
+      "order": 5
+    }
   ]
 }

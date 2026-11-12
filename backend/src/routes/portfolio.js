@@ -5,7 +5,9 @@ const fs = require('fs');
 const Project = require('../models/Project');
 const Lift = require('../models/Lift');
 const Profile = require('../models/Profile');
+const Story = require('../models/Story');
 const { getDBStatus } = require('../config/db');
+const memoryStore = require('../config/memoryStore');
 
 const DEFAULT_PROFILE = {
   name: 'Ashik',
@@ -136,6 +138,38 @@ router.get('/assets', (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET /api/portfolio/story
+router.get('/story', async (req, res) => {
+  try {
+    let chapters = [];
+    let settings = memoryStore.getStorySettings();
+
+    if (getDBStatus()) {
+      chapters = await Story.find().sort({ order: 1, createdAt: -1 });
+    } else {
+      chapters = memoryStore.getStory();
+    }
+
+    if (!chapters || chapters.length === 0) {
+      chapters = memoryStore.getStory();
+    }
+
+    res.json({
+      success: true,
+      count: chapters.length,
+      settings,
+      data: chapters,
+    });
+  } catch (err) {
+    res.json({
+      success: true,
+      count: memoryStore.getStory().length,
+      settings: memoryStore.getStorySettings(),
+      data: memoryStore.getStory(),
+    });
   }
 });
 
