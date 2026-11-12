@@ -381,6 +381,7 @@ router.put('/profile', async (req, res) => {
           runValidators: true,
         });
       }
+      memoryStore.updateProfile(req.body);
       return res.json({ success: true, message: 'Profile updated successfully', data: profile });
     }
 

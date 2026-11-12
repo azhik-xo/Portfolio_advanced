@@ -243,35 +243,40 @@ export default function AdminDashboard() {
   const handleSaveProject = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const form = e.target;
-    const payload = {
-      title: form.title.value,
-      category: form.category.value,
-      subtitle: form.subtitle.value,
-      description: form.description.value,
-      tags: form.tags.value,
-      liveUrl: form.liveUrl.value,
-      githubUrl: form.githubUrl.value,
-      mediaUrl: form.mediaUrl.value,
-      videoUrl: form.videoUrl.value,
-      posterUrl: form.posterUrl.value,
-      featured: form.featured.checked,
-      order: parseInt(form.order.value, 10) || 0,
-    };
+    try {
+      const form = e.target;
+      const payload = {
+        title: form.title?.value || '',
+        category: form.category?.value || 'web',
+        subtitle: form.subtitle?.value || '',
+        description: form.description?.value || '',
+        tags: form.tags?.value || '',
+        liveUrl: form.liveUrl?.value || '',
+        githubUrl: form.githubUrl?.value || '',
+        mediaUrl: form.mediaUrl?.value || '',
+        videoUrl: form.videoUrl?.value || '',
+        posterUrl: form.posterUrl?.value || '',
+        featured: Boolean(form.featured?.checked),
+        order: parseInt(form.order?.value, 10) || 0,
+      };
 
-    const isEdit = projectModal.mode === 'edit';
-    const url = isEdit ? `/api/admin/projects/${projectModal.data._id}` : '/api/admin/projects';
-    const method = isEdit ? 'PUT' : 'POST';
+      const isEdit = projectModal.mode === 'edit';
+      const url = isEdit ? `/api/admin/projects/${projectModal.data._id}` : '/api/admin/projects';
+      const method = isEdit ? 'PUT' : 'POST';
 
-    const res = await authFetch(url, { method, body: JSON.stringify(payload) });
-    setLoading(false);
-    if (res?.success) {
-      showToast(isEdit ? 'Project updated successfully!' : 'Project created successfully!');
-      setProjectModal({ open: false, mode: 'create', data: null });
-      fetchProjects();
-      fetchStats();
-    } else {
-      showToast(res?.error || 'Failed to save project', 'error');
+      const res = await authFetch(url, { method, body: JSON.stringify(payload) });
+      if (res?.success) {
+        showToast(isEdit ? 'Project updated successfully!' : 'Project created successfully!');
+        setProjectModal({ open: false, mode: 'create', data: null });
+        fetchProjects();
+        fetchStats();
+      } else {
+        showToast(res?.error || 'Failed to save project', 'error');
+      }
+    } catch (err) {
+      showToast(err.message || 'Error saving project', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -279,42 +284,47 @@ export default function AdminDashboard() {
   const handleSaveLift = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const form = e.target;
-    const payload = {
-      title: form.title.value,
-      subtitle: form.subtitle.value,
-      category: form.category.value,
-      categoryLabel: form.categoryLabel.value,
-      mediaType: form.mediaType.value,
-      thumbnail: form.thumbnail.value,
-      videoSrc: form.videoSrc.value,
-      fullPhoto: form.fullPhoto.value || form.thumbnail.value,
-      badge: form.badge.value,
-      stats: {
-        weight: form.weight.value,
-        reps: form.reps.value,
-        discipline: form.discipline.value,
-        gear: form.gear.value,
-        meet: form.meet.value,
-        date: form.date.value,
-        notes: form.notes.value,
-      },
-      order: parseInt(form.order.value, 10) || 0,
-    };
+    try {
+      const form = e.target;
+      const payload = {
+        title: form.title?.value || '',
+        subtitle: form.subtitle?.value || '',
+        category: form.category?.value || 'lifts',
+        categoryLabel: form.categoryLabel?.value || '',
+        mediaType: form.mediaType?.value || 'photo',
+        thumbnail: form.thumbnail?.value || '',
+        videoSrc: form.videoSrc?.value || '',
+        fullPhoto: form.fullPhoto?.value || form.thumbnail?.value || '',
+        badge: form.badge?.value || 'PR',
+        stats: {
+          weight: form.weight?.value || '',
+          reps: form.reps?.value || '',
+          discipline: form.discipline?.value || '',
+          gear: form.gear?.value || '',
+          meet: form.meet?.value || '',
+          date: form.date?.value || '',
+          notes: form.notes?.value || '',
+        },
+        order: parseInt(form.order?.value, 10) || 0,
+      };
 
-    const isEdit = liftModal.mode === 'edit';
-    const url = isEdit ? `/api/admin/lifts/${liftModal.data._id}` : '/api/admin/lifts';
-    const method = isEdit ? 'PUT' : 'POST';
+      const isEdit = liftModal.mode === 'edit';
+      const url = isEdit ? `/api/admin/lifts/${liftModal.data._id}` : '/api/admin/lifts';
+      const method = isEdit ? 'PUT' : 'POST';
 
-    const res = await authFetch(url, { method, body: JSON.stringify(payload) });
-    setLoading(false);
-    if (res?.success) {
-      showToast(isEdit ? 'Lift entry updated!' : 'New lift entry added!');
-      setLiftModal({ open: false, mode: 'create', data: null });
-      fetchLifts();
-      fetchStats();
-    } else {
-      showToast(res?.error || 'Failed to save lift entry', 'error');
+      const res = await authFetch(url, { method, body: JSON.stringify(payload) });
+      if (res?.success) {
+        showToast(isEdit ? 'Lift entry updated!' : 'New lift entry added!');
+        setLiftModal({ open: false, mode: 'create', data: null });
+        fetchLifts();
+        fetchStats();
+      } else {
+        showToast(res?.error || 'Failed to save lift entry', 'error');
+      }
+    } catch (err) {
+      showToast(err.message || 'Error saving lift entry', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -322,36 +332,41 @@ export default function AdminDashboard() {
   const handleSaveStory = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const form = e.target;
-    const bulletsRaw = form.bullets.value || '';
-    const bulletsArray = bulletsRaw
-      .split('\n')
-      .map((b) => b.trim())
-      .filter(Boolean);
+    try {
+      const form = e.target;
+      const bulletsRaw = form.bullets?.value || '';
+      const bulletsArray = bulletsRaw
+        .split('\n')
+        .map((b) => b.trim())
+        .filter(Boolean);
 
-    const payload = {
-      title: form.title.value,
-      org: form.org.value,
-      when: form.when.value,
-      year: form.year.value,
-      bullets: bulletsArray,
-      isCurrent: form.isCurrent.checked,
-      order: parseInt(form.order.value, 10) || 0,
-    };
+      const payload = {
+        title: form.title?.value || '',
+        org: form.org?.value || '',
+        when: form.when?.value || '',
+        year: form.year?.value || '2026',
+        bullets: bulletsArray,
+        isCurrent: Boolean(form.isCurrent?.checked),
+        order: parseInt(form.order?.value, 10) || 0,
+      };
 
-    const isEdit = storyModal.mode === 'edit';
-    const url = isEdit ? `/api/admin/story/${storyModal.data._id}` : '/api/admin/story';
-    const method = isEdit ? 'PUT' : 'POST';
+      const isEdit = storyModal.mode === 'edit';
+      const url = isEdit ? `/api/admin/story/${storyModal.data._id}` : '/api/admin/story';
+      const method = isEdit ? 'PUT' : 'POST';
 
-    const res = await authFetch(url, { method, body: JSON.stringify(payload) });
-    setLoading(false);
-    if (res?.success) {
-      showToast(isEdit ? 'Story milestone updated!' : 'New story milestone added!');
-      setStoryModal({ open: false, mode: 'create', data: null });
-      fetchStory();
-      fetchStats();
-    } else {
-      showToast(res?.error || 'Failed to save story milestone', 'error');
+      const res = await authFetch(url, { method, body: JSON.stringify(payload) });
+      if (res?.success) {
+        showToast(isEdit ? 'Story milestone updated!' : 'New story milestone added!');
+        setStoryModal({ open: false, mode: 'create', data: null });
+        fetchStory();
+        fetchStats();
+      } else {
+        showToast(res?.error || 'Failed to save story milestone', 'error');
+      }
+    } catch (err) {
+      showToast(err.message || 'Error saving story milestone', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -471,40 +486,46 @@ export default function AdminDashboard() {
   const handleSaveProfile = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const form = e.target;
-    const payload = {
-      name: form.name.value,
-      title: form.title.value,
-      location: form.location.value,
-      responseTime: form.responseTime.value,
-      availability: form.availability.value,
-      startingBudget: form.startingBudget.value,
-      stats: {
-        experienceYears: form.experienceYears.value,
-        productionClusters: form.productionClusters.value,
-        uptimeRecord: form.uptimeRecord.value,
-        bigThreeTotal: form.bigThreeTotal.value,
-        deadliftPR: form.deadliftPR.value,
-        squatPR: form.squatPR.value,
-        benchPR: form.benchPR.value,
-      },
-      socials: {
-        github: form.github.value,
-        linkedin: form.linkedin.value,
-        email: form.email.value,
-      },
-    };
+    try {
+      const form = e.target;
+      const payload = {
+        name: form.name?.value || profile?.name || 'Ashik',
+        title: form.title?.value || profile?.title || '',
+        location: form.location?.value || profile?.location || '',
+        responseTime: form.responseTime?.value || profile?.responseTime || '',
+        availability: form.availability?.value || profile?.availability || '',
+        startingBudget: form.startingBudget?.value || profile?.startingBudget || '$500',
+        stats: {
+          experienceYears: form.experienceYears?.value || profile?.stats?.experienceYears || '4+',
+          productionClusters: form.productionClusters?.value || profile?.stats?.productionClusters || '12+',
+          uptimeRecord: form.uptimeRecord?.value || profile?.stats?.uptimeRecord || '99.99%',
+          bigThreeTotal: form.bigThreeTotal?.value || profile?.stats?.bigThreeTotal || '585 kg',
+          deadliftPR: form.deadliftPR?.value || profile?.stats?.deadliftPR || '235 kg',
+          squatPR: form.squatPR?.value || profile?.stats?.squatPR || '205 kg',
+          benchPR: form.benchPR?.value || profile?.stats?.benchPR || '145 kg',
+        },
+        socials: {
+          github: form.github?.value || profile?.socials?.github || 'https://github.com/azhik-xo',
+          linkedin: form.linkedin?.value || profile?.socials?.linkedin || 'https://linkedin.com',
+          email: form.email?.value || profile?.socials?.email || 'ashik@gmail.com',
+        },
+      };
 
-    const res = await authFetch('/api/admin/profile', {
-      method: 'PUT',
-      body: JSON.stringify(payload),
-    });
-    setLoading(false);
-    if (res?.success) {
-      showToast('Profile and settings updated live in MongoDB!');
-      fetchProfile();
-    } else {
-      showToast(res?.error || 'Failed to update profile', 'error');
+      const res = await authFetch('/api/admin/profile', {
+        method: 'PUT',
+        body: JSON.stringify(payload),
+      });
+
+      if (res?.success) {
+        showToast('Profile and settings updated live in MongoDB!');
+        fetchProfile();
+      } else {
+        showToast(res?.error || 'Failed to update profile', 'error');
+      }
+    } catch (err) {
+      showToast(err.message || 'Error saving settings', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1601,6 +1622,39 @@ export default function AdminDashboard() {
                       defaultValue={profile?.startingBudget || '$500'}
                       className="w-full bg-[#1A1818] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-[#FAF8F5] focus:outline-none focus:border-[#D6B26E]"
                     />
+                  </div>
+                </div>
+
+                {/* Engineering Stats */}
+                <div className="pt-4 border-t border-white/10">
+                  <h3 className="text-xs uppercase tracking-wider font-bold text-[#D6B26E] mb-3">
+                    Engineering Telemetry
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                      <span className="block text-[10px] text-[#78716C] uppercase">Years of Experience</span>
+                      <input
+                        name="experienceYears"
+                        defaultValue={profile?.stats?.experienceYears || '4+'}
+                        className="w-full bg-[#1A1818] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-[#FAF8F5]"
+                      />
+                    </div>
+                    <div>
+                      <span className="block text-[10px] text-[#78716C] uppercase">Production Clusters</span>
+                      <input
+                        name="productionClusters"
+                        defaultValue={profile?.stats?.productionClusters || '12+'}
+                        className="w-full bg-[#1A1818] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-[#FAF8F5]"
+                      />
+                    </div>
+                    <div>
+                      <span className="block text-[10px] text-[#78716C] uppercase">Uptime Record</span>
+                      <input
+                        name="uptimeRecord"
+                        defaultValue={profile?.stats?.uptimeRecord || '99.99%'}
+                        className="w-full bg-[#1A1818] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-[#FAF8F5]"
+                      />
+                    </div>
                   </div>
                 </div>
 
