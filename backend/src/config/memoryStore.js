@@ -21,15 +21,15 @@ let memoryProfile = {
     experienceYears: '4+',
     productionClusters: '12+',
     uptimeRecord: '99.99%',
-    bigThreeTotal: '585 kg (1,290 lbs)',
-    deadliftPR: '235 kg',
-    squatPR: '205 kg',
-    benchPR: '145 kg',
+    bigThreeTotal: '315 kg (694.456 lbs)',
+    deadliftPR: '135 kg',
+    squatPR: '110 kg',
+    benchPR: '70 kg',
   },
   socials: {
-    github: 'https://github.com',
-    linkedin: 'https://linkedin.com',
-    email: 'ashik@gmail.com',
+    github: 'https://github.com/azhik-xo',
+    linkedin: 'https://linkedin.com/in/abdul-ashik-k/',
+    email: 'syncthrive.meh@gmail.com',
   },
 };
 

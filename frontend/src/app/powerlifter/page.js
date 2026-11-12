@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import Script from 'next/script';
+import PowerlifterHydrator from '../../components/PowerlifterHydrator';
 import './roomStyles.css';
 
 export const metadata = {
@@ -15,6 +16,7 @@ export default function PowerlifterPage() {
   return (
     <main style={{ minHeight: '100vh', background: '#030306', color: '#E8E4E0', overflow: 'hidden' }}>
       <div dangerouslySetInnerHTML={{ __html: markup }} />
+      <PowerlifterHydrator />
       <Script id="powerlifter-lifts" src="/powerlifter/lifts.js" strategy="beforeInteractive" />
       <Script id="powerlifter-engine" src="/powerlifter/powerlifter-engine.js" strategy="afterInteractive" />
     </main>

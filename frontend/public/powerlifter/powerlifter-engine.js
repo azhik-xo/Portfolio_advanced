@@ -37,10 +37,50 @@
     });
   }
 
+  /* ---- PR Telemetry Formatting & Dynamic Sync ---- */
+  const formatPr = (val, fallback) => {
+    if (!val) return fallback;
+    let str = String(val).trim().replace(/\s*\([^)]*\)/g, '').trim().toUpperCase();
+    if (/^\d+$/.test(str)) str += ' KG';
+    return str;
+  };
+
+  const updatePrChip = (stats) => {
+    if (!stats) return;
+    const prEl = document.querySelector('.chip--prs');
+    if (!prEl) return;
+    const tot = formatPr(stats.bigThreeTotal, '315 KG');
+    const sq = formatPr(stats.squatPR, '110 KG');
+    const bp = formatPr(stats.benchPR, '70 KG');
+    const dl = formatPr(stats.deadliftPR, '135 KG');
+    prEl.innerHTML = `
+      <span title="${stats.bigThreeTotal || ''}">TOTAL: <b>${tot}</b></span>
+      <span class="pr-div">·</span>
+      <span title="${stats.squatPR || ''}">SQ: <b>${sq}</b></span>
+      <span class="pr-div">·</span>
+      <span title="${stats.benchPR || ''}">BP: <b>${bp}</b></span>
+      <span class="pr-div">·</span>
+      <span title="${stats.deadliftPR || ''}">DL: <b>${dl}</b></span>
+    `;
+  };
+
+  // Immediate synchronous cache hydration for 0ms paint
+  try {
+    const cachedStats = JSON.parse(localStorage.getItem('ashik_pr_stats') || 'null');
+    if (cachedStats) updatePrChip(cachedStats);
+  } catch (e) {}
+
+  let cachedLifts = null;
+  try {
+    cachedLifts = JSON.parse(localStorage.getItem('ashik_powerlifting_items') || 'null');
+  } catch (e) {}
+
   /* ---- items list & filtering ---- */
-  let ALL_ITEMS = (window.POWERLIFTING_ITEMS && Array.isArray(window.POWERLIFTING_ITEMS) && window.POWERLIFTING_ITEMS.length > 0)
-    ? window.POWERLIFTING_ITEMS
-    : [];
+  let ALL_ITEMS = (cachedLifts && Array.isArray(cachedLifts) && cachedLifts.length > 0)
+    ? cachedLifts
+    : ((window.POWERLIFTING_ITEMS && Array.isArray(window.POWERLIFTING_ITEMS) && window.POWERLIFTING_ITEMS.length > 0)
+      ? window.POWERLIFTING_ITEMS
+      : []);
   let currentFilter = 'all';
   let activeItems = [...ALL_ITEMS];
 
@@ -50,6 +90,42 @@
     if (filter === 'video') return list.filter(it => it.mediaType === 'video');
     return list.filter(it => it.category === filter);
   };
+
+  window.__rebuildPowerlifter = function(items) {
+    if (!Array.isArray(items) || items.length === 0) return;
+    window.POWERLIFTING_ITEMS = items;
+    ALL_ITEMS = items;
+    activeItems = getFilteredItems(currentFilter);
+    const allBtn = document.querySelector('.chip--filter[data-filter="all"]');
+    if (allBtn) allBtn.textContent = `All (${ALL_ITEMS.length})`;
+    buildRows();
+    renderCells();
+  };
+
+  function syncPowerliftingData() {
+    fetch('/api/portfolio/profile')
+      .then(res => res.ok ? res.json() : null)
+      .then(json => {
+        if (!json?.success || !json.data?.stats) return;
+        updatePrChip(json.data.stats);
+        try {
+          localStorage.setItem('ashik_pr_stats', JSON.stringify(json.data.stats));
+        } catch (e) {}
+      })
+      .catch(() => {});
+
+    fetch('/api/portfolio/powerlifting')
+      .then(res => res.ok ? res.json() : null)
+      .then(json => {
+        if (!json?.success || !Array.isArray(json.data) || json.data.length === 0) return;
+        try {
+          localStorage.setItem('ashik_powerlifting_items', JSON.stringify(json.data));
+        } catch (e) {}
+        window.__rebuildPowerlifter(json.data);
+      })
+      .catch(() => {});
+  }
+  syncPowerliftingData();
 
   /* ---- 3D draggable matrix layout ---- */
   let vw = Math.max(window.innerWidth || 0, 360), vh = Math.max(window.innerHeight || 0, 600), g = vw >= 640 ? 32 : 18;

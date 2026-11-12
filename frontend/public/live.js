@@ -1,33 +1,70 @@
-// Keeps the rooms in step with Rishi's portfolio manager without a rebuild.
+// Keeps the rooms in step with Ashik's portfolio manager without a rebuild.
 // Each room starts from the copy baked in at build time (so it paints instantly and works offline).
 // If a newer published copy exists it is used: straight away when this browser has seen it before,
 // otherwise the page fetches it, keeps it, and reloads once.
 (function () {
-  var API = 'https://qgrbtgmcslsovoatttdm.supabase.co/rest/v1/portfolio_site';
-  var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFncmJ0Z21jc2xzb3ZvYXR0dGRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM5NjUxNDMsImV4cCI6MjEwOTU0MTE0M30.oAyFaUo-R5eNaFpc652OaxRP6bwSpxUeQr5qd3HN6Fo';   // the public "anon" key: it can only read what is already published
-  var ms = function (s) { var t = Date.parse(String(s || '').replace(/(\.\d{3})\d+/, '$1')); return isNaN(t) ? 0 : t; };
   var read = function (k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
   var keep = function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } };
+
+  var catMap = {
+    web: 'web',
+    app: 'app',
+    ux: 'uiux',
+    uiux: 'uiux',
+    devops: 'devops'
+  };
+
   window.__room = function (room, baked, stamp, box) {
-    var key = 'rt-live:' + room, cached = read(key), data = baked, at = ms(stamp);
-    if (cached && Array.isArray(cached.data) && ms(cached.at) > at) {
-      data = cached.data; at = ms(cached.at);
-      var el = box && document.getElementById(box);
-      if (el) el.innerHTML = '';                 // drop the pre-rendered markup so the newer copy is drawn
+    var key = 'rt-live:' + room;
+    var cached = read(key);
+    var data = baked;
+
+    if (cached && Array.isArray(cached.data) && cached.data.length > 0) {
+      data = cached.data;
     }
-    if (location.protocol === 'https:' && window.fetch) {
-      fetch(API + '?select=data,published_at&room=eq.' + encodeURIComponent(room), { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY } })
-        .then(function (r) { return r.ok ? r.json() : []; })
-        .then(function (rows) {
-          var row = rows && rows[0];
-          if (!row || !Array.isArray(row.data) || !(ms(row.published_at) > at)) return;
-          if (!keep(key, { at: row.published_at, data: row.data })) return;
-          var once = 'rt-reloaded:' + room + ':' + row.published_at;
-          try { if (sessionStorage.getItem(once)) return; sessionStorage.setItem(once, '1'); } catch (e) { return; }
-          location.reload();
+
+    if (typeof window !== 'undefined' && window.fetch) {
+      var category = catMap[room] || room;
+      fetch('/api/portfolio/projects?category=' + encodeURIComponent(category))
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (res) {
+          if (!res || !res.success || !Array.isArray(res.data) || res.data.length === 0) return;
+
+          var mapped = res.data.map(function (p) {
+            return {
+              kind: p.subtitle || p.kind || 'Project',
+              title: p.title,
+              sub: p.subtitle || p.sub || '',
+              desc: p.description || p.desc || '',
+              tags: Array.isArray(p.tags) ? p.tags : [],
+              url: p.liveUrl || p.url || '',
+              video: p.videoUrl || p.video || '',
+              poster: p.posterUrl || p.poster || '',
+              shot: p.mediaUrl || p.shot || '',
+              ar: p.ar || '1280 / 800',
+              bg: p.bg || '#000',
+              note: p.note || '',
+              icon: p.icon || '',
+              lqip: p.lqip || ''
+            };
+          });
+
+          // Check if data is newer or changed
+          var serializedOld = JSON.stringify(cached ? cached.data : baked);
+          var serializedNew = JSON.stringify(mapped);
+          if (serializedOld !== serializedNew) {
+            keep(key, { at: new Date().toISOString(), data: mapped });
+            var once = 'rt-reloaded:' + room + ':' + mapped.length;
+            try {
+              if (sessionStorage.getItem(once)) return;
+              sessionStorage.setItem(once, '1');
+            } catch (e) { return; }
+            location.reload();
+          }
         })
         .catch(function () {});
     }
+
     return data;
   };
 })();
