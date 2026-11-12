@@ -26,28 +26,66 @@ app.use((req, res, next) => {
 // Connect to MongoDB Atlas
 connectDB();
 
-// Middleware: Strict CORS policy
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://127.0.0.1:3000',
-  process.env.CLIENT_URL,
-].filter(Boolean);
+// Middleware: Robust CORS policy supporting Vercel, localhost, and custom domains
+const configuredClientUrls = (process.env.CLIENT_URL || '')
+  .split(',')
+  .map((url) => url.trim().replace(/\/+$/, ''))
+  .filter(Boolean);
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (e.g. mobile apps, server-to-server, curl)
-      if (!origin || allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      if (process.env.NODE_ENV !== 'production') {
-        return callback(null, true); // Dev convenience
-      }
-      return callback(new Error('Blocked by CORS policy'));
-    },
-    credentials: true,
-  })
-);
+const allowedStaticOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5000',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:5000',
+  'https://abdulashiksre.vercel.app',
+  ...configuredClientUrls,
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // 1. Allow requests with no origin (curl, server-to-server, SSR, mobile, Next.js rewrite proxy)
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    const cleanOrigin = origin.replace(/\/+$/, '');
+
+    // 2. Allow explicitly listed static origins
+    if (allowedStaticOrigins.includes(cleanOrigin)) {
+      return callback(null, true);
+    }
+
+    // 3. Allow all Vercel deployments (production, staging, branch previews)
+    if (/^https:\/\/([a-z0-9-]+\.)*vercel\.app$/i.test(cleanOrigin)) {
+      return callback(null, true);
+    }
+
+    // 4. Allow all Render deployments (*.onrender.com)
+    if (/^https:\/\/([a-z0-9-]+\.)*onrender\.com$/i.test(cleanOrigin)) {
+      return callback(null, true);
+    }
+
+    // 5. In development or local IP addresses
+    if (
+      process.env.NODE_ENV !== 'production' ||
+      cleanOrigin.includes('localhost') ||
+      cleanOrigin.includes('127.0.0.1')
+    ) {
+      return callback(null, true);
+    }
+
+    // 6. Default fallback: allow access for public portfolio & authenticated admin API
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-key', 'X-Requested-With', 'Accept'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  maxAge: 86400, // 24 hours
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Security: Payload size limits to mitigate Denial of Service (DoS) memory floods
 app.use(express.json({ limit: '50kb' }));
