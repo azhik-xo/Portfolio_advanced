@@ -1,0 +1,808 @@
+{
+  "projects": [
+    {
+      "kind": "Website build",
+      "title": "Sundown Studio",
+      "sub": "Studio website",
+      "desc": "An editorial website for a multi-disciplinary studio that creates spaces and experiences: oversized type, a soft red glow that follows the story and a project list that reveals imagery on hover.",
+      "tags": [
+        "Design & build",
+        "Motion",
+        "Hover interactions"
+      ],
+      "video": "project-2.mp4",
+      "poster": "https://res.cloudinary.com/h8vtnbby/video/upload/so_0/v1794388408/ashik-portfolio/web-developer/project-2.webp",
+      "ar": "1280 / 732",
+      "bg": "#EBE7DE",
+      "category": "web",
+      "order": 0
+    },
+    {
+      "kind": "Website build",
+      "title": "Personal portfolio",
+      "sub": "Product designer portfolio",
+      "desc": "A dark, type-led portfolio with a large display headline, a project list with hover previews and an about section.",
+      "tags": [
+        "Design & build",
+        "Typography",
+        "Hover previews"
+      ],
+      "video": "project-4.mp4",
+      "poster": "https://res.cloudinary.com/h8vtnbby/video/upload/so_0/v1794388410/ashik-portfolio/web-developer/project-4.webp",
+      "ar": "1280 / 730",
+      "bg": "#000",
+      "category": "web",
+      "order": 1
+    },
+    {
+      "kind": "Quicko · Live",
+      "title": "P&L Page for Zerodha",
+      "sub": "Broker landing page · pnl.page",
+      "desc": "Landing page that helps Zerodha users connect their demat account, track profit & loss, download tax-ready reports and share verified P&L with their tax advisor.",
+      "tags": [
+        "Landing page",
+        "Responsive build",
+        "SEO"
+      ],
+      "url": "https://pnl.page/brokers/zerodha",
+      "shot": "1-zerodha.webp",
+      "category": "web",
+      "order": 2
+    },
+    {
+      "kind": "Quicko · Live",
+      "title": "Capital Gains Tax Calculator",
+      "sub": "Interactive tool · quicko.com",
+      "desc": "Calculates LTCG and STCG on shares, property, mutual funds and crypto: enter the buy price and sell date to get capital gains tax and indexed cost instantly.",
+      "tags": [
+        "Calculator",
+        "Interactive UI",
+        "SEO"
+      ],
+      "url": "https://quicko.com/tools/capital-gains-tax-calculator",
+      "shot": "4-quicko-cg.webp",
+      "category": "web",
+      "order": 3
+    },
+    {
+      "kind": "Sandbox · Live",
+      "title": "Tax API Cost Calculator",
+      "sub": "Pricing tool · sandbox.co.in",
+      "desc": "Estimates the cost of tax APIs for KYC, Income Tax, TDS and GST: choose a plan, add monthly usage and download a pricing estimate.",
+      "tags": [
+        "Pricing calculator",
+        "Interactive UI",
+        "Embedded tool"
+      ],
+      "url": "https://sandbox.co.in/tools/cost-calculator",
+      "shot": "5-sandbox-cost.webp",
+      "category": "web",
+      "order": 4
+    },
+    {
+      "kind": "Quicko · Live",
+      "title": "Tax P&L Report, explained",
+      "sub": "Long-form guide · pnl.page",
+      "desc": "A guide to every sheet of the Tax P&L report: capital gains on shares, mutual funds and real estate, intraday and F&O income, dividends and loss adjustment, with tables and FAQs.",
+      "tags": [
+        "Content page",
+        "Data tables",
+        "SEO"
+      ],
+      "url": "https://pnl.page/guides/understand-tax-pnl-report",
+      "shot": "2-tax-pnl.webp",
+      "category": "web",
+      "order": 5
+    },
+    {
+      "kind": "Quicko · Live",
+      "title": "Capital Gains Statement, explained",
+      "sub": "Long-form guide · pnl.page",
+      "desc": "Walks Indian investors through each section of the Capital Gains Statement: STCG and LTCG on equity shares, mutual funds and real estate.",
+      "tags": [
+        "Content page",
+        "Data tables",
+        "SEO"
+      ],
+      "url": "https://pnl.page/guides/understand-capital-gains-statement",
+      "shot": "3-capital-gains.webp",
+      "category": "web",
+      "order": 6
+    },
+    {
+      "kind": "iOS app · Finance",
+      "title": "Expense Tracker",
+      "sub": "Personal finance, organised into books",
+      "desc": "Spending is grouped into expense books such as Personal, Travel and Business, each with its own budget. Add income or an expense in a couple of taps, see the balance, spend and budget used at a glance, and search across every entry.",
+      "tags": [
+        "Budgets",
+        "Expense books",
+        "Shortcuts & Back Tap"
+      ],
+      "video": "app-expense.mp4",
+      "poster": "https://res.cloudinary.com/h8vtnbby/video/upload/so_0/v1794388413/ashik-portfolio/app-developer/app-expense.webp",
+      "note": "Screen recording on iPhone",
+      "icon": "icon-expense.webp",
+      "lqip": "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAABQBQCdASoWADAAPrFOoEunJCMhqqgA4BYJaQAAPY/9OjphkIk8XGYA6eEFf3dAe9tN3gAA/varJVrewwzMIzTFLawEO29Fx1JsHinvtEM2zUFTPr13RVQd9uhJzNhx6bwOr+5hOwzYEeeMEGNNChwNt7zrkEgAAAA=",
+      "category": "app",
+      "order": 0
+    },
+    {
+      "kind": "iOS app · Privacy",
+      "title": "Secret Vault",
+      "sub": "A photo vault disguised as a calculator",
+      "desc": "It looks and works like an ordinary calculator. Type your secret equation and double-tap % to open a private vault: photos you import are hidden there and can be removed from your photo library.",
+      "tags": [
+        "Privacy",
+        "Equation passcode",
+        "Photos access"
+      ],
+      "video": "app-vault.mp4",
+      "poster": "https://res.cloudinary.com/h8vtnbby/video/upload/so_0/v1794388414/ashik-portfolio/app-developer/app-vault.webp",
+      "note": "Recorded on iPhone with sample photos",
+      "icon": "icon-vault.webp",
+      "lqip": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAAAwBgCdASoWADAAPpVClkmlpCIhOrzIALASiWkA0YAs2W94CsvMnPEjrZH9/8puNKKooDEk+IeuVpgAAP7y2dGMKDtWIkcS87pXM5c73fkTCwUF+DRPBtVySJ2nAkgXYpkqGTouykU4hp5cR55AAA==",
+      "category": "app",
+      "order": 1
+    },
+    {
+      "kind": "iOS game · Arcade",
+      "title": "Brick Breaker",
+      "sub": "Arcade game with pixel-art levels",
+      "desc": "A fast arcade brick breaker: pixel-art levels, multi-ball power-ups that flood the screen, combos and a live score, with a pause menu and level-by-level progression.",
+      "tags": [
+        "Game design",
+        "Power-ups",
+        "Level design"
+      ],
+      "video": "app-brick.mp4",
+      "poster": "https://res.cloudinary.com/h8vtnbby/video/upload/so_0/v1794388411/ashik-portfolio/app-developer/app-brick.webp",
+      "note": "Gameplay recorded on iPhone",
+      "icon": "icon-brick.webp",
+      "lqip": "data:image/webp;base64,UklGRrwAAABXRUJQVlA4ILAAAAAwBgCdASoWADAAPrFGnEmnI6KhNVQIAOAWCWQAx+Q5X7Fb2+drW7FLsX3d1xUlIStpj0XKMRUoP52gAP78ptUdXrARGOtskF8MifbUiH/I2pV9htfUcRcLEZsUP3eAJrueLZGNJKnWpRjMHdgv1VjyOxdpHawEbcckCq9I27rno3Us0eHZpDW7GUyMBuEKNr8UHt6C+GiJtKWqjfSRTnZKBO1LxxDHHMli2UNE0O2QAA==",
+      "category": "app",
+      "order": 2
+    },
+    {
+      "kind": "iOS app · Utility",
+      "title": "Dice",
+      "sub": "A colourful dice roller",
+      "desc": "Roll several dice at once: each die fills its own block of colour and the total updates instantly, so a board-game night needs nothing but a phone.",
+      "tags": [
+        "Utility",
+        "Minimal UI",
+        "Tap to roll"
+      ],
+      "video": "app-dice.mp4",
+      "poster": "https://res.cloudinary.com/h8vtnbby/video/upload/so_0/v1794388415/ashik-portfolio/app-developer/app-dice.webp",
+      "note": "Screen recording on iPhone",
+      "icon": "icon-dice.webp",
+      "lqip": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAACQBACdASoWADAAPqlGnkmmJCMhMAqowBUJYgCDMfkgGEg4+mAlEH6d3GNpc0AA/rhzRmSQDP+chJNr/d1jZAbXbk4ynfkvNYiJnwJ5T43ypu3InS8X7SMq5QkGluq3yOIvkG7PRYsaKUYAAAA=",
+      "category": "app",
+      "order": 3
+    },
+    {
+      "kind": "Product design",
+      "title": "Cliq",
+      "sub": "Affiliate management · self-hosted SaaS",
+      "desc": "A full affiliate platform a company runs on its own servers. Admins see revenue, commission, signups and purchases, top-promoter leaderboards and a daily chart; promoters get their own dashboard to create and track referral links. Fully white-label, so each company runs it under its own brand.",
+      "tags": [
+        "SaaS dashboard",
+        "Data visualisation",
+        "White-label"
+      ],
+      "video": "ux-cliq.mp4",
+      "poster": "https://res.cloudinary.com/h8vtnbby/video/upload/so_0/v1794388424/ashik-portfolio/ui-ux-designer/ux-cliq.webp",
+      "ar": "1280 / 800",
+      "bg": "#fff",
+      "fit": "cover",
+      "note": "Admin and promoter screens, shown under three client brands",
+      "category": "uiux",
+      "order": 0
+    },
+    {
+      "kind": "Figma prototype",
+      "title": "Prime Hostel",
+      "sub": "Hotel booking · web app design",
+      "desc": "A booking flow from search to reservation: location and date pickers, hotel listings with filters, a property page with gallery, facilities, reviews and a price breakdown, plus login and sign-up.",
+      "tags": [
+        "User flow",
+        "Interactive prototype",
+        "Booking UX"
+      ],
+      "video": "ux-1.mp4",
+      "poster": "https://res.cloudinary.com/h8vtnbby/video/upload/so_0/v1794388419/ashik-portfolio/ui-ux-designer/ux-1.webp",
+      "ar": "1280 / 800",
+      "bg": "#000",
+      "fit": "cover",
+      "note": "Prototype walkthrough recorded in Figma",
+      "category": "uiux",
+      "order": 1
+    },
+    {
+      "kind": "Figma prototype",
+      "title": "WeBuildTech",
+      "sub": "AI agency · website design",
+      "desc": "A bold, dark landing page for an AI product studio: a 3D mascot hero, service cards, cloud partners, a technology wall, case studies and a project enquiry call to action.",
+      "tags": [
+        "Landing page",
+        "Visual design",
+        "Brand look"
+      ],
+      "video": "ux-2.mp4",
+      "poster": "https://res.cloudinary.com/h8vtnbby/video/upload/so_0/v1794388420/ashik-portfolio/ui-ux-designer/ux-2.webp",
+      "ar": "1280 / 800",
+      "bg": "#12082a",
+      "fit": "cover",
+      "note": "Prototype walkthrough recorded in Figma",
+      "category": "uiux",
+      "order": 2
+    },
+    {
+      "kind": "Figma prototype",
+      "title": "Jordan One Take 4",
+      "sub": "Product page · e-commerce concept",
+      "desc": "A product page concept where each colourway flies in with smart-animate transitions, with oversized type, colour swatches, size select and add to cart.",
+      "tags": [
+        "E-commerce",
+        "Smart animate",
+        "Product showcase"
+      ],
+      "video": "ux-3.mp4",
+      "poster": "https://res.cloudinary.com/h8vtnbby/video/upload/so_0/v1794388422/ashik-portfolio/ui-ux-designer/ux-3.webp",
+      "ar": "1280 / 800",
+      "bg": "#fff",
+      "fit": "cover",
+      "note": "Prototype walkthrough recorded in Figma",
+      "category": "uiux",
+      "order": 3
+    },
+    {
+      "kind": "Quicko · Live",
+      "title": "P&L Page for Zerodha",
+      "sub": "Designed and shipped · pnl.page",
+      "desc": "Designed end to end: the dark trading-terminal look, a clear hero with the product shown in context, and the sections that explain P&L, tax reports and accrual summaries.",
+      "tags": [
+        "UI design",
+        "Design to build",
+        "Live product"
+      ],
+      "url": "https://pnl.page/brokers/zerodha",
+      "shot": "ux-pnl.webp",
+      "category": "uiux",
+      "order": 4
+    },
+    {
+      "kind": "Website build",
+      "title": "Sundown Studio",
+      "sub": "Studio website",
+      "desc": "An editorial website for a multi-disciplinary studio that creates spaces and experiences: oversized type, a soft red glow that follows the story and a project list that reveals imagery on hover.",
+      "tags": [
+        "Design & build",
+        "Motion",
+        "Hover interactions"
+      ],
+      "video": "project-2.mp4",
+      "poster": "https://res.cloudinary.com/h8vtnbby/video/upload/so_0/v1794388408/ashik-portfolio/web-developer/project-2.webp",
+      "ar": "1280 / 732",
+      "bg": "#EBE7DE",
+      "category": "devops",
+      "order": 0
+    },
+    {
+      "kind": "Website build",
+      "title": "Personal portfolio",
+      "sub": "Product designer portfolio",
+      "desc": "A dark, type-led portfolio with a large display headline, a project list with hover previews and an about section.",
+      "tags": [
+        "Design & build",
+        "Typography",
+        "Hover previews"
+      ],
+      "video": "project-4.mp4",
+      "poster": "https://res.cloudinary.com/h8vtnbby/video/upload/so_0/v1794388410/ashik-portfolio/web-developer/project-4.webp",
+      "ar": "1280 / 730",
+      "bg": "#000",
+      "category": "devops",
+      "order": 1
+    },
+    {
+      "kind": "Quicko · Live",
+      "title": "P&L Page for Zerodha",
+      "sub": "Broker landing page · pnl.page",
+      "desc": "Landing page that helps Zerodha users connect their demat account, track profit & loss, download tax-ready reports and share verified P&L with their tax advisor.",
+      "tags": [
+        "Landing page",
+        "Responsive build",
+        "SEO"
+      ],
+      "url": "https://pnl.page/brokers/zerodha",
+      "shot": "1-zerodha.webp",
+      "category": "devops",
+      "order": 2
+    },
+    {
+      "kind": "Quicko · Live",
+      "title": "Capital Gains Tax Calculator",
+      "sub": "Interactive tool · quicko.com",
+      "desc": "Calculates LTCG and STCG on shares, property, mutual funds and crypto: enter the buy price and sell date to get capital gains tax and indexed cost instantly.",
+      "tags": [
+        "Calculator",
+        "Interactive UI",
+        "SEO"
+      ],
+      "url": "https://quicko.com/tools/capital-gains-tax-calculator",
+      "shot": "4-quicko-cg.webp",
+      "category": "devops",
+      "order": 3
+    },
+    {
+      "kind": "Sandbox · Live",
+      "title": "Tax API Cost Calculator",
+      "sub": "Pricing tool · sandbox.co.in",
+      "desc": "Estimates the cost of tax APIs for KYC, Income Tax, TDS and GST: choose a plan, add monthly usage and download a pricing estimate.",
+      "tags": [
+        "Pricing calculator",
+        "Interactive UI",
+        "Embedded tool"
+      ],
+      "url": "https://sandbox.co.in/tools/cost-calculator",
+      "shot": "5-sandbox-cost.webp",
+      "category": "devops",
+      "order": 4
+    },
+    {
+      "kind": "Quicko · Live",
+      "title": "Tax P&L Report, explained",
+      "sub": "Long-form guide · pnl.page",
+      "desc": "A guide to every sheet of the Tax P&L report: capital gains on shares, mutual funds and real estate, intraday and F&O income, dividends and loss adjustment, with tables and FAQs.",
+      "tags": [
+        "Content page",
+        "Data tables",
+        "SEO"
+      ],
+      "url": "https://pnl.page/guides/understand-tax-pnl-report",
+      "shot": "2-tax-pnl.webp",
+      "category": "devops",
+      "order": 5
+    },
+    {
+      "kind": "Quicko · Live",
+      "title": "Capital Gains Statement, explained",
+      "sub": "Long-form guide · pnl.page",
+      "desc": "Walks Indian investors through each section of the Capital Gains Statement: STCG and LTCG on equity shares, mutual funds and real estate.",
+      "tags": [
+        "Content page",
+        "Data tables",
+        "SEO"
+      ],
+      "url": "https://pnl.page/guides/understand-capital-gains-statement",
+      "shot": "3-capital-gains.webp",
+      "category": "devops",
+      "order": 6
+    }
+  ],
+  "lifts": [
+    {
+      "id": 1,
+      "title": "235 KG Conventional Deadlift",
+      "subtitle": "All-Time Gym PR · Clean Lockout",
+      "category": "lifts",
+      "categoryLabel": "Big Lifts (PR)",
+      "mediaType": "video",
+      "thumbnail": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388426/ashik-portfolio/powerlifter/p01_deadlift_pr.webp",
+      "videoSrc": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388443/ashik-portfolio/powerlifter/lift-deadlift.mp4",
+      "fullPhoto": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388426/ashik-portfolio/powerlifter/p01_deadlift_pr.webp",
+      "badge": "235 KG · PR",
+      "w": 800,
+      "h": 1000,
+      "stats": {
+        "weight": "235 kg (518.1 lbs)",
+        "reps": "1 Rep @ RPE 9.5",
+        "discipline": "Conventional Deadlift",
+        "gear": "SBD 13mm Belt, A7 Slippers, Liquid Chalk",
+        "meet": "State Championship Prep · Heavy Single",
+        "date": "October 2026",
+        "notes": "Huge milestone. Broke off the floor fast, strong lats engagement, zero hitching."
+      },
+      "order": 0
+    },
+    {
+      "id": 2,
+      "title": "Front Double Bicep Pose",
+      "subtitle": "Morning Conditioning & Arm Peak",
+      "category": "physique",
+      "categoryLabel": "Physique & Posing",
+      "mediaType": "photo",
+      "thumbnail": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388427/ashik-portfolio/powerlifter/p02_front_double_bicep.webp",
+      "fullPhoto": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388427/ashik-portfolio/powerlifter/p02_front_double_bicep.webp",
+      "badge": "PHYSIQUE",
+      "w": 800,
+      "h": 1000,
+      "stats": {
+        "weight": "81.2 kg Bodyweight",
+        "reps": "Posing Practice",
+        "discipline": "Classic Front Double Bicep",
+        "gear": "Natural Lighting, Post-Workout",
+        "meet": "Off-Season Hypertrophy Phase",
+        "date": "September 2026",
+        "notes": "Focusing on bicep peak and serratus activation while maintaining lean waistline."
+      },
+      "order": 1
+    },
+    {
+      "id": 3,
+      "title": "205 KG Low Bar Squat",
+      "subtitle": "Competition Standard Depth · Single",
+      "category": "lifts",
+      "categoryLabel": "Big Lifts (PR)",
+      "mediaType": "video",
+      "thumbnail": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388428/ashik-portfolio/powerlifter/p03_squat_pr.webp",
+      "videoSrc": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388444/ashik-portfolio/powerlifter/lift-squat.mp4",
+      "fullPhoto": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388428/ashik-portfolio/powerlifter/p03_squat_pr.webp",
+      "badge": "205 KG · PR",
+      "w": 800,
+      "h": 1000,
+      "stats": {
+        "weight": "205 kg (451.9 lbs)",
+        "reps": "1 Rep @ RPE 9",
+        "discipline": "Low Bar Back Squat",
+        "gear": "Inzer Knee Sleeves, SBD 13mm Belt, Adipower Lifters",
+        "meet": "Heavy Platform Session",
+        "date": "August 2026",
+        "notes": "Sunk below parallel with solid bounce out of the hole. Kept chest tall throughout."
+      },
+      "order": 2
+    },
+    {
+      "id": 4,
+      "title": "State Championship — 1st Place",
+      "subtitle": "Gold Medal Podium & Best Lifter",
+      "category": "competitions",
+      "categoryLabel": "Competition Stage",
+      "mediaType": "photo",
+      "thumbnail": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388429/ashik-portfolio/powerlifter/p04_gold_medal.webp",
+      "fullPhoto": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388429/ashik-portfolio/powerlifter/p04_gold_medal.webp",
+      "badge": "🏆 1ST PLACE",
+      "w": 800,
+      "h": 1000,
+      "stats": {
+        "weight": "585 kg Total (9/9 Attempts)",
+        "reps": "Competition Meet",
+        "discipline": "-83kg Junior / Open Division",
+        "gear": "IPF Approved Singlet, SBD Belt & Sleeves",
+        "meet": "State Powerlifting Championship 2026",
+        "date": "October 2026",
+        "notes": "Went 9 for 9 on all attempts. Awarded 1st place gold and Best Lifter trophy."
+      },
+      "order": 3
+    },
+    {
+      "id": 5,
+      "title": "145 KG Paused Bench Press",
+      "subtitle": "Competition Pause & Command",
+      "category": "lifts",
+      "categoryLabel": "Big Lifts (PR)",
+      "mediaType": "video",
+      "thumbnail": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388430/ashik-portfolio/powerlifter/p05_bench_pr.webp",
+      "videoSrc": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388446/ashik-portfolio/powerlifter/lift-bench.mp4",
+      "fullPhoto": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388430/ashik-portfolio/powerlifter/p05_bench_pr.webp",
+      "badge": "145 KG · PR",
+      "w": 800,
+      "h": 1000,
+      "stats": {
+        "weight": "145 kg (319.7 lbs)",
+        "reps": "1 Rep (Competition Paused)",
+        "discipline": "Flat Barbell Bench Press",
+        "gear": "SBD Wrist Wraps, A7 Bar Grip Shirt",
+        "meet": "Competition Bench Station",
+        "date": "September 2026",
+        "notes": "Full 1-second pause on chest, explosive drive to lockout. Clean command adherence."
+      },
+      "order": 4
+    },
+    {
+      "id": 6,
+      "title": "Back Lat Spread Pose",
+      "subtitle": "V-Taper & Posterior Chain Density",
+      "category": "physique",
+      "categoryLabel": "Physique & Posing",
+      "mediaType": "photo",
+      "thumbnail": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388431/ashik-portfolio/powerlifter/p06_lat_spread.webp",
+      "fullPhoto": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388431/ashik-portfolio/powerlifter/p06_lat_spread.webp",
+      "badge": "V-TAPER",
+      "w": 800,
+      "h": 1000,
+      "stats": {
+        "weight": "81.0 kg Bodyweight",
+        "reps": "Posing Practice",
+        "discipline": "Back Lat Spread",
+        "gear": "Gym Mirrors",
+        "meet": "Pull Day Hypertrophy Check",
+        "date": "July 2026",
+        "notes": "Heavy deadlifts and barbell rows paying off in lat width and lower back erectors."
+      },
+      "order": 5
+    },
+    {
+      "id": 7,
+      "title": "Chalk & Pre-Lift Platform Ritual",
+      "subtitle": "Focus, Ammonia & Mindset",
+      "category": "training",
+      "categoryLabel": "Gym Training",
+      "mediaType": "photo",
+      "thumbnail": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388432/ashik-portfolio/powerlifter/p07_chalk_platform.webp",
+      "fullPhoto": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388432/ashik-portfolio/powerlifter/p07_chalk_platform.webp",
+      "badge": "PLATFORM FOCUS",
+      "w": 800,
+      "h": 1000,
+      "stats": {
+        "weight": "Barbell Knurling Macro",
+        "reps": "Warmup Routine",
+        "discipline": "Mental & Physical Prep",
+        "gear": "A7 Chalk, Zone Smelling Salts",
+        "meet": "Competition Warmup Area",
+        "date": "October 2026",
+        "notes": "Getting dialed in 5 minutes before walking out to the main platform."
+      },
+      "order": 6
+    },
+    {
+      "id": 8,
+      "title": "Side Chest & Delt Pose",
+      "subtitle": "Shoulder Cap & Ribcage Expansion",
+      "category": "physique",
+      "categoryLabel": "Physique & Posing",
+      "mediaType": "photo",
+      "thumbnail": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388432/ashik-portfolio/powerlifter/p08_side_chest.webp",
+      "fullPhoto": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388432/ashik-portfolio/powerlifter/p08_side_chest.webp",
+      "badge": "PHYSIQUE",
+      "w": 800,
+      "h": 1000,
+      "stats": {
+        "weight": "81.5 kg Bodyweight",
+        "reps": "Side Chest Pose",
+        "discipline": "Bodybuilding Posing",
+        "gear": "Overhead Gym Lighting",
+        "meet": "Chest & Shoulders Day",
+        "date": "June 2026",
+        "notes": "Shoulder roundness and upper pec fullness responding well to heavy pressing volume."
+      },
+      "order": 7
+    },
+    {
+      "id": 9,
+      "title": "195 KG Squat Heavy Triple",
+      "subtitle": "Volume Accumulation Block",
+      "category": "training",
+      "categoryLabel": "Gym Training",
+      "mediaType": "video",
+      "thumbnail": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388433/ashik-portfolio/powerlifter/p09_squat_triple.webp",
+      "videoSrc": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388448/ashik-portfolio/powerlifter/lift-triple.mp4",
+      "fullPhoto": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388433/ashik-portfolio/powerlifter/p09_squat_triple.webp",
+      "badge": "195 KG × 3",
+      "w": 800,
+      "h": 1000,
+      "stats": {
+        "weight": "195 kg (429.9 lbs)",
+        "reps": "3 Reps @ RPE 8.5",
+        "discipline": "Back Squat Triples",
+        "gear": "SBD Belt & Inzer Sleeves",
+        "meet": "Week 7 Strength Block",
+        "date": "August 2026",
+        "notes": "Consistent depth on all three reps. Bar speed maintained into the third rep."
+      },
+      "order": 8
+    },
+    {
+      "id": 10,
+      "title": "Best Lifter Trophy & Certificate",
+      "subtitle": "425.2 DOTS Score Award",
+      "category": "competitions",
+      "categoryLabel": "Competition Stage",
+      "mediaType": "photo",
+      "thumbnail": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388434/ashik-portfolio/powerlifter/p10_trophy_board.webp",
+      "fullPhoto": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388434/ashik-portfolio/powerlifter/p10_trophy_board.webp",
+      "badge": "🏆 BEST LIFTER",
+      "w": 800,
+      "h": 1000,
+      "stats": {
+        "weight": "425.2 DOTS Score",
+        "reps": "Award Ceremony",
+        "discipline": "Overall Championship Lifter",
+        "gear": "Medals, Trophy & Certificate",
+        "meet": "State Championship 2026",
+        "date": "October 2026",
+        "notes": "Highest coefficient score among all weight classes in the junior division."
+      },
+      "order": 9
+    },
+    {
+      "id": 11,
+      "title": "200 KG Deficit Deadlifts",
+      "subtitle": "2-Inch Deficit for Off-The-Floor Speed",
+      "category": "training",
+      "categoryLabel": "Gym Training",
+      "mediaType": "video",
+      "thumbnail": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388435/ashik-portfolio/powerlifter/p11_deficit_pull.webp",
+      "videoSrc": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388443/ashik-portfolio/powerlifter/lift-deadlift.mp4",
+      "fullPhoto": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388435/ashik-portfolio/powerlifter/p11_deficit_pull.webp",
+      "badge": "DEFICIT PULL",
+      "w": 800,
+      "h": 1000,
+      "stats": {
+        "weight": "200 kg (440.9 lbs)",
+        "reps": "3 Reps @ RPE 8",
+        "discipline": "Deficit Deadlifts",
+        "gear": "SBD Belt, Wooden 2-Inch Platform",
+        "meet": "Posterior Chain Accessory Day",
+        "date": "September 2026",
+        "notes": "Forces explosive quad drive and tighter back angle at floor initiation."
+      },
+      "order": 10
+    },
+    {
+      "id": 12,
+      "title": "Abdominal Vacuum & Core Control",
+      "subtitle": "Deep Transverse Abdominis Activation",
+      "category": "physique",
+      "categoryLabel": "Physique & Posing",
+      "mediaType": "photo",
+      "thumbnail": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388436/ashik-portfolio/powerlifter/p12_vacuum_abs.webp",
+      "fullPhoto": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388436/ashik-portfolio/powerlifter/p12_vacuum_abs.webp",
+      "badge": "CORE / ABS",
+      "w": 800,
+      "h": 1000,
+      "stats": {
+        "weight": "80.8 kg Fasted",
+        "reps": "Stomach Vacuum Hold (30s)",
+        "discipline": "Core Stability & Waist Control",
+        "gear": "Morning Check-In",
+        "meet": "Post-Prep Cut",
+        "date": "August 2026",
+        "notes": "Crucial for bracing strength under 200kg+ squats and maintaining a tight waistline."
+      },
+      "order": 11
+    },
+    {
+      "id": 13,
+      "title": "135 KG Bench Press Working Sets",
+      "subtitle": "Peaking Phase Heavy Doubles",
+      "category": "training",
+      "categoryLabel": "Gym Training",
+      "mediaType": "video",
+      "thumbnail": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388438/ashik-portfolio/powerlifter/p13_bench_reps.webp",
+      "videoSrc": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388446/ashik-portfolio/powerlifter/lift-bench.mp4",
+      "fullPhoto": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388438/ashik-portfolio/powerlifter/p13_bench_reps.webp",
+      "badge": "135 KG × 4",
+      "w": 800,
+      "h": 1000,
+      "stats": {
+        "weight": "135 kg (297.6 lbs)",
+        "reps": "4 Sets of 2 Reps",
+        "discipline": "Barbell Bench Press",
+        "gear": "A7 Bar Grip, Wrist Wraps",
+        "meet": "Peaking Cycle Week 9",
+        "date": "September 2026",
+        "notes": "Rock solid leg drive and scapular retraction. Bar flew off the chest."
+      },
+      "order": 12
+    },
+    {
+      "id": 14,
+      "title": "3 White Lights Across the Board",
+      "subtitle": "Unanimous Decision from 3 Judges",
+      "category": "competitions",
+      "categoryLabel": "Competition Stage",
+      "mediaType": "photo",
+      "thumbnail": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388438/ashik-portfolio/powerlifter/p14_white_lights.webp",
+      "fullPhoto": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388438/ashik-portfolio/powerlifter/p14_white_lights.webp",
+      "badge": "⚪⚪⚪ LIGHTS",
+      "w": 800,
+      "h": 1000,
+      "stats": {
+        "weight": "Official Attempt Approved",
+        "reps": "Scoring Light Display",
+        "discipline": "Meet Official Scoring",
+        "gear": "Platform Lights Board",
+        "meet": "Championship Platform",
+        "date": "October 2026",
+        "notes": "All 3 judges signaled white lights for depth, lockout, and downward command."
+      },
+      "order": 13
+    },
+    {
+      "id": 15,
+      "title": "Most Muscular Pose",
+      "subtitle": "Trapezius, Delts & Forearm Vascularity",
+      "category": "physique",
+      "categoryLabel": "Physique & Posing",
+      "mediaType": "photo",
+      "thumbnail": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388439/ashik-portfolio/powerlifter/p15_most_muscular.webp",
+      "fullPhoto": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388439/ashik-portfolio/powerlifter/p15_most_muscular.webp",
+      "badge": "PHYSIQUE",
+      "w": 800,
+      "h": 1000,
+      "stats": {
+        "weight": "81.6 kg Bodyweight",
+        "reps": "Most Muscular Crab Pose",
+        "discipline": "Physique Posing",
+        "gear": "Direct Downward Gym Lights",
+        "meet": "Upper Body Hypertrophy Session",
+        "date": "September 2026",
+        "notes": "Shoulders and upper traps showing noticeable growth from heavy overhead pressing."
+      },
+      "order": 14
+    },
+    {
+      "id": 16,
+      "title": "Quads & Hamstrings Pump",
+      "subtitle": "Teardrop (Vastus Medialis) Separation",
+      "category": "physique",
+      "categoryLabel": "Physique & Posing",
+      "mediaType": "photo",
+      "thumbnail": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388440/ashik-portfolio/powerlifter/p16_quads_calves.webp",
+      "fullPhoto": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388440/ashik-portfolio/powerlifter/p16_quads_calves.webp",
+      "badge": "LEGS PUMP",
+      "w": 800,
+      "h": 1000,
+      "stats": {
+        "weight": "Leg Hypertrophy Check",
+        "reps": "Post-Squat Pump",
+        "discipline": "Lower Body Conditioning",
+        "gear": "Gym Mirrors",
+        "meet": "Heavy Squat Day Accessories",
+        "date": "August 2026",
+        "notes": "Hack squats and Bulgarian split squats bringing out clear quad separation."
+      },
+      "order": 15
+    },
+    {
+      "id": 17,
+      "title": "240 KG Deadlift 3rd Attempt",
+      "subtitle": "Platform Showdown Attempt",
+      "category": "lifts",
+      "categoryLabel": "Big Lifts (PR)",
+      "mediaType": "video",
+      "thumbnail": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388441/ashik-portfolio/powerlifter/p17_deadlift_lockout.webp",
+      "videoSrc": "https://res.cloudinary.com/h8vtnbby/video/upload/v1794388443/ashik-portfolio/powerlifter/lift-deadlift.mp4",
+      "fullPhoto": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388441/ashik-portfolio/powerlifter/p17_deadlift_lockout.webp",
+      "badge": "240 KG ATTEMPT",
+      "w": 800,
+      "h": 1000,
+      "stats": {
+        "weight": "240 kg (529.1 lbs)",
+        "reps": "3rd Attempt on Platform",
+        "discipline": "Max Effort Deadlift",
+        "gear": "SBD Belt, Inzer Singlet",
+        "meet": "State Finals · Final Flight",
+        "date": "October 2026",
+        "notes": "Aggressive pull to secure the meet victory. Roar from the crowd on the lockout."
+      },
+      "order": 16
+    },
+    {
+      "id": 18,
+      "title": "Calibrated Competition Plates",
+      "subtitle": "Eleiko Olympic Iron & Knurled Steel",
+      "category": "training",
+      "categoryLabel": "Gym Training",
+      "mediaType": "photo",
+      "thumbnail": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388442/ashik-portfolio/powerlifter/p18_barbell_knurl.webp",
+      "fullPhoto": "https://res.cloudinary.com/h8vtnbby/image/upload/v1794388442/ashik-portfolio/powerlifter/p18_barbell_knurl.webp",
+      "badge": "ELEIKO IRON",
+      "w": 800,
+      "h": 1000,
+      "stats": {
+        "weight": "IPF Certified Plates",
+        "reps": "Equipment Detail",
+        "discipline": "Competition Gear",
+        "gear": "Eleiko 29mm Powerlifting Bar",
+        "meet": "Iron Temple Training Facility",
+        "date": "October 2026",
+        "notes": "Crisp aggressive knurling that sticks to the hands without tearing skin."
+      },
+      "order": 17
+    }
+  ]
+}

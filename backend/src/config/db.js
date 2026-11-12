@@ -19,6 +19,10 @@ const connectDB = async () => {
     });
     isConnected = true;
     console.log(`[MongoDB] Connected to database: ${conn.connection.host} (${conn.connection.name})`);
+    
+    // Auto-seed initial data if collections are empty
+    const { seedInitialData } = require('./seed');
+    seedInitialData();
   } catch (err) {
     isConnected = false;
     console.warn(`[MongoDB] Warning: Could not connect to MongoDB at ${uri.replace(/:([^:@]+)@/, ':****@')}. Running with in-memory fallback.`);

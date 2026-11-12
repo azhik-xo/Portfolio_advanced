@@ -3,6 +3,8 @@ const router = express.Router();
 const path = require('path');
 const fs = require('fs');
 const Project = require('../models/Project');
+const Lift = require('../models/Lift');
+const Profile = require('../models/Profile');
 const { getDBStatus } = require('../config/db');
 
 const DEFAULT_PROFILE = {
@@ -11,6 +13,7 @@ const DEFAULT_PROFILE = {
   location: 'Remote, Worldwide',
   responseTime: 'Within 5 hours',
   availability: 'Available for new projects',
+  startingBudget: '$500',
   skills: [
     'Web Developer',
     'App Developer',
@@ -23,6 +26,9 @@ const DEFAULT_PROFILE = {
     productionClusters: '12+',
     uptimeRecord: '99.99%',
     bigThreeTotal: '585 kg (1,290 lbs)',
+    deadliftPR: '235 kg',
+    squatPR: '205 kg',
+    benchPR: '145 kg',
   },
   socials: {
     github: 'https://github.com',
@@ -31,65 +37,32 @@ const DEFAULT_PROFILE = {
   },
 };
 
-const DEFAULT_PROJECTS = [
-  {
-    title: 'Multi-Region Kubernetes Cluster',
-    category: 'devops',
-    subtitle: 'Container Orchestration & High Availability',
-    description: 'Automated microservices platform on AWS EKS with Helm, Istio service mesh, horizontal pod autoscaling, and zero-downtime canary rollouts.',
-    tags: ['Kubernetes', 'Docker', 'Helm', 'AWS EKS', 'Istio'],
-    featured: true,
-  },
-  {
-    title: 'Zero-Touch GitOps CI/CD',
-    category: 'devops',
-    subtitle: 'GitHub Actions & ArgoCD',
-    description: 'Enterprise pipeline featuring automated security audits with Trivy, continuous container scanning, automated testing, and sub-minute deployment speeds.',
-    tags: ['GitHub Actions', 'ArgoCD', 'GitOps', 'DevSecOps'],
-    featured: true,
-  },
-  {
-    title: 'Declarative Cloud Platform',
-    category: 'devops',
-    subtitle: 'Terraform Multi-Cloud IaC',
-    description: '100% Infrastructure as Code managing multi-region VPC topologies, managed PostgreSQL clusters, and automated cost optimization.',
-    tags: ['Terraform', 'AWS', 'Cloudflare', 'Vault'],
-    featured: true,
-  },
-  {
-    title: 'The Big Three Strength Framework',
-    category: 'powerlifting',
-    subtitle: 'Squat, Bench Press, Deadlift',
-    description: 'Scientific periodization, progressive overload, intra-abdominal core bracing, and data-driven autoregulation under the barbell.',
-    tags: ['Squat', 'Bench Press', 'Deadlift', 'RPE Programming'],
-    featured: true,
-  },
-  {
-    title: 'Enterprise Fintech Dashboard',
-    category: 'web',
-    subtitle: 'Full-stack high-speed trading dashboard',
-    description: 'Modern financial analytics, low-latency data streams, and responsive design built for traders and investors.',
-    tags: ['Next.js', 'React', 'Node.js', 'Tailwind CSS'],
-    featured: true,
-  },
-  {
-    title: 'Mobile Vault & Security App',
-    category: 'app',
-    subtitle: 'Cross-platform iOS / Android security app',
-    description: 'Encrypted offline credential storage, biometric authentication, and smooth fluid animations.',
-    tags: ['React Native', 'Swift', 'Biometrics', 'Crypto'],
-    featured: true,
-  },
-];
-
 // GET /api/portfolio/profile
-router.get('/profile', (req, res) => {
-  res.json({ success: true, data: DEFAULT_PROFILE });
+router.get('/profile', async (req, res) => {
+  try {
+    if (getDBStatus()) {
+      const profile = await Profile.findOne();
+      if (profile) return res.json({ success: true, data: profile });
+    }
+    res.json({ success: true, data: DEFAULT_PROFILE });
+  } catch (err) {
+    res.json({ success: true, data: DEFAULT_PROFILE });
+  }
 });
 
 // GET /api/portfolio/skills
-router.get('/skills', (req, res) => {
-  res.json({ success: true, data: DEFAULT_PROFILE.skills });
+router.get('/skills', async (req, res) => {
+  try {
+    if (getDBStatus()) {
+      const profile = await Profile.findOne();
+      if (profile && profile.skills?.length > 0) {
+        return res.json({ success: true, data: profile.skills });
+      }
+    }
+    res.json({ success: true, data: DEFAULT_PROFILE.skills });
+  } catch (err) {
+    res.json({ success: true, data: DEFAULT_PROFILE.skills });
+  }
 });
 
 // GET /api/portfolio/projects
@@ -97,16 +70,52 @@ router.get('/projects', async (req, res) => {
   try {
     const { category } = req.query;
     if (getDBStatus()) {
-      const query = category ? { category } : {};
-      const projects = await Project.find(query).sort({ order: 1 });
+      const query = category && category !== 'all' ? { category } : {};
+      const projects = await Project.find(query).sort({ order: 1, createdAt: -1 });
       if (projects.length > 0) {
-        return res.json({ success: true, data: projects });
+        return res.json({ success: true, count: projects.length, data: projects });
       }
     }
-    const filtered = category
-      ? DEFAULT_PROJECTS.filter((p) => p.category === category)
-      : DEFAULT_PROJECTS;
-    res.json({ success: true, data: filtered });
+
+    // Fallback from seed data file if DB not ready
+    const seedPath = path.join(__dirname, '../config/seed-data.json');
+    if (fs.existsSync(seedPath)) {
+      const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
+      const list = category && category !== 'all'
+        ? seed.projects.filter((p) => p.category === category)
+        : seed.projects;
+      return res.json({ success: true, count: list.length, data: list });
+    }
+
+    res.json({ success: true, count: 0, data: [] });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET /api/portfolio/powerlifting
+router.get('/powerlifting', async (req, res) => {
+  try {
+    const { category } = req.query;
+    if (getDBStatus()) {
+      const query = category && category !== 'all' ? { category } : {};
+      const lifts = await Lift.find(query).sort({ order: 1, createdAt: -1 });
+      if (lifts.length > 0) {
+        return res.json({ success: true, count: lifts.length, data: lifts });
+      }
+    }
+
+    // Fallback from seed data file if DB not ready
+    const seedPath = path.join(__dirname, '../config/seed-data.json');
+    if (fs.existsSync(seedPath)) {
+      const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
+      const list = category && category !== 'all'
+        ? seed.lifts.filter((l) => l.category === category)
+        : seed.lifts;
+      return res.json({ success: true, count: list.length, data: list });
+    }
+
+    res.json({ success: true, count: 0, data: [] });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -123,7 +132,7 @@ router.get('/assets', (req, res) => {
     res.json({
       success: true,
       provider: 'local',
-      message: 'Cloudinary assets mapping will be populated upon upload.'
+      message: 'Cloudinary assets mapping will be populated upon upload.',
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

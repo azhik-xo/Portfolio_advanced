@@ -4,7 +4,7 @@ const projectSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: true,
+      required: [true, 'Please provide a title'],
       trim: true,
     },
     category: {
@@ -15,6 +15,7 @@ const projectSchema = new mongoose.Schema(
     subtitle: {
       type: String,
       required: true,
+      trim: true,
     },
     description: {
       type: String,
@@ -25,7 +26,19 @@ const projectSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    githubUrl: {
+      type: String,
+      default: '',
+    },
     mediaUrl: {
+      type: String,
+      default: '',
+    },
+    videoUrl: {
+      type: String,
+      default: '',
+    },
+    posterUrl: {
       type: String,
       default: '',
     },
@@ -44,4 +57,3 @@ const projectSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model('Project', projectSchema);
-
