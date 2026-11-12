@@ -19,6 +19,7 @@ import {
   X,
   RefreshCw,
   Eye,
+  EyeOff,
   Calendar,
   Tag,
   ShieldCheck,
@@ -39,6 +40,7 @@ export default function AdminDashboard() {
   const [authChecked, setAuthChecked] = useState(false);
   const [loginUsername, setLoginUsername] = useState('admin');
   const [loginPassword, setLoginPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
 
@@ -588,18 +590,22 @@ export default function AdminDashboard() {
               <div className="relative">
                 <Lock className="w-4 h-4 text-[#78716C] absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full bg-[#1A1818] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#FAF8F5] focus:outline-none focus:border-[#D6B26E] transition-colors"
+                  className="w-full bg-[#1A1818] border border-white/10 rounded-xl pl-10 pr-10 py-2.5 text-sm text-[#FAF8F5] focus:outline-none focus:border-[#D6B26E] transition-colors"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#78716C] hover:text-[#FAF8F5] transition-colors"
+                  title={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
-            </div>
-
-            <div className="p-3 bg-[#1A1818]/60 border border-white/5 rounded-xl text-xs text-[#78716C] leading-relaxed">
-              Default password: <code className="text-[#D6B26E] bg-black/40 px-1.5 py-0.5 rounded">ashikportfolio2026!</code>
             </div>
 
             <button

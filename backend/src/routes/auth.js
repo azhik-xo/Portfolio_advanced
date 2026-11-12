@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const { requireAdmin, JWT_SECRET } = require('../middleware/auth');
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'ashikportfolio2026!';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin@2906';
 
 // POST /api/auth/login - Admin Login
 router.post('/login', (req, res) => {
