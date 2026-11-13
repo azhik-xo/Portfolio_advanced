@@ -18,7 +18,7 @@ export default function PowerlifterPage() {
       <div dangerouslySetInnerHTML={{ __html: markup }} />
       <PowerlifterHydrator />
       <Script id="powerlifter-lifts" src="/powerlifter/lifts.js" strategy="beforeInteractive" />
-      <Script id="powerlifter-simple" src="/powerlifter/powerlifter-simple.js" strategy="afterInteractive" />
+      <Script id="powerlifter-engine" src="/powerlifter/powerlifter-engine.js" strategy="afterInteractive" />
     </>
   );
 }
