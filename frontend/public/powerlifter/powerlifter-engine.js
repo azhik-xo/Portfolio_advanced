@@ -9,18 +9,25 @@
   if (sky) {
     const sctx = sky.getContext('2d');
     let sw = sky.width = innerWidth, sh = sky.height = innerHeight;
-    const stars = Array.from({ length: 65 }, () => ({
+    const isMobile = sw < 640;
+    const starsCount = isMobile ? 24 : 55;
+    const stars = Array.from({ length: starsCount }, () => ({
       x: Math.random() * sw,
       y: Math.random() * sh,
-      r: Math.random() * 1.5 + 0.4,
-      o: Math.random() * 0.5 + 0.2,
-      vx: (Math.random() - 0.5) * 0.12,
-      vy: (Math.random() - 0.5) * 0.12
+      r: Math.random() * 1.3 + 0.4,
+      o: Math.random() * 0.4 + 0.2,
+      vx: (Math.random() - 0.5) * 0.1,
+      vy: (Math.random() - 0.5) * 0.1
     }));
 
     const renderSky = () => {
+      if (document.hidden) {
+        requestAnimationFrame(renderSky);
+        return;
+      }
       sctx.clearRect(0, 0, sw, sh);
-      stars.forEach(s => {
+      for (let i = 0; i < stars.length; i++) {
+        const s = stars[i];
         sctx.fillStyle = `rgba(232, 228, 224, ${s.o})`;
         sctx.beginPath();
         sctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
@@ -28,7 +35,7 @@
         s.x += s.vx; s.y += s.vy;
         if (s.x < 0) s.x = sw; else if (s.x > sw) s.x = 0;
         if (s.y < 0) s.y = sh; else if (s.y > sh) s.y = 0;
-      });
+      }
       requestAnimationFrame(renderSky);
     };
     renderSky();
@@ -99,7 +106,7 @@
     const allBtn = document.querySelector('.chip--filter[data-filter="all"]');
     if (allBtn) allBtn.textContent = `All (${ALL_ITEMS.length})`;
     buildRows();
-    renderCells();
+    renderCells(true);
   };
 
   function syncPowerliftingData() {
@@ -127,18 +134,17 @@
   }
   syncPowerliftingData();
 
-  /* ---- 3D draggable matrix layout ---- */
-  let vw = Math.max(window.innerWidth || 0, 360), vh = Math.max(window.innerHeight || 0, 600), g = vw >= 640 ? 32 : 18;
+  /* ---- 3D matrix layout ---- */
+  let vw = Math.max(window.innerWidth || 0, 360), vh = Math.max(window.innerHeight || 0, 600);
+  let g = vw < 640 ? 20 : 32;
   let ROWS = [];
   let PW = 800, PH = 600;
 
   function buildRows() {
     vw = Math.max(window.innerWidth || 0, 360);
     vh = Math.max(window.innerHeight || 0, 600);
-    g = vw >= 640 ? 32 : 18;
     const mobile = vw < 640;
-    const side = (mobile ? vw * 0.65 : Math.min(420, vh * 0.48)) * 0.95;
-    const A = Math.max(side * side, 10000);
+    g = mobile ? 20 : 32;
 
     if ((!activeItems || activeItems.length === 0) && window.POWERLIFTING_ITEMS && window.POWERLIFTING_ITEMS.length > 0) {
       ALL_ITEMS = window.POWERLIFTING_ITEMS;
@@ -146,26 +152,31 @@
     }
 
     if (!activeItems || activeItems.length === 0) {
-      ROWS = [{
-        y: 0, H: 400, L: 800, off: 0,
-        cells: []
-      }];
-      PH = 600;
-      PW = 800;
+      ROWS = [{ y: 0, H: 400, L: 800, off: 0, cells: [] }];
+      PH = 600; PW = 800;
       return;
     }
 
+    // 2 rows on mobile (spacious, never congested); 4 rows on desktop
+    const numRows = mobile ? 2 : 4;
+    const cardW = mobile ? Math.min(265, Math.round(vw * 0.68)) : Math.min(360, Math.round(vh * 0.38));
+    const cardH = mobile ? Math.min(350, Math.round(cardW * 1.32)) : Math.min(480, Math.round(cardW * 1.32));
+
     const items = activeItems.map((p, idx) => {
-      const r = (p.w && p.h) ? (p.w / p.h) : 0.8;
-      const w = Math.max(100, Math.sqrt(A * r));
-      return { idx, r, w, h: Math.max(100, w / r), item: p };
+      const r = (p.w && p.h) ? (p.w / p.h) : 0.75;
+      const w = mobile ? cardW : Math.round(cardH * r);
+      const h = mobile ? cardH : Math.round(w / r);
+      return { idx, r, w, h, item: p };
     });
 
-    const numRows = mobile ? 3 : 4;
     ROWS = [];
     const itemsPerRow = Math.max(1, Math.ceil(items.length / numRows));
 
-    let y = 0;
+    // Calculate vertical offset to center the rows on mobile screen
+    const totalHeight = numRows * cardH + (numRows - 1) * g;
+    const startY = mobile ? Math.max(120, Math.round((vh - totalHeight) / 2)) : 0;
+
+    let y = startY;
     for (let r = 0; r < numRows; r++) {
       const rowSlice = [];
       for (let c = 0; c < itemsPerRow; c++) {
@@ -199,7 +210,7 @@
         ALL_ITEMS = window.POWERLIFTING_ITEMS;
         activeItems = getFilteredItems(currentFilter);
         buildRows();
-        renderCells();
+        renderCells(true);
       } else if (attempts > 60) {
         clearInterval(checkTimer);
       }
@@ -214,12 +225,13 @@
   let lastX = 0, lastY = 0;
   let hasMoved = false;
 
-  const POOL_SIZE = 45;
+  const POOL_SIZE = 36;
   const pool = [];
 
   for (let i = 0; i < POOL_SIZE; i++) {
     const el = document.createElement('div');
     el.className = 'cell';
+    el.style.display = 'none';
     el.innerHTML = `
       <div class="fl" style="--fx:${(Math.random() - 0.5) * 8}px;--fy:${(Math.random() - 0.5) * 8}px;--fr:${(Math.random() - 0.5) * 1.5}deg;--fd:${10 + Math.random() * 6}s;--fdl:-${Math.random() * 8}s">
         <div class="ph">
@@ -233,26 +245,31 @@
       </div>
     `;
     space.appendChild(el);
-    pool.push({ el, inUse: false });
+    pool.push({
+      el,
+      inUse: false,
+      assignedIdx: -1,
+      img: el.querySelector('img'),
+      badge: el.querySelector('.ph__badge'),
+      title: el.querySelector('.ph__title'),
+      sub: el.querySelector('.ph__sub')
+    });
   }
 
-  function renderCells() {
-    pool.forEach(p => { p.inUse = false; p.el.style.display = 'none'; });
-
+  function renderCells(forceFullUpdate = false) {
     if (!PH || PH <= 50 || !PW || PW <= 50 || !ROWS || ROWS.length === 0) return;
 
-    const viewLeft = camX - 100;
-    const viewRight = camX + vw + 100;
-    const viewTop = camY - 100;
-    const viewBottom = camY + vh + 100;
+    const viewLeft = camX - 120;
+    const viewRight = camX + vw + 120;
+    const viewTop = camY - 120;
+    const viewBottom = camY + vh + 120;
 
     let poolIdx = 0;
 
     const rawRowStart = Math.floor(viewTop / PH);
     const rawRowEnd = Math.floor(viewBottom / PH);
-    // Strict safety clamp: never allow runaway or infinite iteration
-    const rowStart = Math.max(rawRowStart, -10);
-    const rowEnd = Math.min(rawRowEnd, 10);
+    const rowStart = Math.max(rawRowStart, -6);
+    const rowEnd = Math.min(rawRowEnd, 6);
 
     for (let rBlock = rowStart; rBlock <= rowEnd; rBlock++) {
       const blockY = rBlock * PH;
@@ -265,9 +282,8 @@
         const effectiveX = viewLeft - (row.off || 0);
         const rawColStart = Math.floor(effectiveX / row.L);
         const rawColEnd = Math.floor((viewRight - (row.off || 0)) / row.L);
-        // Strict safety clamp: never allow runaway or infinite iteration
-        const colStart = Math.max(rawColStart, -10);
-        const colEnd = Math.min(rawColEnd, 10);
+        const colStart = Math.max(rawColStart, -6);
+        const colEnd = Math.min(rawColEnd, 6);
 
         for (let cBlock = colStart; cBlock <= colEnd; cBlock++) {
           const blockX = cBlock * row.L + (row.off || 0);
@@ -283,110 +299,138 @@
             const pObj = pool[poolIdx++];
             pObj.inUse = true;
             const el = pObj.el;
-            el.style.display = 'block';
-            el.style.transform = `translate3d(${cellX - camX}px, ${cellY - camY}px, 0)`;
-            el.style.width = `${c.w}px`;
-            el.style.height = `${c.h}px`;
-            el.dataset.idx = c.idx;
 
-            const it = c.item;
-            if (it) {
-              const img = el.querySelector('img');
-              if (img && img.getAttribute('src') !== it.thumbnail) {
-                img.src = it.thumbnail;
-                img.classList.remove('ok');
-                img.onload = () => img.classList.add('ok');
-              }
+            if (el.style.display !== 'block') el.style.display = 'block';
 
-              const badge = el.querySelector('.ph__badge');
-              if (badge) {
-                if (it.mediaType === 'video') {
-                  badge.innerHTML = `<span class="badge-vid">▶ VIDEO</span> <span class="badge-txt">${it.badge}</span>`;
-                } else {
-                  badge.innerHTML = `<span class="badge-txt">${it.badge}</span>`;
+            // Fast hardware-accelerated transform
+            const tx = Math.round(cellX - camX);
+            const ty = Math.round(cellY - camY);
+            el.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
+
+            // Only update DOM attributes if card index changed or forced
+            if (forceFullUpdate || pObj.assignedIdx !== c.idx) {
+              pObj.assignedIdx = c.idx;
+              el.style.width = `${c.w}px`;
+              el.style.height = `${c.h}px`;
+              el.dataset.idx = c.idx;
+
+              const it = c.item;
+              if (it) {
+                if (pObj.img && pObj.img.getAttribute('src') !== it.thumbnail) {
+                  pObj.img.src = it.thumbnail;
+                  pObj.img.classList.remove('ok');
+                  pObj.img.onload = () => pObj.img.classList.add('ok');
                 }
+                if (pObj.badge) {
+                  pObj.badge.innerHTML = (it.mediaType === 'video')
+                    ? `<span class="badge-vid">▶ VIDEO</span> <span class="badge-txt">${it.badge}</span>`
+                    : `<span class="badge-txt">${it.badge}</span>`;
+                }
+                if (pObj.title) pObj.title.textContent = it.title || '';
+                if (pObj.sub) pObj.sub.textContent = it.subtitle || '';
               }
-
-              const titleEl = el.querySelector('.ph__title');
-              if (titleEl) titleEl.textContent = it.title || '';
-              const subEl = el.querySelector('.ph__sub');
-              if (subEl) subEl.textContent = it.subtitle || '';
             }
           }
         }
+      }
+    }
+
+    // Hide any pool elements that were not used in this pass
+    for (let i = poolIdx; i < pool.length; i++) {
+      const p = pool[i];
+      if (p.inUse) {
+        p.inUse = false;
+        p.assignedIdx = -1;
+        p.el.style.display = 'none';
       }
     }
   }
 
   /* ---- physics loop & inertia ---- */
   function tick() {
-    if (!isDragging) {
-      camX += velX;
-      camY += velY;
-      velX *= 0.92;
-      velY *= 0.92;
-
-      // constant slow majestic drift
-      camX += 0.25;
+    if (document.hidden) {
+      requestAnimationFrame(tick);
+      return;
     }
-    renderCells();
+
+    if (!isDragging) {
+      const speed = Math.hypot(velX, velY);
+      if (speed > 0.02) {
+        camX += velX;
+        camY += velY;
+        velX *= 0.92;
+        velY *= 0.92;
+      } else {
+        velX = 0;
+        velY = 0;
+        // Gentle slow majestic drift
+        camX += 0.2;
+      }
+    }
+    renderCells(false);
     requestAnimationFrame(tick);
   }
   tick();
 
-  /* ---- drag events ---- */
+  /* ---- unified Pointer Events (handles touch + mouse identically) ---- */
+  let activePointerId = null;
+
   const onPointerDown = (e) => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
     isDragging = true;
     hasMoved = false;
-    startX = lastX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-    startY = lastY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+    activePointerId = e.pointerId;
+    try { wall.setPointerCapture(e.pointerId); } catch (_) {}
+
+    startX = lastX = e.clientX;
+    startY = lastY = e.clientY;
     velX = velY = 0;
     wall.classList.add('drag');
+
     const hint = document.getElementById('hint');
     if (hint) hint.classList.add('gone');
   };
 
   const onPointerMove = (e) => {
-    if (!isDragging) return;
-    const x = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-    const y = e.clientY || (e.touches && e.touches[0].clientY) || 0;
-    const dx = x - lastX;
-    const dy = y - lastY;
+    if (!isDragging || e.pointerId !== activePointerId) return;
+    const dx = e.clientX - lastX;
+    const dy = e.clientY - lastY;
 
-    if (Math.hypot(x - startX, y - startY) > 5) hasMoved = true;
+    if (Math.hypot(e.clientX - startX, e.clientY - startY) > 8) {
+      hasMoved = true;
+    }
 
     camX -= dx;
     camY -= dy;
     velX = -dx;
     velY = -dy;
 
-    lastX = x;
-    lastY = y;
+    lastX = e.clientX;
+    lastY = e.clientY;
   };
 
   const onPointerUp = (e) => {
-    if (!isDragging) return;
+    if (!isDragging || e.pointerId !== activePointerId) return;
     isDragging = false;
+    activePointerId = null;
     wall.classList.remove('drag');
+    try { wall.releasePointerCapture(e.pointerId); } catch (_) {}
 
     if (!hasMoved) {
-      // It's a click! Check if a cell was clicked
-      const target = e.target.closest('.cell');
+      // Direct tap or click on a card
+      const target = document.elementFromPoint(e.clientX, e.clientY)?.closest('.cell');
       if (target && target.dataset.idx !== undefined) {
         openLightbox(+target.dataset.idx);
       }
     }
   };
 
-  wall.addEventListener('mousedown', onPointerDown);
-  window.addEventListener('mousemove', onPointerMove);
-  window.addEventListener('mouseup', onPointerUp);
+  wall.addEventListener('pointerdown', onPointerDown);
+  wall.addEventListener('pointermove', onPointerMove);
+  wall.addEventListener('pointerup', onPointerUp);
+  wall.addEventListener('pointercancel', onPointerUp);
 
-  wall.addEventListener('touchstart', onPointerDown, { passive: true });
-  window.addEventListener('touchmove', onPointerMove, { passive: true });
-  window.addEventListener('touchend', onPointerUp, { passive: true });
-
-  // Wheel to pan
+  // Wheel pan support for desktop trackpads/mice
   wall.addEventListener('wheel', (e) => {
     e.preventDefault();
     camX += e.deltaX;
@@ -402,7 +446,7 @@
       currentFilter = btn.dataset.filter;
       activeItems = getFilteredItems(currentFilter);
       buildRows();
-      renderCells();
+      renderCells(true);
     });
   });
 
@@ -505,7 +549,6 @@
 
   window.addEventListener('resize', () => {
     buildRows();
-    renderCells();
+    renderCells(true);
   });
 })();
-

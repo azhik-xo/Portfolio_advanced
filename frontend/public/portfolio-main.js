@@ -217,7 +217,7 @@ function closeLayer(el, after){
   setTimeout(() => { el.hidden = true; el.classList.remove('closing'); startScroll(); after?.(); }, 460);
 }
 // nav menu
-const NAV = [['Home','home'],['Web Development',0],['App Development',1],['UI/UX Design',2],['Graphic Design',3],['My story','about'],['Contact',null]];
+const NAV = [['Home','home'],['Web Development',0],['App Development',1],['UI/UX Design',2],['DevOps',3],['Powerlifting',4],['My story','about'],['Contact',null]];
 const navm = $('#navm');
 $('#navList').innerHTML = NAV.map(([l, id], i) =>
   `<li><button class="navm__item" style="--d:${i * 45 + 80}ms" data-i="${i}"><small>0${i + 1}</small><span>${l}</span></button></li>`).join('');
@@ -1261,21 +1261,8 @@ const toggleMode = () => setMode(getMode() === 'dark' ? 'light' : 'dark');
     walkRaf = requestAnimationFrame(step);
     // as the dark fills the screen, the room takes over (same black, so it's invisible) and the photos start to float in
     function handoff(){
-      pick(i);
-      if (frameReady){
-        wallv.classList.add('on');
-        setTimeout(() => {
-          inWall = true;
-          wallv.classList.add('live');
-          try { history.pushState({ wall: 1 }, '', ROUTES[i]); pushed = true; } catch (e) { pushed = false; }
-          document.title = TITLES[i] + ' — Ashik';
-          toWall({ wall: 'enter' });
-          try { frame.contentWindow.focus(); } catch (e) {}
-        }, 0);
-      } else {
-        veil.innerHTML = ''; veil.className = 'veil veil--glow'; veil.style.clipPath = 'none'; veil.style.transition = 'none'; veil.hidden = false;
-        requestAnimationFrame(() => { location.href = ROUTES[i]; });
-      }
+      veil.innerHTML = ''; veil.className = 'veil veil--glow'; veil.style.clipPath = 'none'; veil.style.transition = 'none'; veil.hidden = false;
+      requestAnimationFrame(() => { location.href = ROUTES[i]; });
     }
   }
 
