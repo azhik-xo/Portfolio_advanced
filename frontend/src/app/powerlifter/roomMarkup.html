@@ -15,52 +15,297 @@
   </div>
 </header>
 
-<main class="wrap">
+<main class="wrap pl-cinematic">
   <div class="top"><a class="chip" href="/#works">← Back to the doors</a></div>
   
-  <section class="intro">
-    <h1>Powerlifting &amp; Strength</h1>
-    <p>Competitive powerlifting personal records, competition medals, posing sessions, and platform attempts. Powered by athletic discipline, structured periodization, and progressive overload.</p>
-    <span class="count" id="plStatBadge">315 KG Official Big Three Total</span>
+  <!-- Hero Section -->
+  <section class="pl-hero">
+    <div class="pl-hero__meta">
+      <span class="pl-pill-status"><i></i>Competitive Powerlifter · IPF Raw</span>
+      <span class="pl-hero__spec">-83 KG Division · State Champion</span>
+    </div>
+
+    <h1 class="pl-hero__title">
+      Raw Strength.<br>
+      <span class="pl-title-gradient">Engineered Focus.</span>
+    </h1>
+
+    <p class="pl-hero__desc">
+      Applying athletic periodization, IPF-standard raw discipline, and extreme grit. The same progressive overload practiced under the barbell powers resilient system architecture and high-performance engineering.
+    </p>
+
+    <!-- Cinematic Featured Reel Stage -->
+    <div class="pl-hero-stage" id="heroStage">
+      <div class="pl-stage__video-wrap">
+        <video id="heroVideo" muted loop playsinline preload="metadata" poster="https://res.cloudinary.com/h8vtnbby/image/upload/v1794388426/ashik-portfolio/powerlifter/p01_deadlift_pr.webp" src="https://res.cloudinary.com/h8vtnbby/video/upload/v1794388443/ashik-portfolio/powerlifter/lift-deadlift.mp4"></video>
+        <div class="pl-stage__overlay">
+          <div class="pl-stage__info">
+            <span class="pl-badge-gold">FEATURED ATTEMPT</span>
+            <h3>235 KG Conventional Deadlift</h3>
+            <p>All-Time Gym PR · Clean Lockout · October 2026</p>
+          </div>
+          <div class="pl-stage__controls">
+            <button type="button" class="pl-ctrl-btn" id="heroPlayBtn" aria-label="Play or pause video">
+              <svg id="heroPlayIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <button type="button" class="pl-ctrl-btn" id="heroMuteBtn" aria-label="Mute or unmute">
+              <svg id="heroMuteIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M23 9l-6 6M17 9l6 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <!-- PR Telemetry Dashboard -->
-  <section class="pl-telemetry" aria-label="Personal Records Telemetry">
-    <div class="pl-stat-card">
-      <div class="pl-stat-label"><span class="pl-stat-dot dot-gold"></span>Big Three Total</div>
-      <div class="pl-stat-val" id="teleTotal">315 kg</div>
-      <div class="pl-stat-sub">Squat + Bench + Deadlift</div>
+  <!-- Big Three Telemetry Metric Blocks (Apple Fitness Style) -->
+  <section class="pl-telemetry-section" aria-label="Big Three Telemetry">
+    <div class="pl-telemetry__header">
+      <span class="pl-eyebrow">ATHLETIC TELEMETRY</span>
+      <h2>The Big Three Metrics</h2>
+      <p>Official personal records tracked under competition command standards.</p>
     </div>
-    <div class="pl-stat-card">
-      <div class="pl-stat-label"><span class="pl-stat-dot"></span>Squat PR</div>
-      <div class="pl-stat-val" id="teleSquat">110 kg</div>
-      <div class="pl-stat-sub">Competition Low Bar</div>
-    </div>
-    <div class="pl-stat-card">
-      <div class="pl-stat-label"><span class="pl-stat-dot"></span>Bench Press PR</div>
-      <div class="pl-stat-val" id="teleBench">70 kg</div>
-      <div class="pl-stat-sub">Paused Competition Press</div>
-    </div>
-    <div class="pl-stat-card">
-      <div class="pl-stat-label"><span class="pl-stat-dot"></span>Deadlift PR</div>
-      <div class="pl-stat-val" id="teleDeadlift">135 kg</div>
-      <div class="pl-stat-sub">Conventional Lockout</div>
+
+    <div class="pl-telemetry-grid">
+      <!-- Total -->
+      <div class="pl-stat-block pl-stat-block--hero">
+        <div class="pl-stat-block__top">
+          <span class="pl-stat-tag">OFFICIAL TOTAL</span>
+          <span class="pl-stat-badge-gold">3-LIFT COMBINED</span>
+        </div>
+        <div class="pl-stat-block__val" id="teleTotal">315 kg</div>
+        <div class="pl-stat-block__lbs" id="teleTotalLbs">694.5 lbs</div>
+        <div class="pl-stat-bar"><div class="pl-stat-fill" style="width:100%"></div></div>
+        <p class="pl-stat-block__sub">Squat + Bench Press + Deadlift Combined Platform Total</p>
+      </div>
+
+      <!-- Squat -->
+      <div class="pl-stat-block">
+        <div class="pl-stat-block__top">
+          <span class="pl-stat-tag">SQUAT PR</span>
+          <span class="pl-stat-icon">🏋️</span>
+        </div>
+        <div class="pl-stat-block__val" id="teleSquat">110 kg</div>
+        <div class="pl-stat-block__lbs">242.5 lbs</div>
+        <div class="pl-stat-bar"><div class="pl-stat-fill" style="width:85%"></div></div>
+        <p class="pl-stat-block__sub">Competition Standard Low Bar Back Squat</p>
+      </div>
+
+      <!-- Bench -->
+      <div class="pl-stat-block">
+        <div class="pl-stat-block__top">
+          <span class="pl-stat-tag">BENCH PR</span>
+          <span class="pl-stat-icon">💪</span>
+        </div>
+        <div class="pl-stat-block__val" id="teleBench">70 kg</div>
+        <div class="pl-stat-block__lbs">154.3 lbs</div>
+        <div class="pl-stat-bar"><div class="pl-stat-fill" style="width:72%"></div></div>
+        <p class="pl-stat-block__sub">1-Second Paused Competition Chest Press</p>
+      </div>
+
+      <!-- Deadlift -->
+      <div class="pl-stat-block">
+        <div class="pl-stat-block__top">
+          <span class="pl-stat-tag">DEADLIFT PR</span>
+          <span class="pl-stat-icon">⚡</span>
+        </div>
+        <div class="pl-stat-block__val" id="teleDeadlift">135 kg</div>
+        <div class="pl-stat-block__lbs">297.6 lbs</div>
+        <div class="pl-stat-bar"><div class="pl-stat-fill" style="width:92%"></div></div>
+        <p class="pl-stat-block__sub">Conventional Raw Deadlift · Platform Lockout</p>
+      </div>
     </div>
   </section>
 
-  <!-- Filter Pills -->
-  <div class="pl-filterbar" role="tablist" aria-label="Category filters">
-    <button type="button" class="pl-filter-chip active" data-filter="all">All (<span id="plCount">18</span>)</button>
-    <button type="button" class="pl-filter-chip" data-filter="lifts">Big Lifts (PRs)</button>
-    <button type="button" class="pl-filter-chip" data-filter="physique">Physique &amp; Posing</button>
-    <button type="button" class="pl-filter-chip" data-filter="competitions">Competitions</button>
-    <button type="button" class="pl-filter-chip" data-filter="training">Training</button>
-    <button type="button" class="pl-filter-chip" data-filter="video">▶ Videos</button>
-  </div>
+  <!-- Section 1: The Big Three Heavy Attempts (Cinematic Feature Cards) -->
+  <section class="pl-section" id="bigThreeSection">
+    <div class="pl-section__head">
+      <span class="pl-eyebrow">01 / PLATFORM &amp; ATTEMPTS</span>
+      <h2>The Big Three PRs</h2>
+      <p>Full depth, motionless chest pause, and solid lockout under competition judge commands.</p>
+    </div>
 
-  <!-- Modern Clean Responsive Media Grid -->
-  <section class="pl-grid" id="plGrid" aria-label="Powerlifting media gallery">
-    <!-- Populated dynamically via powerlifter-simple.js -->
+    <div class="pl-features-list">
+      <!-- 205 KG Squat -->
+      <article class="pl-feature-card">
+        <div class="pl-feature-card__media" data-open-modal="2">
+          <img src="https://res.cloudinary.com/h8vtnbby/image/upload/v1794388428/ashik-portfolio/powerlifter/p03_squat_pr.webp" alt="205 KG Low Bar Squat" loading="lazy">
+          <div class="pl-play-badge">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <span>WATCH REEL</span>
+          </div>
+          <span class="pl-badge-top">205 KG · SQUAT PR</span>
+        </div>
+        <div class="pl-feature-card__info">
+          <span class="pl-discipline-tag">LOW BAR BACK SQUAT</span>
+          <h3>205 KG Low Bar Back Squat</h3>
+          <p class="pl-feature-desc">Sunk below parallel with clean bounce out of the hole. Core stayed braced, keeping back angle rigid throughout the ascent.</p>
+          <div class="pl-specs-row">
+            <div class="pl-spec-box"><small>LOAD</small><b>205 kg (452 lbs)</b></div>
+            <div class="pl-spec-box"><small>REPS</small><b>1 Rep @ RPE 9</b></div>
+            <div class="pl-spec-box"><small>GEAR</small><b>Inzer Sleeves, SBD Belt</b></div>
+          </div>
+          <button type="button" class="pl-view-btn" data-open-modal="2">View Full Telemetry &amp; Video →</button>
+        </div>
+      </article>
+
+      <!-- 145 KG Bench -->
+      <article class="pl-feature-card pl-feature-card--reverse">
+        <div class="pl-feature-card__media" data-open-modal="4">
+          <img src="https://res.cloudinary.com/h8vtnbby/image/upload/v1794388430/ashik-portfolio/powerlifter/p05_bench_pr.webp" alt="145 KG Paused Bench Press" loading="lazy">
+          <div class="pl-play-badge">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <span>WATCH REEL</span>
+          </div>
+          <span class="pl-badge-top">145 KG · BENCH PR</span>
+        </div>
+        <div class="pl-feature-card__info">
+          <span class="pl-discipline-tag">FLAT BARBELL BENCH</span>
+          <h3>145 KG Paused Bench Press</h3>
+          <p class="pl-feature-desc">Full 1-second pause motionless on the chest, followed by explosive leg drive to lockout. Clean command adherence.</p>
+          <div class="pl-specs-row">
+            <div class="pl-spec-box"><small>LOAD</small><b>145 kg (320 lbs)</b></div>
+            <div class="pl-spec-box"><small>REPS</small><b>1 Rep (Paused)</b></div>
+            <div class="pl-spec-box"><small>GEAR</small><b>SBD Wraps, A7 Shirt</b></div>
+          </div>
+          <button type="button" class="pl-view-btn" data-open-modal="4">View Full Telemetry &amp; Video →</button>
+        </div>
+      </article>
+
+      <!-- 235 KG Deadlift -->
+      <article class="pl-feature-card">
+        <div class="pl-feature-card__media" data-open-modal="0">
+          <img src="https://res.cloudinary.com/h8vtnbby/image/upload/v1794388426/ashik-portfolio/powerlifter/p01_deadlift_pr.webp" alt="235 KG Conventional Deadlift" loading="lazy">
+          <div class="pl-play-badge">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <span>WATCH REEL</span>
+          </div>
+          <span class="pl-badge-top">235 KG · DEADLIFT PR</span>
+        </div>
+        <div class="pl-feature-card__info">
+          <span class="pl-discipline-tag">CONVENTIONAL DEADLIFT</span>
+          <h3>235 KG Conventional Deadlift</h3>
+          <p class="pl-feature-desc">Broke off the floor fast, maintained strong lat engagement throughout, locked out with zero downward motion or hitching.</p>
+          <div class="pl-specs-row">
+            <div class="pl-spec-box"><small>LOAD</small><b>235 kg (518 lbs)</b></div>
+            <div class="pl-spec-box"><small>REPS</small><b>1 Rep @ RPE 9.5</b></div>
+            <div class="pl-spec-box"><small>GEAR</small><b>SBD 13mm, A7 Slippers</b></div>
+          </div>
+          <button type="button" class="pl-view-btn" data-open-modal="0">View Full Telemetry &amp; Video →</button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Section 2: Competition Honors & Meet Record -->
+  <section class="pl-section pl-section--gold">
+    <div class="pl-section__head">
+      <span class="pl-eyebrow">02 / PODIUMS &amp; HONORS</span>
+      <h2>State Championship Record</h2>
+      <p>Results from the State Powerlifting Championship under drug-tested IPF guidelines.</p>
+    </div>
+
+    <div class="pl-meet-showcase">
+      <div class="pl-meet-card pl-meet-card--gold" data-open-modal="3">
+        <div class="pl-meet-card__img">
+          <img src="https://res.cloudinary.com/h8vtnbby/image/upload/v1794388429/ashik-portfolio/powerlifter/p04_gold_medal.webp" alt="Gold Medal" loading="lazy">
+        </div>
+        <div class="pl-meet-card__content">
+          <span class="pl-badge-gold">🏆 GOLD MEDAL</span>
+          <h3>1st Place Podium</h3>
+          <p>Went 9 for 9 on all attempts across Squat, Bench, and Deadlift. Awarded 1st place gold in junior division.</p>
+        </div>
+      </div>
+
+      <div class="pl-meet-card pl-meet-card--dark" data-open-modal="9">
+        <div class="pl-meet-card__img">
+          <img src="https://res.cloudinary.com/h8vtnbby/image/upload/v1794388434/ashik-portfolio/powerlifter/p10_trophy_board.webp" alt="Best Lifter Trophy" loading="lazy">
+        </div>
+        <div class="pl-meet-card__content">
+          <span class="pl-badge-gold">🎖️ BEST LIFTER</span>
+          <h3>425.2 DOTS Score Trophy</h3>
+          <p>Earned the Best Lifter Trophy for achieving the highest strength-to-bodyweight coefficient score of the meet.</p>
+        </div>
+      </div>
+
+      <div class="pl-meet-card pl-meet-card--dark" data-open-modal="6">
+        <div class="pl-meet-card__img">
+          <img src="https://res.cloudinary.com/h8vtnbby/image/upload/v1794388432/ashik-portfolio/powerlifter/p07_chalk_platform.webp" alt="Platform Ritual" loading="lazy">
+        </div>
+        <div class="pl-meet-card__content">
+          <span class="pl-badge-neutral">⚡ FOCUS &amp; GRIT</span>
+          <h3>Pre-Lift Platform Mindset</h3>
+          <p>Liquid chalk, smelling salts, and mental rehearsal 5 minutes prior to stepping onto the championship platform.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: Physique, Conditioning & Posing -->
+  <section class="pl-section">
+    <div class="pl-section__head">
+      <span class="pl-eyebrow">03 / ATHLETIC FORM</span>
+      <h2>Physique &amp; Conditioning</h2>
+      <p>Maintaining muscle density, low body fat, and joint mobility alongside peak maximum strength.</p>
+    </div>
+
+    <div class="pl-physique-grid">
+      <article class="pl-physique-card" data-open-modal="1">
+        <div class="pl-physique-card__img">
+          <img src="https://res.cloudinary.com/h8vtnbby/image/upload/v1794388427/ashik-portfolio/powerlifter/p02_front_double_bicep.webp" alt="Front Double Bicep" loading="lazy">
+        </div>
+        <div class="pl-physique-card__info">
+          <span class="pl-tag">ARM PEAK &amp; CHEST</span>
+          <h4>Front Double Bicep</h4>
+          <p>81.2 kg Bodyweight · Post-Workout</p>
+        </div>
+      </article>
+
+      <article class="pl-physique-card" data-open-modal="5">
+        <div class="pl-physique-card__img">
+          <img src="https://res.cloudinary.com/h8vtnbby/image/upload/v1794388431/ashik-portfolio/powerlifter/p06_lat_spread.webp" alt="Back Lat Spread" loading="lazy">
+        </div>
+        <div class="pl-physique-card__info">
+          <span class="pl-tag">POSTERIOR CHAIN</span>
+          <h4>Back Lat Spread</h4>
+          <p>81.0 kg Bodyweight · Lat Width &amp; Erector Density</p>
+        </div>
+      </article>
+
+      <article class="pl-physique-card" data-open-modal="7">
+        <div class="pl-physique-card__img">
+          <img src="https://res.cloudinary.com/h8vtnbby/image/upload/v1794388432/ashik-portfolio/powerlifter/p08_side_chest.webp" alt="Side Chest Pose" loading="lazy">
+        </div>
+        <div class="pl-physique-card__info">
+          <span class="pl-tag">DELTOID &amp; PEC</span>
+          <h4>Side Chest &amp; Delt</h4>
+          <p>81.5 kg Bodyweight · Upper Torso Fullness</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Section 4: Complete Media Archive & Filters -->
+  <section class="pl-section pl-section--archive">
+    <div class="pl-section__head">
+      <span class="pl-eyebrow">04 / ARCHIVE</span>
+      <h2>All Lifts &amp; Media Sessions</h2>
+      <p>Browse the full collection of lifts, accessory work, and competition footage.</p>
+    </div>
+
+    <!-- Filter Pills -->
+    <div class="pl-filterbar" role="tablist" aria-label="Category filters">
+      <button type="button" class="pl-filter-chip active" data-filter="all">All (<span id="plCount">18</span>)</button>
+      <button type="button" class="pl-filter-chip" data-filter="lifts">Big Lifts (PRs)</button>
+      <button type="button" class="pl-filter-chip" data-filter="physique">Physique &amp; Posing</button>
+      <button type="button" class="pl-filter-chip" data-filter="competitions">Competitions</button>
+      <button type="button" class="pl-filter-chip" data-filter="training">Training</button>
+      <button type="button" class="pl-filter-chip" data-filter="video">▶ Videos</button>
+    </div>
+
+    <!-- Modern Clean Responsive Media Grid -->
+    <div class="pl-grid" id="plGrid" aria-label="Powerlifting media gallery">
+      <!-- Populated dynamically via powerlifter-simple.js -->
+    </div>
   </section>
 </main>
 

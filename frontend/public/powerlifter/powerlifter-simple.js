@@ -20,6 +20,7 @@
     const dl = formatPr(stats.deadliftPR, '135 KG');
 
     const eTotal = document.getElementById('teleTotal');
+    const eTotalLbs = document.getElementById('teleTotalLbs');
     const eSq = document.getElementById('teleSquat');
     const eBp = document.getElementById('teleBench');
     const eDl = document.getElementById('teleDeadlift');
@@ -30,6 +31,11 @@
     if (eBp) eBp.textContent = bp;
     if (eDl) eDl.textContent = dl;
     if (badge) badge.textContent = `${tot} Official Big Three Total`;
+
+    if (eTotalLbs && stats.bigThreeTotal) {
+      const m = String(stats.bigThreeTotal).match(/\(([^)]+)\)/);
+      if (m && m[1]) eTotalLbs.textContent = m[1];
+    }
   };
 
   // Immediate cache hydration
@@ -65,7 +71,7 @@
   let activeItems = [...ALL_ITEMS];
 
   const getFiltered = (filter) => {
-    const list = (window.POWERLIFTING_ITEMS && window.POWERLIFTING_ITEMS.length > 0) ? window.POWERLIFTING_ITEMS : ALL_ITEMS;
+    const list = (ALL_ITEMS && ALL_ITEMS.length > 0) ? ALL_ITEMS : (window.POWERLIFTING_ITEMS || []);
     if (filter === 'all') return list;
     if (filter === 'video') return list.filter(it => it.mediaType === 'video');
     return list.filter(it => it.category === filter);
@@ -114,24 +120,6 @@
     }).join('');
   }
 
-  // Card click opens modal
-  if (grid) {
-    grid.addEventListener('click', e => {
-      const card = e.target.closest('.pl-card');
-      if (!card || card.dataset.idx === undefined) return;
-      openModal(+card.dataset.idx);
-    });
-    grid.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        const card = e.target.closest('.pl-card');
-        if (card && card.dataset.idx !== undefined) {
-          e.preventDefault();
-          openModal(+card.dataset.idx);
-        }
-      }
-    });
-  }
-
   // Filter Buttons
   const filterBtns = document.querySelectorAll('.pl-filter-chip');
   filterBtns.forEach(btn => {
@@ -143,6 +131,45 @@
       renderGrid();
     });
   });
+
+  /* ---- Hero Video Reel Controls ---- */
+  const heroVid = document.getElementById('heroVideo');
+  const heroPlayBtn = document.getElementById('heroPlayBtn');
+  const heroMuteBtn = document.getElementById('heroMuteBtn');
+
+  if (heroVid && heroPlayBtn) {
+    const playSvg = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+    const pauseSvg = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+
+    heroPlayBtn.addEventListener('click', () => {
+      if (heroVid.paused) {
+        heroVid.play().then(() => {
+          heroPlayBtn.innerHTML = pauseSvg;
+        }).catch(() => {});
+      } else {
+        heroVid.pause();
+        heroPlayBtn.innerHTML = playSvg;
+      }
+    });
+
+    // Auto-play muted on load if supported
+    heroVid.play().then(() => {
+      heroPlayBtn.innerHTML = pauseSvg;
+    }).catch(() => {
+      heroPlayBtn.innerHTML = playSvg;
+    });
+  }
+
+  if (heroVid && heroMuteBtn) {
+    const muteSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M23 9l-6 6M17 9l6 6"/></svg>';
+    const soundSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>';
+
+    heroMuteBtn.addEventListener('click', () => {
+      heroVid.muted = !heroVid.muted;
+      heroMuteBtn.innerHTML = heroVid.muted ? muteSvg : soundSvg;
+      heroMuteBtn.setAttribute('aria-label', heroVid.muted ? 'Unmute video' : 'Mute video');
+    });
+  }
 
   /* ---- Lightbox Modal ---- */
   const modal = document.getElementById('plModal');
@@ -162,8 +189,11 @@
 
   function openModal(idx) {
     if (!modal) return;
-    currentModalIdx = idx;
-    const it = activeItems[idx];
+    const itemsList = (ALL_ITEMS && ALL_ITEMS.length > 0) ? ALL_ITEMS : (window.POWERLIFTING_ITEMS || []);
+    if (!itemsList || itemsList.length === 0) return;
+
+    currentModalIdx = (idx >= 0 && idx < itemsList.length) ? idx : 0;
+    const it = itemsList[currentModalIdx];
     if (!it) return;
 
     if (it.mediaType === 'video' && it.videoSrc) {
@@ -187,7 +217,7 @@
     if (modalBadge) modalBadge.textContent = it.badge || 'LIFT';
     if (modalTitle) modalTitle.textContent = it.title || '';
     if (modalSub) modalSub.textContent = it.subtitle || '';
-    if (modalCounter) modalCounter.textContent = `${idx + 1} / ${activeItems.length}`;
+    if (modalCounter) modalCounter.textContent = `${currentModalIdx + 1} / ${itemsList.length}`;
 
     const s = it.stats || {};
     if (modalStats) {
@@ -220,14 +250,16 @@
 
   if (modalPrev) {
     modalPrev.addEventListener('click', () => {
-      const nextIdx = (currentModalIdx - 1 + activeItems.length) % activeItems.length;
+      const itemsList = (ALL_ITEMS && ALL_ITEMS.length > 0) ? ALL_ITEMS : (window.POWERLIFTING_ITEMS || []);
+      const nextIdx = (currentModalIdx - 1 + itemsList.length) % itemsList.length;
       openModal(nextIdx);
     });
   }
 
   if (modalNext) {
     modalNext.addEventListener('click', () => {
-      const nextIdx = (currentModalIdx + 1) % activeItems.length;
+      const itemsList = (ALL_ITEMS && ALL_ITEMS.length > 0) ? ALL_ITEMS : (window.POWERLIFTING_ITEMS || []);
+      const nextIdx = (currentModalIdx + 1) % itemsList.length;
       openModal(nextIdx);
     });
   }
@@ -239,6 +271,42 @@
       else if (e.key === 'ArrowRight' && modalNext) modalNext.click();
     }
   });
+
+  // Global listener for feature cards and badges with data-open-modal
+  document.addEventListener('click', e => {
+    const trigger = e.target.closest('[data-open-modal]');
+    if (!trigger) return;
+    const rawIdx = trigger.getAttribute('data-open-modal');
+    if (rawIdx !== null && rawIdx !== '') {
+      e.preventDefault();
+      const idx = parseInt(rawIdx, 10);
+      if (!isNaN(idx)) {
+        openModal(idx);
+      }
+    }
+  });
+
+  // Card click in grid
+  if (grid) {
+    grid.addEventListener('click', e => {
+      const card = e.target.closest('.pl-card');
+      if (!card || card.dataset.idx === undefined) return;
+      const cardItem = activeItems[+card.dataset.idx];
+      const allIdx = ALL_ITEMS.indexOf(cardItem);
+      openModal(allIdx !== -1 ? allIdx : +card.dataset.idx);
+    });
+    grid.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        const card = e.target.closest('.pl-card');
+        if (card && card.dataset.idx !== undefined) {
+          e.preventDefault();
+          const cardItem = activeItems[+card.dataset.idx];
+          const allIdx = ALL_ITEMS.indexOf(cardItem);
+          openModal(allIdx !== -1 ? allIdx : +card.dataset.idx);
+        }
+      }
+    });
+  }
 
   // Live rebuild hook for admin panel / hydrator
   window.__rebuildPowerlifter = function(items) {
@@ -383,4 +451,3 @@
     }
   }
 })();
-
