@@ -5,7 +5,7 @@ import PowerlifterHydrator from '../../components/PowerlifterHydrator';
 import './roomStyles.css';
 
 export const metadata = {
-  title: 'Powerlifting & Physique — Ashik',
+  title: 'Powerlifting & Strength — Ashik',
   description: 'Powerlifting personal records, competition achievements, body posing, and heavy lift videos by Ashik.',
 };
 
@@ -14,11 +14,11 @@ export default function PowerlifterPage() {
   const markup = fs.readFileSync(markupPath, 'utf8');
 
   return (
-    <main style={{ minHeight: '100vh', background: '#030306', color: '#E8E4E0', overflow: 'hidden' }}>
+    <>
       <div dangerouslySetInnerHTML={{ __html: markup }} />
       <PowerlifterHydrator />
       <Script id="powerlifter-lifts" src="/powerlifter/lifts.js" strategy="beforeInteractive" />
-      <Script id="powerlifter-engine" src="/powerlifter/powerlifter-engine.js" strategy="afterInteractive" />
-    </main>
+      <Script id="powerlifter-simple" src="/powerlifter/powerlifter-simple.js" strategy="afterInteractive" />
+    </>
   );
 }

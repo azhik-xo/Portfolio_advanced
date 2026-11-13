@@ -15,22 +15,37 @@ export default function PowerlifterHydrator() {
 
     function updatePrDom(stats) {
       if (!stats) return;
-      const prEl = document.querySelector('.chip--prs');
-      if (!prEl) return;
       const tot = formatPr(stats.bigThreeTotal, '315 KG');
       const sq = formatPr(stats.squatPR, '110 KG');
       const bp = formatPr(stats.benchPR, '70 KG');
       const dl = formatPr(stats.deadliftPR, '135 KG');
 
-      prEl.innerHTML = `
-        <span title="${escapeHtml(stats.bigThreeTotal || '')}">TOTAL: <b>${escapeHtml(tot)}</b></span>
-        <span class="pr-div">·</span>
-        <span title="${escapeHtml(stats.squatPR || '')}">SQ: <b>${escapeHtml(sq)}</b></span>
-        <span class="pr-div">·</span>
-        <span title="${escapeHtml(stats.benchPR || '')}">BP: <b>${escapeHtml(bp)}</b></span>
-        <span class="pr-div">·</span>
-        <span title="${escapeHtml(stats.deadliftPR || '')}">DL: <b>${escapeHtml(dl)}</b></span>
-      `;
+      // 1. Update chip if present
+      const prEl = document.querySelector('.chip--prs');
+      if (prEl) {
+        prEl.innerHTML = `
+          <span title="${escapeHtml(stats.bigThreeTotal || '')}">TOTAL: <b>${escapeHtml(tot)}</b></span>
+          <span class="pr-div">·</span>
+          <span title="${escapeHtml(stats.squatPR || '')}">SQ: <b>${escapeHtml(sq)}</b></span>
+          <span class="pr-div">·</span>
+          <span title="${escapeHtml(stats.benchPR || '')}">BP: <b>${escapeHtml(bp)}</b></span>
+          <span class="pr-div">·</span>
+          <span title="${escapeHtml(stats.deadliftPR || '')}">DL: <b>${escapeHtml(dl)}</b></span>
+        `;
+      }
+
+      // 2. Update telemetry dashboard cards if present
+      const eTotal = document.getElementById('teleTotal');
+      const eSq = document.getElementById('teleSquat');
+      const eBp = document.getElementById('teleBench');
+      const eDl = document.getElementById('teleDeadlift');
+      const badge = document.getElementById('plStatBadge');
+
+      if (eTotal) eTotal.textContent = tot;
+      if (eSq) eSq.textContent = sq;
+      if (eBp) eBp.textContent = bp;
+      if (eDl) eDl.textContent = dl;
+      if (badge) badge.textContent = `${tot} Official Big Three Total`;
     }
 
     // 1. Instant sync from local cache
@@ -98,4 +113,3 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 }
-
