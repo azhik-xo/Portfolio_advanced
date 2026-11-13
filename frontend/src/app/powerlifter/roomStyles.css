@@ -9,19 +9,15 @@
   color-scheme:dark;
 }
 
-@view-transition{navigation:auto}
-::view-transition-old(root),::view-transition-new(root){animation-duration:.25s}
 *{box-sizing:border-box;margin:0;padding:0}
 [hidden]{display:none!important}
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--fg);font-family:var(--font);-webkit-font-smoothing:antialiased}
 button,a{font:inherit;color:inherit;text-decoration:none;background:none;border:0;cursor:pointer}
 :focus-visible{outline:2px solid #C4B0B0;outline-offset:3px}
 
-.wall{position:fixed;inset:0;overflow:hidden;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;perspective:1300px;background:transparent}
+.sky{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none}
+.wall{position:fixed;inset:0;overflow:hidden;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;perspective:1300px;background:transparent;z-index:1}
 .wall.drag{cursor:grabbing}
-.sky{position:fixed;inset:0;width:100%;height:100%;display:block;transition:opacity 1.6s ease .2s}
-html.pre .sky{opacity:0;transition:none}
-html.out .sky{opacity:0;transition:opacity .5s ease}
 .space{position:absolute;inset:0;transform-origin:50% 50%;will-change:transform}
 .cell{position:absolute;left:0;top:0;will-change:transform}
 
@@ -34,27 +30,13 @@ html.out .sky{opacity:0;transition:opacity .5s ease}
 .fl{width:100%;height:100%;animation:drift var(--fd,12s) ease-in-out var(--fdl,0s) infinite}
 .ph{position:relative;width:100%;height:100%;border-radius:6px;overflow:hidden;background:#0d0d0d center/cover no-repeat;scale:var(--z,1);
   box-shadow:0 0 0 1px rgba(255,255,255,.08),0 12px 30px -10px rgba(0,0,0,.6);
-  transition:transform 1s var(--ease) var(--dl,0s),opacity .6s ease var(--dl,0s),scale .5s var(--ease)}
-.ph img{display:block;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .45s ease;-webkit-user-drag:none;pointer-events:none}
-.ph img.ok{opacity:1}
-.ph::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .4s ease;
-  background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.07) 50%,transparent 70%);transform:translateX(-100%)}
-.ph:has(img:not(.ok))::after{opacity:1;animation:phSk 1.3s linear infinite}
-@keyframes phSk{to{transform:translateX(100%)}}
-@media (prefers-reduced-motion:reduce){.ph::after{animation:none!important}}
+  transition:transform 1s var(--ease),opacity .6s ease,scale .5s var(--ease);
+  opacity:1!important}
+.ph img{display:block;width:100%;height:100%;object-fit:cover;opacity:1;-webkit-user-drag:none;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.fl{animation:none}}
 @media (hover:hover){ .wall:not(.drag) .cell:hover{z-index:2} .wall:not(.drag) .cell:hover .ph{scale:calc(var(--z,1) * 1.08)} }
 
-/* arriving: photos come forward out of the dark, nearest the middle first */
-html.pre .ph{opacity:0;transform:scale(.3) translateY(30px)}
-html.pre .ph,html.instant .ph{transition-duration:0s!important;transition-delay:0s!important}
-/* leaving: they sink back into it */
-html.out .ph{opacity:0;transform:scale(.55);transition:transform .55s cubic-bezier(.5,0,.75,0),opacity .45s ease}
-@media (prefers-reduced-motion:reduce){ .fl{animation:none} }
-
-@keyframes chromeIn{from{opacity:0}}
-.bar,.hint{transition:opacity .6s ease .9s}
-html.pre .bar,html.pre .hint,html.out .bar,html.out .hint{opacity:0;transition-delay:0s}
-.bar{position:fixed;left:0;right:0;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:12px;
+.bar{position:fixed;left:0;right:0;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 0 max(16px,env(safe-area-inset-left));pointer-events:none}
 .bar>*{pointer-events:auto}
 .bar__right{display:flex;align-items:center;gap:10px}
@@ -67,8 +49,8 @@ html.pre .bar,html.pre .hint,html.out .bar,html.out .hint{opacity:0;transition-d
 .chip--prs b{color:var(--gold);font-weight:700}
 .pr-div{opacity:.4;padding:0 2px}
 
-.hint{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));z-index:10;translate:-50% 0;transition:opacity .6s ease}
-.hint.gone{opacity:0;pointer-events:none}
+.hint{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));z-index:20;translate:-50% 0;transition:opacity .6s ease;pointer-events:none}
+.hint.gone{opacity:0}
 @media (max-width:900px){ .chip--prs{display:none} }
 @media (max-width:560px){ .chip--title small{display:none} .chip{height:40px;padding:0 14px;font-size:13px} }
 
@@ -81,7 +63,7 @@ html.pre .bar,html.pre .hint,html.out .bar,html.out .hint{opacity:0;transition-d
 .ph__badge--vid{display:inline-flex;background:linear-gradient(135deg,#EF4444,#DC2626);border-color:rgba(255,255,255,.3);box-shadow:0 2px 10px rgba(239,68,68,.4)}
 
 /* Lightbox Modal */
-.lb{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:var(--scrim);opacity:0;transition:opacity .35s ease}
+.lb{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:var(--scrim);opacity:0;transition:opacity .35s ease}
 .lb.open{opacity:1}
 .lb__wrap{position:relative;display:flex;flex-direction:column;align-items:center;max-width:min(92vw,1300px);max-height:86vh;padding:10px}
 .lb img,.lb video{max-width:min(92vw,1300px);max-height:72vh;width:auto;height:auto;border-radius:10px;

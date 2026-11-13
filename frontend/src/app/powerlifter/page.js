@@ -13,11 +13,14 @@ export default function PowerlifterPage() {
   const markupPath = path.join(process.cwd(), 'src/app/powerlifter/roomMarkup.html');
   const markup = fs.readFileSync(markupPath, 'utf8');
 
+  const liftsPath = path.join(process.cwd(), 'public/powerlifter/lifts.js');
+  const liftsScript = fs.readFileSync(liftsPath, 'utf8');
+
   return (
     <>
+      <script dangerouslySetInnerHTML={{ __html: liftsScript }} />
       <div dangerouslySetInnerHTML={{ __html: markup }} />
       <PowerlifterHydrator />
-      <Script id="powerlifter-lifts" src="/powerlifter/lifts.js" strategy="beforeInteractive" />
       <Script id="powerlifter-engine" src="/powerlifter/powerlifter-engine.js" strategy="afterInteractive" />
     </>
   );

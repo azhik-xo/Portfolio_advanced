@@ -1,5 +1,5 @@
 (() => {
-  const EMBED = /[?&]embed\b/.test(location.search);
+  const EMBED = typeof location !== 'undefined' && /[?&]embed\b/.test(location.search);
   const root = document.documentElement;
   const dark = root.dataset.mode === 'dark';
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -13,18 +13,19 @@
     cachedLifts = JSON.parse(localStorage.getItem('ashik_powerlifting_items') || 'null');
   } catch (_) {}
 
-  let RAW_ITEMS = (cachedLifts && Array.isArray(cachedLifts) && cachedLifts.length > 0)
-    ? cachedLifts
-    : ((window.POWERLIFTING_ITEMS && Array.isArray(window.POWERLIFTING_ITEMS))
-      ? window.POWERLIFTING_ITEMS
+  let RAW_ITEMS = (window.POWERLIFTING_ITEMS && Array.isArray(window.POWERLIFTING_ITEMS) && window.POWERLIFTING_ITEMS.length > 0)
+    ? window.POWERLIFTING_ITEMS
+    : ((cachedLifts && Array.isArray(cachedLifts) && cachedLifts.length > 0)
+      ? cachedLifts
       : []);
 
   let P = [];
   let N = 0;
 
   function initItems(items) {
+    if (!Array.isArray(items) || items.length === 0) return;
     RAW_ITEMS = items;
-    P = (items || []).map((it, idx) => ({
+    P = items.map((it, idx) => ({
       s: idx,
       t: it.thumbnail,
       q: it.thumbnail,
@@ -95,7 +96,7 @@
     vw = innerWidth;
     vh = innerHeight;
     const mobile = vw < 640;
-    g = mobile ? 18 : 30;
+    g = mobile ? 20 : 32;
 
     if (!P || P.length === 0) {
       ROWS = [];
@@ -200,28 +201,33 @@
     let el = live.get(key);
     if (el) return el;
 
-    el = pool.pop() || (() => {
-      const d = document.createElement('div');
-      d.className = 'cell';
-      d.innerHTML = `
-        <div class="fl">
-          <div class="ph">
-            <span class="ph__badge"></span>
-            <img alt="" draggable="false" decoding="async">
-          </div>
-        </div>
-      `;
-      const im = d.querySelector('img');
-      im.onload = () => im.classList.add('ok');
-      space.appendChild(d);
-      return d;
-    })();
+    el = pool.pop();
+    if (!el) {
+      el = document.createElement('div');
+      el.className = 'cell';
+      const fl = document.createElement('div');
+      fl.className = 'fl';
+      const ph = document.createElement('div');
+      ph.className = 'ph';
+      const badge = document.createElement('span');
+      badge.className = 'ph__badge';
+      const im = document.createElement('img');
+      im.alt = '';
+      im.draggable = false;
+      im.decoding = 'async';
 
-    const fl = el.firstChild;
-    const ph = fl.firstChild;
-    const badge = ph.querySelector('.ph__badge');
-    const im = ph.querySelector('img');
-    const p = P[s];
+      ph.appendChild(badge);
+      ph.appendChild(im);
+      fl.appendChild(ph);
+      el.appendChild(fl);
+      if (space) space.appendChild(el);
+    }
+
+    const fl = el.querySelector('.fl');
+    const ph = el.querySelector('.ph');
+    const badge = el.querySelector('.ph__badge');
+    const im = el.querySelector('img');
+    const p = P[s] || {};
 
     if (el.dataset.k !== key) {
       el.dataset.k = key;
@@ -230,25 +236,28 @@
         for (const ch of key + n) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
         return ((h >>> 0) % 1000) / 1000;
       };
-      const z = 1;
-      ph.style.setProperty('--z', z.toFixed(3));
+      if (ph) ph.style.setProperty('--z', '1');
       const amp = 0.25;
-      fl.style.setProperty('--fx', ((r('x') - 0.5) * 14 * amp).toFixed(1) + 'px');
-      fl.style.setProperty('--fy', ((r('y') - 0.5) * 18 * amp).toFixed(1) + 'px');
-      fl.style.setProperty('--fr', ((r('r') - 0.5) * 1.4 * amp).toFixed(2) + 'deg');
-      fl.style.setProperty('--fd', (10 + r('d') * 8).toFixed(1) + 's');
-      fl.style.setProperty('--fdl', (-r('l') * 18).toFixed(1) + 's');
+      if (fl) {
+        fl.style.setProperty('--fx', ((r('x') - 0.5) * 14 * amp).toFixed(1) + 'px');
+        fl.style.setProperty('--fy', ((r('y') - 0.5) * 18 * amp).toFixed(1) + 'px');
+        fl.style.setProperty('--fr', ((r('r') - 0.5) * 1.4 * amp).toFixed(2) + 'deg');
+        fl.style.setProperty('--fd', (10 + r('d') * 8).toFixed(1) + 's');
+        fl.style.setProperty('--fdl', (-r('l') * 18).toFixed(1) + 's');
+      }
     }
 
     if (el.dataset.s !== String(s)) {
       el.dataset.s = s;
-      ph.style.backgroundImage = `url(${p.t}),url(${p.q})`;
-      im.classList.remove('ok');
-      im.src = p.t;
-      if (im.complete && im.naturalWidth) im.classList.add('ok');
-      else if (!booted) im.decoding = 'sync';
+      if (p.t) {
+        if (ph) ph.style.backgroundImage = `url(${p.t})`;
+        if (im) {
+          im.src = p.t;
+          if (im.complete && im.naturalWidth) im.classList.add('ok');
+          else im.onload = () => im.classList.add('ok');
+        }
+      }
 
-      // Badge Indicator
       if (badge) {
         if (p.mediaType === 'video') {
           badge.style.display = 'inline-flex';
@@ -294,11 +303,6 @@
             el.style.width = c.w + 'px';
             el.style.height = c.h + 'px';
             el.style.transform = `translate3d(${x}px,${y}px,0)`;
-
-            if (arriving) {
-              const d = Math.hypot(x + c.w / 2 - vw / 2, y + c.h / 2 - vh / 2) / Math.hypot(vw / 2, vh / 2);
-              el.firstChild.firstChild.style.setProperty('--dl', (d * 0.22 + (seen.size % 5) * 0.02).toFixed(3) + 's');
-            }
             seen.add(key);
           });
         }
@@ -335,7 +339,7 @@
 
   function sizeSky() {
     if (!sky || !sx) return;
-    const dpr = Math.min(devicePixelRatio || 1, 2);
+    const dpr = Math.min((typeof window !== 'undefined' && window.devicePixelRatio) || 1, 2);
     sky.width = Math.round(innerWidth * dpr);
     sky.height = Math.round(innerHeight * dpr);
     sx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -455,7 +459,7 @@
 
   /* ---- Wheel / Trackpad Scroll ---- */
   addEventListener('wheel', e => {
-    if (!lb.hidden) return;
+    if (lb && !lb.hidden) return;
     e.preventDefault();
     let dx = e.deltaX, dy = e.deltaY;
     if (e.deltaMode === 1) { dx *= 32; dy *= 32; }
@@ -468,7 +472,7 @@
 
   /* ---- Keyboard Navigation ---- */
   addEventListener('keydown', e => {
-    if (!lb.hidden) {
+    if (lb && !lb.hidden) {
       if (e.key === 'Escape') closeLb();
       else if (e.key === 'ArrowRight') step(1);
       else if (e.key === 'ArrowLeft') step(-1);
@@ -560,58 +564,48 @@
   }
 
   function openLb(i) {
+    if (!lb) return;
     show(i);
     lb.hidden = false;
     requestAnimationFrame(() => lb.classList.add('open'));
-    document.getElementById('lbClose')?.focus();
+    try { document.getElementById('lbClose')?.focus?.(); } catch (_) {}
   }
 
   function closeLb() {
+    if (!lb) return;
     lb.classList.remove('open');
     if (lbVid) lbVid.pause();
     setTimeout(() => {
       lb.hidden = true;
-      wall?.focus();
+      try { wall?.focus?.(); } catch (_) {}
     }, 300);
   }
 
   const step = d => show(cur + d);
-  document.getElementById('lbClose').onclick = closeLb;
-  document.getElementById('lbPrev').onclick = () => step(-1);
-  document.getElementById('lbNext').onclick = () => step(1);
-  lb.addEventListener('click', e => {
-    if (e.target === lb || e.target.classList.contains('lb__wrap')) closeLb();
-  });
+  const closeBtn = document.getElementById('lbClose');
+  const prevBtn = document.getElementById('lbPrev');
+  const nextBtn = document.getElementById('lbNext');
+
+  if (closeBtn) closeBtn.onclick = closeLb;
+  if (prevBtn) prevBtn.onclick = () => step(-1);
+  if (nextBtn) nextBtn.onclick = () => step(1);
+  if (lb) {
+    lb.addEventListener('click', e => {
+      if (e.target === lb || e.target.classList.contains('lb__wrap')) closeLb();
+    });
+  }
 
   /* ---- Back / Door Navigation ---- */
   function leave() {
     if (EMBED) parent.postMessage({ wall: 'close' }, location.origin === 'null' ? '*' : location.origin);
     else location.href = document.getElementById('back').href;
   }
-  document.getElementById('back').addEventListener('click', e => {
-    if (EMBED) { e.preventDefault(); leave(); }
-  });
-
-  addEventListener('message', e => {
-    const m = e.data || {};
-    if (e.source !== parent) return;
-    if (m.wall === 'mode') { if (m.mode === 'dark') root.dataset.mode = 'dark'; else delete root.dataset.mode; }
-    if (m.wall === 'enter') {
-      arrive();
-      hinted = false;
-      hint.classList.remove('gone');
-      setTimeout(hideHint, 6000);
-      wall.focus({ preventScroll: true });
-    }
-    if (m.wall === 'exit') { root.classList.add('out'); }
-    if (m.wall === 'reset') {
-      if (!lb.hidden) { lb.hidden = true; lb.classList.remove('open'); }
-      root.classList.add('instant', 'pre');
-      root.classList.remove('out');
-      vx = vy = 0; centre(); arriving = true; render();
-      requestAnimationFrame(() => root.classList.remove('instant'));
-    }
-  });
+  const backBtn = document.getElementById('back');
+  if (backBtn) {
+    backBtn.addEventListener('click', e => {
+      if (EMBED) { e.preventDefault(); leave(); }
+    });
+  }
 
   const hint = document.getElementById('hint');
   let hinted = false;
@@ -651,33 +645,22 @@
     .catch(() => {});
 
   /* ---- Boot Initialization ---- */
-  let booted = false, arriving = true;
+  // 1. Initial items load
+  if (window.POWERLIFTING_ITEMS && window.POWERLIFTING_ITEMS.length > 0) {
+    initItems(window.POWERLIFTING_ITEMS);
+  } else if (RAW_ITEMS && RAW_ITEMS.length > 0) {
+    initItems(RAW_ITEMS);
+  }
+
   sizeSky();
   build();
   centre();
   render();
-  booted = true;
   requestAnimationFrame(tick);
-
-  function arrive() {
-    arriving = false;
-    root.classList.remove('instant');
-    requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('pre')));
-  }
-
-  const firstImgs = [...document.querySelectorAll('.cell img')];
-  const decoded = Promise.race([
-    Promise.all(firstImgs.map(im => im.decode?.().then(() => im.classList.add('ok')).catch(() => {}))),
-    new Promise(r => setTimeout(r, 1500))
-  ]);
-
-  if (!EMBED) {
-    decoded.then(arrive);
-    wall?.focus({ preventScroll: true });
-  }
+  try { wall?.focus?.({ preventScroll: true }); } catch (_) {}
 
   // Double check if lifts.js loaded slightly after engine
-  if (!RAW_ITEMS || RAW_ITEMS.length === 0) {
+  if (!P || P.length === 0) {
     let checkCount = 0;
     const timer = setInterval(() => {
       checkCount++;
