@@ -70,9 +70,10 @@ router.get('/skills', async (req, res) => {
 // GET /api/portfolio/projects
 router.get('/projects', async (req, res) => {
   try {
-    const { category } = req.query;
+    const rawCategory = typeof req.query.category === 'string' ? req.query.category.trim() : null;
+    const cleanCategory = rawCategory && rawCategory !== 'all' ? rawCategory : null;
     if (getDBStatus()) {
-      const query = category && category !== 'all' ? { category } : {};
+      const query = cleanCategory ? { category: cleanCategory } : {};
       const projects = await Project.find(query).sort({ order: 1, createdAt: -1 });
       if (projects.length > 0) {
         return res.json({ success: true, count: projects.length, data: projects });
@@ -83,8 +84,8 @@ router.get('/projects', async (req, res) => {
     const seedPath = path.join(__dirname, '../config/seed-data.json');
     if (fs.existsSync(seedPath)) {
       const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-      const list = category && category !== 'all'
-        ? seed.projects.filter((p) => p.category === category)
+      const list = cleanCategory
+        ? seed.projects.filter((p) => p.category === cleanCategory)
         : seed.projects;
       return res.json({ success: true, count: list.length, data: list });
     }
@@ -98,9 +99,10 @@ router.get('/projects', async (req, res) => {
 // GET /api/portfolio/powerlifting
 router.get('/powerlifting', async (req, res) => {
   try {
-    const { category } = req.query;
+    const rawCategory = typeof req.query.category === 'string' ? req.query.category.trim() : null;
+    const cleanCategory = rawCategory && rawCategory !== 'all' ? rawCategory : null;
     if (getDBStatus()) {
-      const query = category && category !== 'all' ? { category } : {};
+      const query = cleanCategory ? { category: cleanCategory } : {};
       const lifts = await Lift.find(query).sort({ order: 1, createdAt: -1 });
       if (lifts.length > 0) {
         return res.json({ success: true, count: lifts.length, data: lifts });
@@ -111,8 +113,8 @@ router.get('/powerlifting', async (req, res) => {
     const seedPath = path.join(__dirname, '../config/seed-data.json');
     if (fs.existsSync(seedPath)) {
       const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-      const list = category && category !== 'all'
-        ? seed.lifts.filter((l) => l.category === category)
+      const list = cleanCategory
+        ? seed.lifts.filter((l) => l.category === cleanCategory)
         : seed.lifts;
       return res.json({ success: true, count: list.length, data: list });
     }

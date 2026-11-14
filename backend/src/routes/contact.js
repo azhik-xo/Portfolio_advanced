@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Message = require('../models/Message');
 const { getDBStatus } = require('../config/db');
+const { requireAdmin } = require('../middleware/auth');
 
 // In-memory fallback storage if MongoDB is not currently running
 const fallbackMessages = [];
@@ -144,22 +145,11 @@ router.post('/', async (req, res) => {
   }
 });
 
-// GET /api/contact - List recent inquiries (Protected: requires admin secret or development mode)
-router.get('/', async (req, res) => {
+// GET /api/contact - List recent inquiries (Protected: strictly requires admin authentication)
+router.get('/', requireAdmin, async (req, res) => {
   try {
-    const adminKey = req.headers['x-admin-key'] || req.query.admin_key;
-    const expectedKey = process.env.ADMIN_SECRET || 'dev_secret_preview';
-
-    // Prevent open public scraping of private visitor email submissions
-    if (process.env.NODE_ENV === 'production' && (!adminKey || adminKey !== expectedKey)) {
-      return res.status(401).json({
-        success: false,
-        error: 'Unauthorized. Admin credentials required to view inquiries.',
-      });
-    }
-
     if (getDBStatus()) {
-      const messages = await Message.find().sort({ createdAt: -1 }).limit(50);
+      const messages = await Message.find().sort({ createdAt: -1 }).limit(100);
       return res.json({ success: true, count: messages.length, data: messages });
     } else {
       return res.json({ success: true, count: fallbackMessages.length, data: fallbackMessages });

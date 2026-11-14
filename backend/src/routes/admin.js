@@ -20,11 +20,22 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// Allowed upload target folders to prevent path traversal or uncontrolled bucket placement
+const ALLOWED_CLOUDINARY_FOLDERS = [
+  'ashik-portfolio/lifts',
+  'ashik-portfolio/projects',
+  'ashik-portfolio/general',
+];
+
 // Endpoint to generate signed upload parameters for Cloudinary direct browser uploads
 router.get('/cloudinary-sign', (req, res) => {
   try {
     const timestamp = Math.round(new Date().getTime() / 1000);
-    const folder = req.query.folder || 'ashik-portfolio/lifts';
+    const requestedFolder = typeof req.query.folder === 'string' ? req.query.folder.trim() : '';
+    const folder = ALLOWED_CLOUDINARY_FOLDERS.includes(requestedFolder)
+      ? requestedFolder
+      : 'ashik-portfolio/lifts';
+
     const paramsToSign = {
       timestamp,
       folder,
@@ -49,13 +60,20 @@ router.get('/cloudinary-sign', (req, res) => {
 // Fallback upload endpoint for base64 / data-uri media
 router.post('/upload-media', express.json({ limit: '30mb' }), async (req, res) => {
   try {
-    const { file, folder = 'ashik-portfolio/lifts', resourceType = 'auto' } = req.body;
-    if (!file) {
-      return res.status(400).json({ success: false, error: 'No file data provided' });
+    const { file, folder: requestedFolder, resourceType = 'auto' } = req.body;
+    if (!file || typeof file !== 'string') {
+      return res.status(400).json({ success: false, error: 'Valid file data must be provided.' });
     }
+
+    const folder = ALLOWED_CLOUDINARY_FOLDERS.includes(requestedFolder)
+      ? requestedFolder
+      : 'ashik-portfolio/lifts';
+
+    const validResourceType = ['image', 'video', 'auto'].includes(resourceType) ? resourceType : 'auto';
+
     const result = await cloudinary.uploader.upload(file, {
       folder,
-      resource_type: resourceType,
+      resource_type: validResourceType,
     });
     res.json({
       success: true,
