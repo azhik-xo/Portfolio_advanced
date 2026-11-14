@@ -127,12 +127,14 @@ app.use((req, res) => {
   });
 });
 
-// Global error handler
+// Global error handler (OWASP A05: Information Disclosure Defense)
 app.use((err, req, res, next) => {
   console.error('[Server Error]', err.stack || err.message);
-  res.status(err.status || 500).json({
+  const isProd = process.env.NODE_ENV === 'production';
+  const status = err.status || 500;
+  res.status(status).json({
     success: false,
-    error: err.message || 'Internal Server Error',
+    error: isProd && status === 500 ? 'An unexpected internal server error occurred.' : (err.message || 'Internal Server Error'),
   });
 });
 
