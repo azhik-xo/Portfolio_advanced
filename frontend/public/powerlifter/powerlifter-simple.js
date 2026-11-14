@@ -1,5 +1,8 @@
 (() => {
   const root = document.documentElement;
+  const API_ROOT = (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app'))
+    ? 'https://ashik-portfolio-backend.onrender.com'
+    : '';
 
   // Escaper helper
   const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -45,7 +48,7 @@
   } catch (_) {}
 
   // Fetch live stats
-  fetch('/api/portfolio/profile')
+  fetch(API_ROOT + '/api/portfolio/profile')
     .then(r => r.ok ? r.json() : null)
     .then(json => {
       if (json?.success && json.data?.stats) {
@@ -336,7 +339,7 @@
   }
 
   // Fetch live powerlifting items from backend
-  fetch('/api/portfolio/powerlifting')
+  fetch(API_ROOT + '/api/portfolio/powerlifting')
     .then(r => r.ok ? r.json() : null)
     .then(json => {
       if (json?.success && Array.isArray(json.data) && json.data.length > 0) {

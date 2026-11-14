@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { getApiUrl } from '../lib/api';
 
 export default function StoryHydrator() {
   useEffect(() => {
@@ -8,7 +9,7 @@ export default function StoryHydrator() {
 
     async function syncStoryTimeline() {
       try {
-        const res = await fetch('/api/portfolio/story');
+        const res = await fetch(getApiUrl('/api/portfolio/story'));
         if (!res.ok) return;
         const data = await res.json();
 

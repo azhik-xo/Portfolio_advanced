@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { getApiUrl } from '../lib/api';
 
 export default function ProfileHydrator() {
   useEffect(() => {
@@ -8,7 +9,7 @@ export default function ProfileHydrator() {
 
     async function syncProfile() {
       try {
-        const res = await fetch('/api/portfolio/profile');
+        const res = await fetch(getApiUrl('/api/portfolio/profile'));
         if (!res.ok) return;
         const json = await res.json();
         if (!isMounted || !json?.success || !json.data) return;

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { getApiUrl } from '../lib/api';
 
 export default function PowerlifterHydrator() {
   useEffect(() => {
@@ -57,7 +58,7 @@ export default function PowerlifterHydrator() {
     // 2. Fetch live profile stats
     async function syncProfile() {
       try {
-        const res = await fetch('/api/portfolio/profile');
+        const res = await fetch(getApiUrl('/api/portfolio/profile'));
         if (!res.ok) return;
         const json = await res.json();
         if (!isMounted || !json?.success || !json.data?.stats) return;
@@ -74,7 +75,7 @@ export default function PowerlifterHydrator() {
     // 3. Fetch live powerlifting items
     async function syncLifts() {
       try {
-        const res = await fetch('/api/portfolio/powerlifting');
+        const res = await fetch(getApiUrl('/api/portfolio/powerlifting'));
         if (!res.ok) return;
         const json = await res.json();
         if (!isMounted || !json?.success || !Array.isArray(json.data) || json.data.length === 0) return;

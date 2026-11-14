@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import { getApiUrl } from '../../lib/api';
 import {
   LayoutDashboard,
   Briefcase,
@@ -43,6 +44,7 @@ export default function AdminDashboard() {
   const [showPassword, setShowPassword] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [dbHealth, setDbHealth] = useState({ online: true, mongodb: 'checking' });
 
   // Dashboard state
   const [activeTab, setActiveTab] = useState('overview'); // overview, projects, lifts, story, messages, settings
@@ -88,13 +90,30 @@ export default function AdminDashboard() {
     setToast({ message, type });
   };
 
-  // Check existing token on mount
+  // Check backend health & MongoDB connection status
+  const checkHealth = async () => {
+    try {
+      const res = await fetch(getApiUrl('/api/health'));
+      if (res.ok) {
+        const json = await res.json();
+        setDbHealth({
+          online: json.status === 'online',
+          mongodb: json.mongodb || 'connected',
+        });
+      }
+    } catch (e) {
+      setDbHealth({ online: false, mongodb: 'unreachable' });
+    }
+  };
+
+  // Check existing token and backend health on mount
   useEffect(() => {
     const savedToken = localStorage.getItem('ashik_admin_token');
     if (savedToken) {
       setToken(savedToken);
     }
     setAuthChecked(true);
+    checkHealth();
   }, []);
 
   // Fetch data when authenticated
@@ -106,6 +125,7 @@ export default function AdminDashboard() {
       fetchStory();
       fetchMessages();
       fetchProfile();
+      checkHealth();
     }
   }, [token]);
 
@@ -117,7 +137,8 @@ export default function AdminDashboard() {
       ...options.headers,
     };
     try {
-      const res = await fetch(url, { ...options, headers });
+      const apiUrl = getApiUrl(url);
+      const res = await fetch(apiUrl, { ...options, headers });
       if (res.status === 401) {
         handleLogout();
         showToast('Session expired. Please log in again.', 'error');
@@ -136,7 +157,8 @@ export default function AdminDashboard() {
     setLoginLoading(true);
     setLoginError('');
     try {
-      const res = await fetch('/api/auth/login', {
+      const apiUrl = getApiUrl('/api/auth/login');
+      const res = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: loginUsername, password: loginPassword }),
@@ -146,11 +168,12 @@ export default function AdminDashboard() {
         localStorage.setItem('ashik_admin_token', data.token);
         setToken(data.token);
         showToast('Welcome back, Ashik! Logged in successfully.');
+        checkHealth();
       } else {
         setLoginError(data.error || 'Authentication failed. Please verify credentials.');
       }
     } catch (err) {
-      setLoginError('Could not reach backend API server. Is it running on port 5000?');
+      setLoginError('Could not reach backend API server. If Render backend was asleep, please wait a few seconds and try again.');
     } finally {
       setLoginLoading(false);
     }
@@ -687,10 +710,26 @@ export default function AdminDashboard() {
           </div>
           <div>
             <h1 className="text-sm font-bold text-[#FAF8F5] leading-none">Ashik — Portfolio Admin</h1>
-            <p className="text-[11px] text-[#A8A29E] mt-1 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>MongoDB Atlas Connected</span>
-            </p>
+            <div className="text-[11px] text-[#A8A29E] mt-1 flex items-center gap-1.5">
+              {dbHealth.mongodb === 'connected' ? (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-emerald-400 font-medium">MongoDB Atlas Connected</span>
+                </>
+              ) : dbHealth.mongodb.includes('in-memory') ? (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                  <span className="text-amber-300 font-medium" title="Add 0.0.0.0/0 to MongoDB Atlas Network Access so data persists permanently">
+                    In-Memory Mode (Atlas IP Whitelist Required)
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+                  <span>Checking Backend Status...</span>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
@@ -712,6 +751,24 @@ export default function AdminDashboard() {
           </button>
         </div>
       </header>
+
+      {/* MongoDB Atlas Notice Banner if in-memory mode */}
+      {dbHealth.mongodb.includes('in-memory') && (
+        <div className="bg-amber-500/10 border-b border-amber-500/20 px-6 py-2.5 flex items-center justify-between text-xs text-amber-200">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+            <span>
+              <b>Database Notice:</b> The live backend is running in temporary in-memory fallback. To save edits permanently across restarts, open <b>MongoDB Atlas → Network Access → Add IP Address</b> and choose <b>Allow Access from Anywhere (0.0.0.0/0)</b>.
+            </span>
+          </div>
+          <button
+            onClick={() => checkHealth()}
+            className="ml-4 shrink-0 px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 rounded border border-amber-500/30 text-amber-200 transition-colors"
+          >
+            Re-check Status
+          </button>
+        </div>
+      )}
 
       {/* Main Container */}
       <div className="flex-1 flex flex-col md:flex-row">

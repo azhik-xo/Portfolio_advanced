@@ -1,4 +1,10 @@
 /** @type {import('next').NextConfig} */
+const isProd = process.env.NODE_ENV === 'production';
+const defaultBackend = isProd
+  ? 'https://ashik-portfolio-backend.onrender.com'
+  : 'http://localhost:5000';
+const apiBase = (process.env.NEXT_PUBLIC_API_URL || defaultBackend).replace(/\/+$/, '');
+
 const nextConfig = {
   reactStrictMode: true,
   images: {
@@ -11,7 +17,6 @@ const nextConfig = {
     ],
   },
   async rewrites() {
-    const apiBase = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
     return [
       {
         source: '/home',

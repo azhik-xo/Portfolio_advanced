@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { getApiUrl } from '../lib/api';
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -23,7 +24,7 @@ export default function ContactForm() {
     setStatus({ loading: true, success: false, error: null });
 
     try {
-      const res = await fetch('/api/contact', {
+      const res = await fetch(getApiUrl('/api/contact'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

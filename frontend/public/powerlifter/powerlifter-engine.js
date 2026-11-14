@@ -1,5 +1,8 @@
 (() => {
   const EMBED = typeof location !== 'undefined' && /[?&]embed\b/.test(location.search);
+  const API_ROOT = (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app'))
+    ? 'https://ashik-portfolio-backend.onrender.com'
+    : '';
   const root = document.documentElement;
   const dark = root.dataset.mode === 'dark';
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -79,7 +82,7 @@
     if (cachedStats) updatePrDom(cachedStats);
   } catch (_) {}
 
-  fetch('/api/portfolio/profile')
+  fetch(API_ROOT + '/api/portfolio/profile')
     .then(r => r.ok ? r.json() : null)
     .then(json => {
       if (json?.success && json.data?.stats) {
@@ -634,7 +637,7 @@
     render();
   };
 
-  fetch('/api/portfolio/powerlifting')
+  fetch(API_ROOT + '/api/portfolio/powerlifting')
     .then(r => r.ok ? r.json() : null)
     .then(json => {
       if (json?.success && Array.isArray(json.data) && json.data.length > 0) {
