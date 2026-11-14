@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { getApiUrl } from '../../lib/api';
+import { getApiUrl, uploadToCloudinary } from '../../lib/api';
 import {
   LayoutDashboard,
   Briefcase,
@@ -33,6 +33,11 @@ import {
   GripVertical,
   ChevronUp,
   ChevronDown,
+  UploadCloud,
+  Image as ImageIcon,
+  Film,
+  Check,
+  Sparkles,
 } from 'lucide-react';
 
 export default function AdminDashboard() {
@@ -72,6 +77,83 @@ export default function AdminDashboard() {
   const [liftModal, setLiftModal] = useState({ open: false, mode: 'create', data: null });
   const [storyModal, setStoryModal] = useState({ open: false, mode: 'create', data: null });
   const [deleteDialog, setDeleteDialog] = useState({ open: false, type: '', id: '', title: '' });
+
+  // Lift modal media upload states
+  const [liftMediaType, setLiftMediaType] = useState('photo');
+  const [liftPhotoFile, setLiftPhotoFile] = useState(null);
+  const [liftPhotoPreview, setLiftPhotoPreview] = useState('');
+  const [liftVideoFile, setLiftVideoFile] = useState(null);
+  const [liftVideoPreview, setLiftVideoPreview] = useState('');
+  const [liftThumbFile, setLiftThumbFile] = useState(null);
+  const [liftThumbPreview, setLiftThumbPreview] = useState('');
+  const [liftUploadStatus, setLiftUploadStatus] = useState({ isUploading: false, percent: 0, text: '' });
+  const [showManualUrls, setShowManualUrls] = useState(false);
+
+  // Sync lift modal state on open or edit
+  useEffect(() => {
+    if (liftModal.open) {
+      const isVideo = liftModal.data?.mediaType === 'video';
+      setLiftMediaType(isVideo ? 'video' : 'photo');
+      setLiftPhotoFile(null);
+      setLiftPhotoPreview(!isVideo ? (liftModal.data?.thumbnail || liftModal.data?.fullPhoto || '') : '');
+      setLiftVideoFile(null);
+      setLiftVideoPreview(isVideo ? (liftModal.data?.videoSrc || '') : '');
+      setLiftThumbFile(null);
+      setLiftThumbPreview(liftModal.data?.thumbnail || '');
+      setLiftUploadStatus({ isUploading: false, percent: 0, text: '' });
+      setShowManualUrls(false);
+    }
+  }, [liftModal.open, liftModal.data]);
+
+  const handlePhotoSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLiftPhotoFile(file);
+    setLiftPhotoPreview(URL.createObjectURL(file));
+  };
+
+  const handleVideoSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLiftVideoFile(file);
+    const objectUrl = URL.createObjectURL(file);
+    setLiftVideoPreview(objectUrl);
+
+    // Auto-extract first frame from video as a smart thumbnail candidate
+    if (!liftThumbFile && !liftThumbPreview) {
+      try {
+        const vid = document.createElement('video');
+        vid.src = objectUrl;
+        vid.muted = true;
+        vid.playsInline = true;
+        vid.currentTime = 0.5;
+        vid.onloadeddata = () => { vid.currentTime = 0.5; };
+        vid.onseeked = () => {
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = vid.videoWidth || 800;
+            canvas.height = vid.videoHeight || 600;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(vid, 0, 0, canvas.width, canvas.height);
+            canvas.toBlob((blob) => {
+              if (blob) {
+                const autoFile = new File([blob], 'video-frame-poster.jpg', { type: 'image/jpeg' });
+                setLiftThumbFile(autoFile);
+                setLiftThumbPreview(canvas.toDataURL('image/jpeg'));
+              }
+            }, 'image/jpeg', 0.9);
+          } catch (_) {}
+        };
+      } catch (_) {}
+    }
+  };
+
+  const handleThumbSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLiftThumbFile(file);
+    setLiftThumbPreview(URL.createObjectURL(file));
+  };
 
   // Drag and drop ordering states
   const [draggedStoryIdx, setDraggedStoryIdx] = useState(null);
@@ -313,21 +395,91 @@ export default function AdminDashboard() {
     }
   };
 
-  // Lift CRUD handlers
+  // Lift CRUD handlers with Cloudinary media upload & MongoDB sync
   const handleSaveLift = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       const form = e.target;
+      let finalThumbnail = form.thumbnail?.value || liftThumbPreview || liftModal.data?.thumbnail || '';
+      let finalFullPhoto = form.fullPhoto?.value || liftPhotoPreview || liftModal.data?.fullPhoto || '';
+      let finalVideoSrc = form.videoSrc?.value || liftVideoPreview || liftModal.data?.videoSrc || '';
+
+      // 1. Photo upload flow
+      if (liftMediaType === 'photo') {
+        if (liftPhotoFile) {
+          setLiftUploadStatus({ isUploading: true, percent: 10, text: 'Uploading photo to Cloudinary...' });
+          const uploaded = await uploadToCloudinary(
+            liftPhotoFile,
+            'ashik-portfolio/lifts',
+            (percent) => setLiftUploadStatus({ isUploading: true, percent, text: `Uploading photo to Cloudinary... ${percent}%` })
+          );
+          if (uploaded?.url) {
+            finalThumbnail = uploaded.url;
+            finalFullPhoto = uploaded.url;
+          }
+        }
+        finalVideoSrc = '';
+      } 
+      // 2. Video upload flow (Video file + Thumbnail image)
+      else if (liftMediaType === 'video') {
+        // Upload video recording
+        if (liftVideoFile) {
+          setLiftUploadStatus({ isUploading: true, percent: 10, text: 'Uploading video recording to Cloudinary...' });
+          const uploadedVideo = await uploadToCloudinary(
+            liftVideoFile,
+            'ashik-portfolio/lifts',
+            (percent) => setLiftUploadStatus({ isUploading: true, percent, text: `Uploading video to Cloudinary... ${percent}%` })
+          );
+          if (uploadedVideo?.url) {
+            finalVideoSrc = uploadedVideo.url;
+          }
+        }
+
+        // Upload custom video thumbnail
+        if (liftThumbFile) {
+          setLiftUploadStatus({ isUploading: true, percent: 15, text: 'Uploading video thumbnail to Cloudinary...' });
+          const uploadedThumb = await uploadToCloudinary(
+            liftThumbFile,
+            'ashik-portfolio/lifts',
+            (percent) => setLiftUploadStatus({ isUploading: true, percent, text: `Uploading thumbnail to Cloudinary... ${percent}%` })
+          );
+          if (uploadedThumb?.url) {
+            finalThumbnail = uploadedThumb.url;
+            finalFullPhoto = uploadedThumb.url;
+          }
+        } else if (!finalThumbnail && finalVideoSrc) {
+          // Cloudinary automatic dynamic video poster transformation
+          finalThumbnail = finalVideoSrc.replace(/\.(mp4|mov|webm)$/i, '.webp').replace(/\/upload\//, '/upload/so_0/');
+          finalFullPhoto = finalThumbnail;
+        }
+      }
+
+      if (!finalThumbnail) {
+        showToast('Please select or upload a media photo/thumbnail before saving', 'error');
+        setLoading(false);
+        setLiftUploadStatus({ isUploading: false, percent: 0, text: '' });
+        return;
+      }
+
+      if (liftMediaType === 'video' && !finalVideoSrc) {
+        showToast('Please upload a video file or provide a video URL', 'error');
+        setLoading(false);
+        setLiftUploadStatus({ isUploading: false, percent: 0, text: '' });
+        return;
+      }
+
+      setLiftUploadStatus({ isUploading: true, percent: 95, text: 'Saving lift telemetry to MongoDB Atlas...' });
+
       const payload = {
         title: form.title?.value || '',
         subtitle: form.subtitle?.value || '',
         category: form.category?.value || 'lifts',
         categoryLabel: form.categoryLabel?.value || '',
-        mediaType: form.mediaType?.value || 'photo',
-        thumbnail: form.thumbnail?.value || '',
-        videoSrc: form.videoSrc?.value || '',
-        fullPhoto: form.fullPhoto?.value || form.thumbnail?.value || '',
+        mediaType: liftMediaType,
+        thumbnail: finalThumbnail,
+        videoSrc: finalVideoSrc,
+        fullPhoto: finalFullPhoto || finalThumbnail,
         badge: form.badge?.value || 'PR',
         stats: {
           weight: form.weight?.value || '',
@@ -347,7 +499,7 @@ export default function AdminDashboard() {
 
       const res = await authFetch(url, { method, body: JSON.stringify(payload) });
       if (res?.success) {
-        showToast(isEdit ? 'Lift entry updated!' : 'New lift entry added!');
+        showToast(isEdit ? 'Lift updated live in MongoDB!' : 'New lift published live to MongoDB & Website!');
         setLiftModal({ open: false, mode: 'create', data: null });
         fetchLifts();
         fetchStats();
@@ -355,9 +507,10 @@ export default function AdminDashboard() {
         showToast(res?.error || 'Failed to save lift entry', 'error');
       }
     } catch (err) {
-      showToast(err.message || 'Error saving lift entry', 'error');
+      showToast(err.message || 'Error uploading media or saving lift', 'error');
     } finally {
       setLoading(false);
+      setLiftUploadStatus({ isUploading: false, percent: 0, text: '' });
     }
   };
 
@@ -2022,18 +2175,39 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-xs uppercase font-semibold text-[#A8A29E] mb-1">Media Type</label>
-                  <select
-                    name="mediaType"
-                    defaultValue={liftModal.data?.mediaType || 'photo'}
-                    className="w-full bg-[#1A1818] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-[#FAF8F5]"
+              {/* Media Type Segmented Controls */}
+              <div>
+                <label className="block text-xs uppercase font-semibold text-[#A8A29E] mb-2">Media Type</label>
+                <div className="grid grid-cols-2 gap-2 bg-[#1A1818] p-1.5 rounded-xl border border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => setLiftMediaType('photo')}
+                    className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-semibold transition-all ${
+                      liftMediaType === 'photo'
+                        ? 'bg-[#D6B26E] text-[#121010] shadow-md'
+                        : 'text-[#A8A29E] hover:text-[#FAF8F5]'
+                    }`}
                   >
-                    <option value="photo">Photo / Picture</option>
-                    <option value="video">Video Recording (MP4)</option>
-                  </select>
+                    <ImageIcon className="w-4 h-4" />
+                    <span>Photo / Picture</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLiftMediaType('video')}
+                    className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-semibold transition-all ${
+                      liftMediaType === 'video'
+                        ? 'bg-[#D6B26E] text-[#121010] shadow-md'
+                        : 'text-[#A8A29E] hover:text-[#FAF8F5]'
+                    }`}
+                  >
+                    <Film className="w-4 h-4" />
+                    <span>Video Recording (MP4)</span>
+                  </button>
                 </div>
+                <input type="hidden" name="mediaType" value={liftMediaType} />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs uppercase font-semibold text-[#A8A29E] mb-1">Badge Text</label>
                   <input
@@ -2074,42 +2248,182 @@ export default function AdminDashboard() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs uppercase font-semibold text-[#A8A29E] mb-1">
-                    Thumbnail Image URL (Cloudinary or local)
-                  </label>
-                  <input
-                    name="thumbnail"
-                    required
-                    defaultValue={liftModal.data?.thumbnail || ''}
-                    placeholder="https://res.cloudinary.com/...webp"
-                    className="w-full bg-[#1A1818] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-[#FAF8F5]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs uppercase font-semibold text-[#A8A29E] mb-1">
-                    Full Photo URL (optional)
-                  </label>
-                  <input
-                    name="fullPhoto"
-                    defaultValue={liftModal.data?.fullPhoto || ''}
-                    placeholder="https://res.cloudinary.com/...webp"
-                    className="w-full bg-[#1A1818] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-[#FAF8F5]"
-                  />
-                </div>
-              </div>
+              {/* DYNAMIC MEDIA UPLOADER SECTION */}
+              {liftMediaType === 'photo' ? (
+                /* PHOTO UPLOAD BOX */
+                <div className="p-4 bg-[#171515] rounded-xl border border-dashed border-[#D6B26E]/40 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs uppercase font-bold text-[#D6B26E] flex items-center gap-1.5">
+                      <ImageIcon className="w-4 h-4" />
+                      Upload Photo / Image
+                    </span>
+                    <span className="text-[11px] text-[#A8A29E]">PNG, JPG, WEBP, HEIC</span>
+                  </div>
 
-              <div>
-                <label className="block text-xs uppercase font-semibold text-[#A8A29E] mb-1">
-                  Video MP4 Source URL (if mediaType is video)
-                </label>
-                <input
-                  name="videoSrc"
-                  defaultValue={liftModal.data?.videoSrc || ''}
-                  placeholder="https://res.cloudinary.com/...mp4"
-                  className="w-full bg-[#1A1818] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-[#FAF8F5]"
-                />
+                  {liftPhotoPreview ? (
+                    <div className="relative rounded-xl overflow-hidden bg-black/60 border border-white/10 flex items-center justify-center max-h-64">
+                      <img src={liftPhotoPreview} alt="Preview" className="max-h-64 w-auto object-contain rounded-lg" />
+                      <div className="absolute bottom-2 right-2 flex items-center gap-2">
+                        <label className="cursor-pointer bg-[#D6B26E] hover:brightness-105 text-[#121010] text-[11px] font-bold px-3 py-1.5 rounded-lg shadow-lg flex items-center gap-1">
+                          <UploadCloud className="w-3.5 h-3.5" />
+                          Change Photo
+                          <input type="file" accept="image/*" onChange={handlePhotoSelect} className="hidden" />
+                        </label>
+                      </div>
+                      {liftPhotoFile && (
+                        <span className="absolute top-2 left-2 bg-black/80 backdrop-blur-sm text-emerald-400 text-[10px] font-semibold px-2.5 py-1 rounded-md border border-emerald-500/30 flex items-center gap-1">
+                          <Check className="w-3 h-3" /> Ready to upload: {liftPhotoFile.name} ({(liftPhotoFile.size / 1024 / 1024).toFixed(2)} MB)
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <label className="cursor-pointer block border-2 border-dashed border-white/10 hover:border-[#D6B26E]/50 rounded-xl p-6 text-center transition-colors bg-black/20 hover:bg-[#D6B26E]/5">
+                      <UploadCloud className="w-8 h-8 text-[#D6B26E] mx-auto mb-2 animate-bounce" />
+                      <span className="block text-xs font-semibold text-[#FAF8F5]">Click or drag to choose Photo from your device</span>
+                      <span className="block text-[11px] text-[#78716C] mt-1">Direct upload to Cloudinary CDN &amp; synced to website</span>
+                      <input type="file" accept="image/*" onChange={handlePhotoSelect} className="hidden" />
+                    </label>
+                  )}
+                </div>
+              ) : (
+                /* VIDEO UPLOAD BOX */
+                <div className="p-4 bg-[#171515] rounded-xl border border-dashed border-[#D6B26E]/40 space-y-4">
+                  {/* Step 1: Video File */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs uppercase font-bold text-[#D6B26E] flex items-center gap-1.5">
+                        <Film className="w-4 h-4" />
+                        Step 1: Upload Video Recording
+                      </span>
+                      <span className="text-[11px] text-[#A8A29E]">MP4, MOV, WebM</span>
+                    </div>
+
+                    {liftVideoPreview ? (
+                      <div className="relative rounded-xl overflow-hidden bg-black border border-white/10 p-2">
+                        <video src={liftVideoPreview} controls playsInline className="w-full max-h-56 rounded-lg object-contain bg-black" />
+                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/5">
+                          {liftVideoFile ? (
+                            <span className="text-[11px] text-emerald-400 flex items-center gap-1">
+                              <Check className="w-3 h-3" /> {liftVideoFile.name} ({(liftVideoFile.size / 1024 / 1024).toFixed(2)} MB)
+                            </span>
+                          ) : (
+                            <span className="text-[11px] text-[#A8A29E]">Existing Video Loaded</span>
+                          )}
+                          <label className="cursor-pointer text-[11px] font-semibold text-[#D6B26E] hover:underline flex items-center gap-1">
+                            <UploadCloud className="w-3.5 h-3.5" /> Replace Video
+                            <input type="file" accept="video/mp4,video/quicktime,video/webm" onChange={handleVideoSelect} className="hidden" />
+                          </label>
+                        </div>
+                      </div>
+                    ) : (
+                      <label className="cursor-pointer block border-2 border-dashed border-white/10 hover:border-[#D6B26E]/50 rounded-xl p-5 text-center transition-colors bg-black/20 hover:bg-[#D6B26E]/5">
+                        <Film className="w-8 h-8 text-[#D6B26E] mx-auto mb-2" />
+                        <span className="block text-xs font-semibold text-[#FAF8F5]">Choose Video file (.mp4, .mov, .webm)</span>
+                        <span className="block text-[11px] text-[#78716C] mt-1">Direct upload to Cloudinary CDN</span>
+                        <input type="file" accept="video/mp4,video/quicktime,video/webm" onChange={handleVideoSelect} className="hidden" />
+                      </label>
+                    )}
+                  </div>
+
+                  {/* Step 2: Thumbnail / Poster Image for Video */}
+                  <div className="pt-3 border-t border-white/10 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs uppercase font-bold text-amber-300 flex items-center gap-1.5">
+                        <ImageIcon className="w-4 h-4" />
+                        Step 2: Video Thumbnail / Poster Image
+                      </span>
+                      <span className="text-[11px] text-[#A8A29E]">Required for wall preview</span>
+                    </div>
+
+                    {liftThumbPreview ? (
+                      <div className="flex items-center gap-3 p-2 bg-black/40 rounded-xl border border-white/10">
+                        <img src={liftThumbPreview} alt="Thumbnail preview" className="w-20 h-20 object-cover rounded-lg border border-white/10" />
+                        <div className="flex-1">
+                          <span className="text-xs font-semibold text-[#FAF8F5] block">
+                            {liftThumbFile ? liftThumbFile.name : 'Active Video Thumbnail'}
+                          </span>
+                          <span className="text-[11px] text-emerald-400 block mt-0.5">
+                            ✓ Poster ready for video preview
+                          </span>
+                          <div className="flex items-center gap-3 mt-1.5">
+                            <label className="cursor-pointer inline-flex items-center gap-1 text-[11px] text-[#D6B26E] hover:underline font-medium">
+                              <UploadCloud className="w-3 h-3" /> Upload Custom Image
+                              <input type="file" accept="image/*" onChange={handleThumbSelect} className="hidden" />
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <label className="cursor-pointer block border-2 border-dashed border-amber-500/30 hover:border-amber-400 rounded-xl p-4 text-center transition-colors bg-amber-500/5 hover:bg-amber-500/10">
+                        <ImageIcon className="w-6 h-6 text-amber-400 mx-auto mb-1.5" />
+                        <span className="block text-xs font-semibold text-[#FAF8F5]">Upload Thumbnail / Cover Picture for this video</span>
+                        <span className="block text-[11px] text-amber-200/70 mt-0.5">Shows on the photo cards before clicking to play</span>
+                        <input type="file" accept="image/*" onChange={handleThumbSelect} className="hidden" />
+                      </label>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Upload Progress Bar */}
+              {liftUploadStatus.isUploading && (
+                <div className="p-3.5 bg-[#D6B26E]/10 border border-[#D6B26E]/30 rounded-xl space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-[#D6B26E] flex items-center gap-2">
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      {liftUploadStatus.text}
+                    </span>
+                    <span className="font-bold text-[#D6B26E]">{liftUploadStatus.percent}%</span>
+                  </div>
+                  <div className="w-full bg-black/60 rounded-full h-2 overflow-hidden">
+                    <div
+                      className="bg-gradient-to-r from-[#D6B26E] to-[#E5C78A] h-full transition-all duration-300"
+                      style={{ width: `${liftUploadStatus.percent}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Advanced toggle for direct URLs if ever needed */}
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={() => setShowManualUrls(!showManualUrls)}
+                  className="text-[11px] text-[#78716C] hover:text-[#D6B26E] transition-colors underline flex items-center gap-1"
+                >
+                  {showManualUrls ? 'Hide manual URL fields' : 'Advanced: Edit or view raw Cloudinary URLs'}
+                </button>
+
+                {showManualUrls && (
+                  <div className="mt-2.5 p-3 bg-black/40 border border-white/5 rounded-xl space-y-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[10px] uppercase font-semibold text-[#A8A29E] mb-1">Thumbnail URL</label>
+                        <input
+                          name="thumbnail"
+                          defaultValue={liftThumbPreview || liftModal.data?.thumbnail || ''}
+                          className="w-full bg-[#1A1818] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-[#FAF8F5]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] uppercase font-semibold text-[#A8A29E] mb-1">Full Photo URL</label>
+                        <input
+                          name="fullPhoto"
+                          defaultValue={liftPhotoPreview || liftModal.data?.fullPhoto || ''}
+                          className="w-full bg-[#1A1818] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-[#FAF8F5]"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] uppercase font-semibold text-[#A8A29E] mb-1">Video Source URL</label>
+                      <input
+                        name="videoSrc"
+                        defaultValue={liftVideoPreview || liftModal.data?.videoSrc || ''}
+                        className="w-full bg-[#1A1818] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-[#FAF8F5]"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Telemetry Stats */}
@@ -2199,10 +2513,22 @@ export default function AdminDashboard() {
                 </button>
                 <button
                   type="submit"
-                  disabled={loading}
-                  className="bg-[#D6B26E] hover:brightness-105 text-[#121010] text-xs font-bold px-5 py-2 rounded-xl"
+                  disabled={loading || liftUploadStatus.isUploading}
+                  className="bg-[#D6B26E] hover:brightness-105 active:scale-[0.99] disabled:opacity-50 text-[#121010] text-xs font-bold px-6 py-2.5 rounded-xl shadow-lg shadow-[#D6B26E]/20 flex items-center gap-2"
                 >
-                  {loading ? 'Saving...' : 'Save Lift Entry'}
+                  {liftUploadStatus.isUploading ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      Uploading Media...
+                    </>
+                  ) : loading ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      Saving to Atlas...
+                    </>
+                  ) : (
+                    'Save Lift Entry'
+                  )}
                 </button>
               </div>
             </form>

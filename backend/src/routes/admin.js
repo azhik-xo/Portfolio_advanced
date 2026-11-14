@@ -12,6 +12,66 @@ const memoryStore = require('../config/memoryStore');
 // Protect all /api/admin routes
 router.use(requireAdmin);
 
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+// Endpoint to generate signed upload parameters for Cloudinary direct browser uploads
+router.get('/cloudinary-sign', (req, res) => {
+  try {
+    const timestamp = Math.round(new Date().getTime() / 1000);
+    const folder = req.query.folder || 'ashik-portfolio/lifts';
+    const paramsToSign = {
+      timestamp,
+      folder,
+    };
+    const signature = cloudinary.utils.api_sign_request(
+      paramsToSign,
+      process.env.CLOUDINARY_API_SECRET
+    );
+    res.json({
+      success: true,
+      signature,
+      timestamp,
+      apiKey: process.env.CLOUDINARY_API_KEY,
+      cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+      folder,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Fallback upload endpoint for base64 / data-uri media
+router.post('/upload-media', express.json({ limit: '30mb' }), async (req, res) => {
+  try {
+    const { file, folder = 'ashik-portfolio/lifts', resourceType = 'auto' } = req.body;
+    if (!file) {
+      return res.status(400).json({ success: false, error: 'No file data provided' });
+    }
+    const result = await cloudinary.uploader.upload(file, {
+      folder,
+      resource_type: resourceType,
+    });
+    res.json({
+      success: true,
+      url: result.secure_url,
+      publicId: result.public_id,
+      width: result.width,
+      height: result.height,
+      duration: result.duration,
+      format: result.format,
+      resourceType: result.resource_type,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ==========================================
 // 1. STATS & OVERVIEW
 // ==========================================
