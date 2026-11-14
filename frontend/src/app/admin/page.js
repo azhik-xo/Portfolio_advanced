@@ -91,15 +91,25 @@ export default function AdminDashboard() {
   };
 
   // Check backend health & MongoDB connection status
-  const checkHealth = async () => {
+  const checkHealth = async (forceReconnect = false) => {
     try {
+      if (forceReconnect && token) {
+        await authFetch('/api/admin/reconnect-db', { method: 'POST' });
+      }
       const res = await fetch(getApiUrl('/api/health'));
       if (res.ok) {
         const json = await res.json();
+        const connected = json.mongodb === 'connected';
         setDbHealth({
           online: json.status === 'online',
           mongodb: json.mongodb || 'connected',
         });
+        if (forceReconnect && connected) {
+          showToast('Successfully connected to MongoDB Atlas! All edits will now save permanently.');
+          fetchStats();
+          fetchProfile();
+          fetchLifts();
+        }
       }
     } catch (e) {
       setDbHealth({ online: false, mongodb: 'unreachable' });
@@ -762,10 +772,10 @@ export default function AdminDashboard() {
             </span>
           </div>
           <button
-            onClick={() => checkHealth()}
-            className="ml-4 shrink-0 px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 rounded border border-amber-500/30 text-amber-200 transition-colors"
+            onClick={() => checkHealth(true)}
+            className="ml-4 shrink-0 px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 rounded border border-amber-500/30 text-amber-200 transition-colors font-medium"
           >
-            Re-check Status
+            Re-check &amp; Connect Live
           </button>
         </div>
       )}

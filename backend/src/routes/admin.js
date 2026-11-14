@@ -56,6 +56,19 @@ router.get('/stats', async (req, res) => {
   }
 });
 
+router.post('/reconnect-db', async (req, res) => {
+  try {
+    const { connectDB } = require('../config/db');
+    await connectDB();
+    res.json({
+      success: true,
+      mongodb: getDBStatus() ? 'connected' : 'disconnected (in-memory mode)',
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ==========================================
 // 2. PROJECTS CRUD
 // ==========================================
